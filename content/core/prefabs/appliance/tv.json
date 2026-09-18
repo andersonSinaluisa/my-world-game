@@ -1,0 +1,41 @@
+{
+  "id": "tv",
+  "category": "appliance",
+  "tags": [
+    "furniture",
+    "appliance"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_tv_off",
+      "layer": "furniture",
+      "byState": {
+        "on": "env_home_tv_on"
+      }
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -170,
+        "y": -300,
+        "w": 340,
+        "h": 300
+      }
+    },
+    "states": {
+      "current": "off",
+      "values": [
+        "off",
+        "on"
+      ]
+    },
+    "switchable": {
+      "onState": "on",
+      "offState": "off"
+    }
+  },
+  "metadata": {
+    "name": "object.tv.name",
+    "placeholder": true
+  }
+}

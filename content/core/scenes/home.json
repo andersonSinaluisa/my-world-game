@@ -85,26 +85,34 @@
   ],
   "entities": [
     {
-      "localId": "table",
-      "prefabId": "table_round",
+      "localId": "sofa",
+      "prefabId": "sofa",
       "transform": {
-        "x": 1200,
+        "x": 420,
         "y": 960
       }
     },
     {
-      "localId": "apple_1",
-      "prefabId": "apple_red",
+      "localId": "armchair",
+      "prefabId": "armchair",
       "transform": {
-        "x": 1150,
-        "y": 845
+        "x": 900,
+        "y": 960
       }
     },
     {
-      "localId": "ball_1",
-      "prefabId": "ball",
+      "localId": "coffee_table",
+      "prefabId": "coffee_table",
       "transform": {
-        "x": 450,
+        "x": 640,
+        "y": 960
+      }
+    },
+    {
+      "localId": "tv",
+      "prefabId": "tv",
+      "transform": {
+        "x": 1250,
         "y": 960
       }
     },
@@ -112,7 +120,7 @@
       "localId": "lamp",
       "prefabId": "lamp_floor",
       "transform": {
-        "x": 1700,
+        "x": 1560,
         "y": 960
       }
     },
@@ -120,7 +128,7 @@
       "localId": "toybox",
       "prefabId": "toybox",
       "transform": {
-        "x": 4400,
+        "x": 1780,
         "y": 960
       }
     },
@@ -133,26 +141,346 @@
       }
     },
     {
+      "localId": "toybox_book",
+      "prefabId": "book",
+      "inContainer": {
+        "localId": "toybox",
+        "slot": 1
+      }
+    },
+    {
+      "localId": "teddy",
+      "prefabId": "teddy",
+      "transform": {
+        "x": 1050,
+        "y": 960
+      }
+    },
+    {
+      "localId": "plant",
+      "prefabId": "plant",
+      "transform": {
+        "x": 120,
+        "y": 960
+      }
+    },
+    {
+      "localId": "book",
+      "prefabId": "book",
+      "transform": {
+        "x": 640,
+        "y": 880
+      }
+    },
+    {
+      "localId": "fridge",
+      "prefabId": "fridge",
+      "transform": {
+        "x": 2080,
+        "y": 960
+      }
+    },
+    {
+      "localId": "fridge_milk",
+      "prefabId": "milk_carton",
+      "inContainer": {
+        "localId": "fridge",
+        "slot": 0
+      }
+    },
+    {
+      "localId": "fridge_juice",
+      "prefabId": "juice_glass",
+      "inContainer": {
+        "localId": "fridge",
+        "slot": 1
+      }
+    },
+    {
+      "localId": "fridge_cake",
+      "prefabId": "cake_slice",
+      "inContainer": {
+        "localId": "fridge",
+        "slot": 2
+      }
+    },
+    {
+      "localId": "stove",
+      "prefabId": "stove",
+      "transform": {
+        "x": 2380,
+        "y": 960
+      }
+    },
+    {
+      "localId": "cupboard",
+      "prefabId": "cupboard",
+      "transform": {
+        "x": 2640,
+        "y": 960
+      }
+    },
+    {
+      "localId": "cupboard_cookie_1",
+      "prefabId": "cookie",
+      "inContainer": {
+        "localId": "cupboard",
+        "slot": 0
+      }
+    },
+    {
+      "localId": "cupboard_cookie_2",
+      "prefabId": "cookie",
+      "inContainer": {
+        "localId": "cupboard",
+        "slot": 1
+      }
+    },
+    {
+      "localId": "cupboard_sandwich",
+      "prefabId": "sandwich",
+      "inContainer": {
+        "localId": "cupboard",
+        "slot": 2
+      }
+    },
+    {
       "localId": "kitchen_table",
       "prefabId": "table_round",
       "transform": {
-        "x": 2700,
+        "x": 3150,
         "y": 960
+      }
+    },
+    {
+      "localId": "fruit_bowl",
+      "prefabId": "fruit_bowl",
+      "transform": {
+        "x": 3120,
+        "y": 845
+      }
+    },
+    {
+      "localId": "apple_1",
+      "prefabId": "apple_red",
+      "transform": {
+        "x": 3270,
+        "y": 845
       }
     },
     {
       "localId": "apple_2",
       "prefabId": "apple_red",
       "transform": {
-        "x": 2750,
+        "x": 3200,
         "y": 845
+      }
+    },
+    {
+      "localId": "banana",
+      "prefabId": "banana",
+      "transform": {
+        "x": 3060,
+        "y": 845
+      }
+    },
+    {
+      "localId": "chair",
+      "prefabId": "chair",
+      "transform": {
+        "x": 3480,
+        "y": 960
+      }
+    },
+    {
+      "localId": "glass",
+      "prefabId": "glass_empty",
+      "transform": {
+        "x": 3010,
+        "y": 845
+      }
+    },
+    {
+      "localId": "bed",
+      "prefabId": "bed",
+      "transform": {
+        "x": 4250,
+        "y": 960
+      }
+    },
+    {
+      "localId": "nightstand",
+      "prefabId": "nightstand",
+      "transform": {
+        "x": 4620,
+        "y": 960
+      }
+    },
+    {
+      "localId": "table_lamp",
+      "prefabId": "table_lamp",
+      "transform": {
+        "x": 4620,
+        "y": 848
+      }
+    },
+    {
+      "localId": "alarm_clock",
+      "prefabId": "alarm_clock",
+      "transform": {
+        "x": 4000,
+        "y": 960
+      }
+    },
+    {
+      "localId": "pillow",
+      "prefabId": "pillow",
+      "transform": {
+        "x": 4300,
+        "y": 866
+      }
+    },
+    {
+      "localId": "wardrobe",
+      "prefabId": "wardrobe",
+      "transform": {
+        "x": 5100,
+        "y": 960
+      }
+    },
+    {
+      "localId": "wardrobe_top_1",
+      "prefabId": "shirt_stripe_blue",
+      "inContainer": {
+        "localId": "wardrobe",
+        "slot": 0
+      }
+    },
+    {
+      "localId": "wardrobe_top_2",
+      "prefabId": "shirt_heart_pink",
+      "inContainer": {
+        "localId": "wardrobe",
+        "slot": 1
+      }
+    },
+    {
+      "localId": "wardrobe_top_3",
+      "prefabId": "hoodie_purple",
+      "inContainer": {
+        "localId": "wardrobe",
+        "slot": 2
+      }
+    },
+    {
+      "localId": "wardrobe_bottom_1",
+      "prefabId": "shorts_red",
+      "inContainer": {
+        "localId": "wardrobe",
+        "slot": 3
+      }
+    },
+    {
+      "localId": "wardrobe_bottom_2",
+      "prefabId": "skirt_pink",
+      "inContainer": {
+        "localId": "wardrobe",
+        "slot": 4
+      }
+    },
+    {
+      "localId": "wardrobe_bottom_3",
+      "prefabId": "leggings_yellow",
+      "inContainer": {
+        "localId": "wardrobe",
+        "slot": 5
+      }
+    },
+    {
+      "localId": "wardrobe_shoes_1",
+      "prefabId": "boots_brown",
+      "inContainer": {
+        "localId": "wardrobe",
+        "slot": 6
+      }
+    },
+    {
+      "localId": "wardrobe_shoes_2",
+      "prefabId": "sandals_blue",
+      "inContainer": {
+        "localId": "wardrobe",
+        "slot": 7
+      }
+    },
+    {
+      "localId": "toy_blocks",
+      "prefabId": "toy_blocks",
+      "transform": {
+        "x": 5500,
+        "y": 960
+      }
+    },
+    {
+      "localId": "toilet",
+      "prefabId": "toilet",
+      "transform": {
+        "x": 5950,
+        "y": 960
+      }
+    },
+    {
+      "localId": "bathtub",
+      "prefabId": "bathtub",
+      "transform": {
+        "x": 6450,
+        "y": 960
+      }
+    },
+    {
+      "localId": "sink",
+      "prefabId": "sink",
+      "transform": {
+        "x": 7000,
+        "y": 960
+      }
+    },
+    {
+      "localId": "towel",
+      "prefabId": "towel",
+      "transform": {
+        "x": 7180,
+        "y": 960
+      }
+    },
+    {
+      "localId": "toothbrush",
+      "prefabId": "toothbrush",
+      "transform": {
+        "x": 7000,
+        "y": 788
+      }
+    },
+    {
+      "localId": "rubber_duck",
+      "prefabId": "rubber_duck",
+      "transform": {
+        "x": 6450,
+        "y": 900
+      }
+    },
+    {
+      "localId": "laundry_basket",
+      "prefabId": "laundry_basket",
+      "transform": {
+        "x": 7450,
+        "y": 960
       }
     },
     {
       "localId": "bath_lamp",
       "prefabId": "lamp_floor",
       "transform": {
-        "x": 6400,
+        "x": 7620,
         "y": 960
       }
     }

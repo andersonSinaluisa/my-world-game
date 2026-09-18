@@ -1,0 +1,87 @@
+{
+  "id": "fridge",
+  "category": "container",
+  "tags": [
+    "furniture",
+    "appliance"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_fridge_closed",
+      "layer": "furniture",
+      "byState": {
+        "open": "env_home_fridge_open"
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -100,
+        "y": -400,
+        "w": 200,
+        "h": 400
+      },
+      "zones": {
+        "inside": {
+          "type": "rect",
+          "x": -88,
+          "y": -388,
+          "w": 176,
+          "h": 372
+        }
+      }
+    },
+    "states": {
+      "current": "closed",
+      "values": [
+        "closed",
+        "open"
+      ]
+    },
+    "openable": {
+      "openState": "open",
+      "closedState": "closed"
+    },
+    "container": {
+      "capacity": 6,
+      "accepts": [
+        "food",
+        "drink"
+      ],
+      "slots": [
+        {
+          "x": -45,
+          "y": -310
+        },
+        {
+          "x": 45,
+          "y": -310
+        },
+        {
+          "x": -45,
+          "y": -220
+        },
+        {
+          "x": 45,
+          "y": -220
+        },
+        {
+          "x": -45,
+          "y": -130
+        },
+        {
+          "x": 45,
+          "y": -130
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "name": "object.fridge.name",
+    "placeholder": true
+  }
+}

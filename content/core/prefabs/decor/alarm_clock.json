@@ -1,0 +1,32 @@
+{
+  "id": "alarm_clock",
+  "category": "decor",
+  "tags": [
+    "decor"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_decor_clock",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -50,
+        "y": -100,
+        "w": 100,
+        "h": 100
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    }
+  },
+  "metadata": {
+    "name": "object.alarm_clock.name",
+    "placeholder": true
+  }
+}

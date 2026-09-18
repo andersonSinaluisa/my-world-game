@@ -1,0 +1,39 @@
+{
+  "id": "banana",
+  "category": "food",
+  "tags": [
+    "food",
+    "fruit"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_food_banana",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -40,
+        "y": -60,
+        "w": 80,
+        "h": 60
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    },
+    "edible": {
+      "bites": 2,
+      "spriteByBitesLeft": {
+        "1": "obj_food_banana_bite_1"
+      }
+    }
+  },
+  "metadata": {
+    "name": "object.banana.name",
+    "placeholder": true
+  }
+}

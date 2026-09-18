@@ -1,0 +1,33 @@
+{
+  "id": "pillow",
+  "category": "toy",
+  "tags": [
+    "toy",
+    "decor"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_toy_pillow",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -65,
+        "y": -50,
+        "w": 130,
+        "h": 50
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    }
+  },
+  "metadata": {
+    "name": "object.pillow.name",
+    "placeholder": true
+  }
+}

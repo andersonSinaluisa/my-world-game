@@ -1,0 +1,33 @@
+{
+  "id": "apple_core",
+  "category": "food",
+  "tags": [
+    "food",
+    "misc"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_food_apple_core",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -30,
+        "y": -90,
+        "w": 60,
+        "h": 90
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    }
+  },
+  "metadata": {
+    "name": "object.apple_core.name",
+    "placeholder": true
+  }
+}

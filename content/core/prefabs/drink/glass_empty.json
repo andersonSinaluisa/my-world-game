@@ -1,0 +1,32 @@
+{
+  "id": "glass_empty",
+  "category": "misc",
+  "tags": [
+    "misc"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_drink_glass_empty",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -32,
+        "y": -88,
+        "w": 64,
+        "h": 88
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    }
+  },
+  "metadata": {
+    "name": "object.glass_empty.name",
+    "placeholder": true
+  }
+}

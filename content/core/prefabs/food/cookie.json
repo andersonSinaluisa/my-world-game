@@ -1,0 +1,39 @@
+{
+  "id": "cookie",
+  "category": "food",
+  "tags": [
+    "food",
+    "sweet"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_food_cookie",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -30,
+        "y": -56,
+        "w": 60,
+        "h": 56
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    },
+    "edible": {
+      "bites": 1,
+      "onFinish": {
+        "type": "remove"
+      }
+    }
+  },
+  "metadata": {
+    "name": "object.cookie.name",
+    "placeholder": true
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "plant",
+  "category": "decor",
+  "tags": [
+    "decor"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_plant",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -41.5,
+        "y": -150,
+        "w": 83,
+        "h": 150
+      },
+      "padding": 10
+    },
+    "draggable": {
+      "mode": "floorOnly"
+    },
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    }
+  },
+  "metadata": {
+    "name": "object.plant.name",
+    "placeholder": true
+  }
+}

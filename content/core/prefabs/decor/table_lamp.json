@@ -1,0 +1,43 @@
+{
+  "id": "table_lamp",
+  "category": "decor",
+  "tags": [
+    "furniture",
+    "light"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_table_lamp_off",
+      "layer": "props",
+      "byState": {
+        "on": "env_home_table_lamp_on"
+      }
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -45,
+        "y": -130,
+        "w": 90,
+        "h": 130
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "states": {
+      "current": "off",
+      "values": [
+        "off",
+        "on"
+      ]
+    },
+    "switchable": {
+      "onState": "on",
+      "offState": "off"
+    }
+  },
+  "metadata": {
+    "name": "object.table_lamp.name",
+    "placeholder": true
+  }
+}

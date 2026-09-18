@@ -784,37 +784,117 @@
       "license": "own",
       "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
     },
+    "env_home_armchair": {
+      "file": "assets/images/env_home_armchair.webp",
+      "w": 175,
+      "h": 240,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_bathtub": {
+      "file": "assets/images/env_home_bathtub.webp",
+      "w": 440,
+      "h": 176,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_home_bed": {
+      "file": "assets/images/env_home_bed.webp",
+      "w": 443,
+      "h": 170,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_bed_cover": {
+      "file": "assets/images/env_home_bed_cover.webp",
+      "w": 443,
+      "h": 170,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
     "env_home_bg_bathroom_01": {
       "file": "assets/images/env_home_bg_bathroom_01.webp",
       "w": 1920,
       "h": 1080,
       "placeholder": true,
-      "license": "CC0",
-      "source": "https://kenney.nl/assets/background-elements-remastered"
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
     },
     "env_home_bg_bedroom_01": {
       "file": "assets/images/env_home_bg_bedroom_01.webp",
       "w": 1920,
       "h": 1080,
       "placeholder": true,
-      "license": "CC0",
-      "source": "https://kenney.nl/assets/background-elements-remastered"
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
     },
     "env_home_bg_kitchen_01": {
       "file": "assets/images/env_home_bg_kitchen_01.webp",
       "w": 1920,
       "h": 1080,
       "placeholder": true,
-      "license": "CC0",
-      "source": "https://kenney.nl/assets/background-elements-remastered"
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
     },
     "env_home_bg_living_01": {
       "file": "assets/images/env_home_bg_living_01.webp",
       "w": 1920,
       "h": 1080,
       "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_home_chair": {
+      "file": "assets/images/env_home_chair.webp",
+      "w": 139,
+      "h": 210,
+      "placeholder": true,
       "license": "CC0",
-      "source": "https://kenney.nl/assets/background-elements-remastered"
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_coffee_table": {
+      "file": "assets/images/env_home_coffee_table.webp",
+      "w": 423,
+      "h": 90,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_cupboard": {
+      "file": "assets/images/env_home_cupboard.webp",
+      "w": 230,
+      "h": 308,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_home_fridge_closed": {
+      "file": "assets/images/env_home_fridge_closed.webp",
+      "w": 210,
+      "h": 408,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_home_fridge_open": {
+      "file": "assets/images/env_home_fridge_open.webp",
+      "w": 330,
+      "h": 408,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_home_fruit_bowl": {
+      "file": "assets/images/env_home_fruit_bowl.webp",
+      "w": 60,
+      "h": 80,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-food-drink-items-svg"
     },
     "env_home_lamp_floor_off": {
       "file": "assets/images/env_home_lamp_floor_off.webp",
@@ -832,6 +912,86 @@
       "license": "CC0",
       "source": "https://opengameart.org/content/glitch-furniture-svg"
     },
+    "env_home_laundry_basket": {
+      "file": "assets/images/env_home_laundry_basket.webp",
+      "w": 136,
+      "h": 116,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_home_nightstand": {
+      "file": "assets/images/env_home_nightstand.webp",
+      "w": 238,
+      "h": 120,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_plant": {
+      "file": "assets/images/env_home_plant.webp",
+      "w": 83,
+      "h": 150,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_sink_off": {
+      "file": "assets/images/env_home_sink_off.webp",
+      "w": 200,
+      "h": 216,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_home_sink_on": {
+      "file": "assets/images/env_home_sink_on.webp",
+      "w": 200,
+      "h": 216,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_home_sofa": {
+      "file": "assets/images/env_home_sofa.webp",
+      "w": 545,
+      "h": 190,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_stove_off": {
+      "file": "assets/images/env_home_stove_off.webp",
+      "w": 210,
+      "h": 260,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_home_stove_on": {
+      "file": "assets/images/env_home_stove_on.webp",
+      "w": 210,
+      "h": 260,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_home_table_lamp_off": {
+      "file": "assets/images/env_home_table_lamp_off.webp",
+      "w": 60,
+      "h": 130,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_table_lamp_on": {
+      "file": "assets/images/env_home_table_lamp_on.webp",
+      "w": 60,
+      "h": 130,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
     "env_home_table_round": {
       "file": "assets/images/env_home_table_round.webp",
       "w": 320,
@@ -839,6 +999,14 @@
       "placeholder": true,
       "license": "CC0",
       "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_toilet": {
+      "file": "assets/images/env_home_toilet.webp",
+      "w": 140,
+      "h": 176,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
     },
     "env_home_toybox_closed": {
       "file": "assets/images/env_home_toybox_closed.webp",
@@ -855,6 +1023,54 @@
       "placeholder": true,
       "license": "CC0",
       "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_tv_off": {
+      "file": "assets/images/env_home_tv_off.webp",
+      "w": 340,
+      "h": 304,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_home_tv_on": {
+      "file": "assets/images/env_home_tv_on.webp",
+      "w": 340,
+      "h": 304,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_home_wardrobe_closed": {
+      "file": "assets/images/env_home_wardrobe_closed.webp",
+      "w": 270,
+      "h": 428,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_home_wardrobe_open": {
+      "file": "assets/images/env_home_wardrobe_open.webp",
+      "w": 400,
+      "h": 428,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_bath_toothbrush": {
+      "file": "assets/images/obj_bath_toothbrush.webp",
+      "w": 96,
+      "h": 36,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_bath_towel": {
+      "file": "assets/images/obj_bath_towel.webp",
+      "w": 90,
+      "h": 76,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
     },
     "obj_clothing_boots_brown": {
       "file": "assets/images/obj_clothing_boots_brown.webp",
@@ -976,6 +1192,70 @@
       "license": "own",
       "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
     },
+    "obj_decor_clock": {
+      "file": "assets/images/obj_decor_clock.webp",
+      "w": 100,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_drink_glass_empty": {
+      "file": "assets/images/obj_drink_glass_empty.webp",
+      "w": 64,
+      "h": 88,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_drink_juice": {
+      "file": "assets/images/obj_drink_juice.webp",
+      "w": 64,
+      "h": 88,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_drink_juice_1": {
+      "file": "assets/images/obj_drink_juice_1.webp",
+      "w": 64,
+      "h": 88,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_drink_juice_2": {
+      "file": "assets/images/obj_drink_juice_2.webp",
+      "w": 64,
+      "h": 88,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_drink_milk": {
+      "file": "assets/images/obj_drink_milk.webp",
+      "w": 64,
+      "h": 120,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_drink_milk_empty": {
+      "file": "assets/images/obj_drink_milk_empty.webp",
+      "w": 64,
+      "h": 120,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_food_apple_core": {
+      "file": "assets/images/obj_food_apple_core.webp",
+      "w": 50,
+      "h": 90,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
     "obj_food_apple_red": {
       "file": "assets/images/obj_food_apple_red.webp",
       "w": 72,
@@ -984,6 +1264,70 @@
       "license": "CC0",
       "source": "https://opengameart.org/content/glitch-food-drink-items-svg"
     },
+    "obj_food_apple_red_bite_1": {
+      "file": "assets/images/obj_food_apple_red_bite_1.webp",
+      "w": 72,
+      "h": 72,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_food_apple_red_bite_2": {
+      "file": "assets/images/obj_food_apple_red_bite_2.webp",
+      "w": 72,
+      "h": 72,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_food_banana": {
+      "file": "assets/images/obj_food_banana.webp",
+      "w": 108,
+      "h": 60,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-food-drink-items-svg"
+    },
+    "obj_food_banana_bite_1": {
+      "file": "assets/images/obj_food_banana_bite_1.webp",
+      "w": 108,
+      "h": 60,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_food_cake": {
+      "file": "assets/images/obj_food_cake.webp",
+      "w": 118,
+      "h": 60,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-food-drink-items-svg"
+    },
+    "obj_food_cookie": {
+      "file": "assets/images/obj_food_cookie.webp",
+      "w": 60,
+      "h": 56,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_food_sandwich": {
+      "file": "assets/images/obj_food_sandwich.webp",
+      "w": 110,
+      "h": 80,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_food_sandwich_bite_1": {
+      "file": "assets/images/obj_food_sandwich_bite_1.webp",
+      "w": 110,
+      "h": 80,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
     "obj_toy_ball": {
       "file": "assets/images/obj_toy_ball.webp",
       "w": 80,
@@ -991,6 +1335,46 @@
       "placeholder": true,
       "license": "own",
       "source": "MyWorld placeholder (own drawing)"
+    },
+    "obj_toy_blocks": {
+      "file": "assets/images/obj_toy_blocks.webp",
+      "w": 110,
+      "h": 90,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_toy_book": {
+      "file": "assets/images/obj_toy_book.webp",
+      "w": 90,
+      "h": 70,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_toy_duck": {
+      "file": "assets/images/obj_toy_duck.webp",
+      "w": 110,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_toy_pillow": {
+      "file": "assets/images/obj_toy_pillow.webp",
+      "w": 130,
+      "h": 50,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "obj_toy_teddy": {
+      "file": "assets/images/obj_toy_teddy.webp",
+      "w": 72,
+      "h": 100,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
     },
     "ui_creator_body_adult": {
       "file": "assets/images/ui_creator_body_adult.webp",

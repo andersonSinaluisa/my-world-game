@@ -1,0 +1,35 @@
+{
+  "id": "sofa",
+  "category": "furniture",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_sofa",
+      "layer": "furniture"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -272.5,
+        "y": -190,
+        "w": 545,
+        "h": 190
+      }
+    },
+    "seat": {
+      "anchor": {
+        "x": 0,
+        "y": -95
+      }
+    },
+    "draggable": {
+      "mode": "floorOnly"
+    }
+  },
+  "metadata": {
+    "name": "object.sofa.name",
+    "placeholder": true
+  }
+}

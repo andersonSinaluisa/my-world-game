@@ -1,0 +1,32 @@
+{
+  "id": "teddy",
+  "category": "toy",
+  "tags": [
+    "toy"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_toy_teddy",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -36,
+        "y": -100,
+        "w": 72,
+        "h": 100
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    }
+  },
+  "metadata": {
+    "name": "object.teddy.name",
+    "placeholder": true
+  }
+}

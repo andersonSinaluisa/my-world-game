@@ -1,0 +1,32 @@
+{
+  "id": "toy_blocks",
+  "category": "toy",
+  "tags": [
+    "toy"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_toy_blocks",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -55,
+        "y": -90,
+        "w": 110,
+        "h": 90
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    }
+  },
+  "metadata": {
+    "name": "object.toy_blocks.name",
+    "placeholder": true
+  }
+}
