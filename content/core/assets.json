@@ -1169,5 +1169,118 @@
       "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
     }
   },
-  "audio": {}
+  "audio": {
+    "sfx_character_appear": {
+      "file": "assets/audio/sfx_character_appear.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_close_default": {
+      "file": "assets/audio/sfx_close_default.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_coin": {
+      "file": "assets/audio/sfx_coin.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/digital-audio"
+    },
+    "sfx_drink_default": {
+      "file": "assets/audio/sfx_drink_default.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_drop_default_01": {
+      "file": "assets/audio/sfx_drop_default_01.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_drop_default_02": {
+      "file": "assets/audio/sfx_drop_default_02.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_drop_default_03": {
+      "file": "assets/audio/sfx_drop_default_03.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_eat_default": {
+      "file": "assets/audio/sfx_eat_default.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_open_default": {
+      "file": "assets/audio/sfx_open_default.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_pickup_default": {
+      "file": "assets/audio/sfx_pickup_default.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_reject_soft": {
+      "file": "assets/audio/sfx_reject_soft.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_spawn_default": {
+      "file": "assets/audio/sfx_spawn_default.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_store_default": {
+      "file": "assets/audio/sfx_store_default.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_toggle_default": {
+      "file": "assets/audio/sfx_toggle_default.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_ui_tap": {
+      "file": "assets/audio/sfx_ui_tap.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_use_default": {
+      "file": "assets/audio/sfx_use_default.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    }
+  }
 }

@@ -2,6 +2,8 @@ import { forwardRef, useImperativeHandle, type ReactNode } from 'react';
 import { Image, Pressable, StyleSheet, Text, type ImageSourcePropType, type StyleProp, type ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 
+import { useGameSession } from '@/game/game-context';
+
 /** UI_UX_GUIDELINES: HUD and menu targets are at least 64 dp (DEFINITION_OF_DONE §6). */
 export const TOUCH_MIN = 64;
 
@@ -41,6 +43,7 @@ export const IconButton = forwardRef<ShakeHandle, IconButtonProps>(function Icon
   ref,
 ) {
   const dx = useSharedValue(0);
+  const session = useGameSession();
   useImperativeHandle(ref, () => ({
     shake() {
       dx.set(withSequence(withTiming(-10, { duration: 60 }), withTiming(10, { duration: 60 }), withTiming(-6, { duration: 60 }), withTiming(0, { duration: 60 })));
@@ -50,7 +53,10 @@ export const IconButton = forwardRef<ShakeHandle, IconButtonProps>(function Icon
   return (
     <Animated.View style={[anim, style]}>
       <Pressable
-        onPress={onPress}
+        onPress={() => {
+          session?.uiTap?.();
+          onPress();
+        }}
         accessibilityRole="button"
         accessibilityLabel={label}
         accessibilityState={{ selected: !!selected, disabled: !!disabled }}

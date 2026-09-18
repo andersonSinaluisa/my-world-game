@@ -1,5 +1,6 @@
 import { isOpenEntity } from '../actions/container-actions';
 import { DEFAULT_INVENTORY_CAPACITY } from '../actions/inventory-actions';
+import { DEFAULT_AUDIO_SETTINGS, type AudioSettings } from '../audio/audio-director';
 import { seatedTransform, seatSpec } from '../actions/seat-actions';
 import type { ActionEnv } from '../actions/types';
 import { handAnchor } from '../characters/catalog';
@@ -310,6 +311,8 @@ export class GameEngine {
         return this.focusEntity(command.entityId);
       case 'takeFromInventory':
         return this.takeFromInventory(command.slot, command.worldPoint);
+      case 'setSetting':
+        return this.setSetting(command.key, command.value);
       default:
         return { ok: false, reason: 'unknownCommand' };
     }
@@ -461,6 +464,26 @@ export class GameEngine {
     };
   }
 
+  /** Audio settings with defaults (HU-GAME-058 RN-5). */
+  get settings(): AudioSettings {
+    return { ...DEFAULT_AUDIO_SETTINGS, ...(this.player.settings ?? {}) };
+  }
+
+  /** HU-GAME-058: volumes 0..1 in steps of 0.1, muted boolean; persisted through playerChanged. */
+  private setSetting(key: 'musicVolume' | 'sfxVolume' | 'muted', value: number | boolean): CommandResult {
+    const current = this.settings;
+    if (key === 'muted') {
+      if (typeof value !== 'boolean') return { ok: false, reason: 'invalidCommand' };
+      current.muted = value;
+    } else {
+      if (typeof value !== 'number' || !Number.isFinite(value)) return { ok: false, reason: 'invalidCommand' };
+      current[key] = Math.round(Math.min(Math.max(value, 0), 1) * 10) / 10;
+    }
+    this.player = { ...this.player, settings: current };
+    this.world.emit({ type: 'playerChanged', keys: ['settings'] });
+    return OK;
+  }
+
   get inventoryCapacity(): number {
     return this.player.inventory?.capacity ?? DEFAULT_INVENTORY_CAPACITY;
   }
@@ -598,6 +621,7 @@ export class GameEngine {
     // Characters: standUp implícito, temporary pose cancelled, dangle + surprised (HU-GAME-017 R2).
     if (e.components.character) origin.character = this.characters.onDragStart(entityId);
     this.drag = { entityId, origin };
+    this.world.emit({ type: 'pickedUp', entityId });
     this.lastPreview = undefined;
     return OK;
   }
@@ -619,11 +643,12 @@ export class GameEngine {
     if (this.drag?.entityId !== entityId) return { ok: false, reason: 'notDragging' };
     this.drag = undefined;
     if (!this.world.has(entityId)) return { ok: false, reason: 'entityNotFound' };
-    this.resolver.resolve({ trigger: 'drop', sourceId: entityId, point, uiTarget, minHitWorld });
+    const outcome = this.resolver.resolve({ trigger: 'drop', sourceId: entityId, point, uiTarget, minHitWorld });
     this.refreshCarried(entityId);
     // A drop that did not pose the character (sit, sleep…) leaves it standing (HU-GAME-017 R6).
     if (this.world.get(entityId)?.components.character) this.characters.onDragEnd(entityId);
     this.effects.trigger(entityId, 'drop');
+    this.world.emit({ type: 'dropped', entityId, placed: outcome.kind !== 'performed' });
     return OK;
   }
 

@@ -1,6 +1,8 @@
 import { AppState, type AppStateStatus } from 'react-native';
 
 import { BUNDLED_ASSET_MODULES, BUNDLED_PACKS } from '@content/index';
+import type { AudioPort } from '@/engine/audio/audio-director';
+import { AudioDirector } from '@/engine/audio/audio-director';
 import type { AssetEntry } from '@/engine/adapters/render/asset-registry';
 import { computeViewport } from '@/engine/adapters/render/viewport';
 import { ContentRegistry } from '@/engine/content/registry';
@@ -46,15 +48,47 @@ export class GameSession {
   private pendingFocus: string | undefined;
   private starting: Promise<LoadStatus> | undefined;
   private appState: { remove(): void } | undefined;
+  private audioState: { remove(): void } | undefined;
+  readonly audio: AudioDirector | undefined;
 
   constructor(
     private readonly openStore: () => Promise<{ store: SaveStore; status: 'ok' | 'incompatible' }>,
     readonly logger: Logger = consoleLogger,
+    audioPort?: (source: (key: string) => number | undefined) => AudioPort,
   ) {
     this.content = ContentRegistry.load(BUNDLED_PACKS, { dev: isDev(), logger, corePack: 'core' });
     this.engine = GameEngine.create({ content: this.content, logger });
     this.facade = createGameFacade(this.engine, { assetSize: (k) => this.content.assetSize(k) });
     this.textures = createTextureStore(bundledTextureEntries(this.content), { logger });
+    if (audioPort) {
+      const port = audioPort((key) => BUNDLED_ASSET_MODULES[key]);
+      const engine = this.engine;
+      this.audio = new AudioDirector({
+        events: engine.events,
+        clock: engine.clock,
+        random: engine.random,
+        content: this.content,
+        getEntity: (id) => engine.world.get(id),
+        activeScene: () => engine.scene,
+        activeZone: () => engine.activeZoneId,
+        sceneEntities: () => (engine.scene ? engine.world.query({ sceneId: engine.scene.id }) : []),
+        settings: () => engine.settings,
+        port,
+      });
+      // Settings apply at once (HU-GAME-058 RN-2); no audio in background (HU-GAME-056 RN-8, 057 RN-6).
+      engine.events.subscribe((batch) => {
+        if (batch.some((e) => e.type === 'playerChanged' && e.keys.includes('settings'))) this.audio?.applySettings();
+      });
+      this.audioState = AppState.addEventListener('change', (state: AppStateStatus) => {
+        if (state === 'active') port.resumeAll();
+        else port.pauseAll();
+      });
+    }
+  }
+
+  /** Button sound of the HUD and menus (AUDIO_SYSTEM §2). */
+  uiTap(): void {
+    this.audio?.uiTap();
   }
 
   /** Screen size in dp, so the first camera of a scene is centered correctly (SCENE_SYSTEM §2). */
@@ -129,6 +163,8 @@ export class GameSession {
 
   dispose(): void {
     this.appState?.remove();
+    this.audioState?.remove();
+    this.audio?.dispose();
     this.save?.detach();
   }
 }

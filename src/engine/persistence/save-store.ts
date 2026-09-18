@@ -23,6 +23,8 @@ export interface PlayerState {
   unlocks?: string[];
   inventory?: { capacity: number };
   flags?: Record<string, boolean | number | string>;
+  /** HU-GAME-058: audio settings; kept by resetWorld (HU-GAME-055). */
+  settings?: { musicVolume: number; sfxVolume: number; muted: boolean };
   [key: string]: unknown;
 }
 

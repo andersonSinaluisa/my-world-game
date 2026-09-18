@@ -54,6 +54,8 @@ export interface ActiveSceneInfo {
   spawnPoints?: SpawnPointInfo[];
   zones?: ZoneInfo[];
   camera?: { startX?: number; startSpawnId?: string };
+  /** Default music and ambience of the scene; zones may override them (HU-GAME-057). */
+  audio?: { music?: string; ambience?: string };
 }
 
 export const DEFAULT_FLOOR_Y = 960;
