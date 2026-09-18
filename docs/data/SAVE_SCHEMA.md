@@ -134,7 +134,7 @@ Hay **tres versiones independientes**:
 
 **Reglas:**
 1. Las migraciones de `saveVersion` son **encadenadas** (1→2→3…), **puras**, **idempotentes por paso** y **cubiertas por un test con fixture** (HU-GAME-072).
-2. Antes de **cualquier** migración (SQL por `user_version` o de datos por `saveVersion`) se hace una **copia de seguridad** en `myworld.backup.db`. Implementación: `ATTACH` del archivo de backup y copia tabla a tabla (`DELETE` + `INSERT … SELECT`), porque `VACUUM INTO` falla si el archivo ya existe y borrarlo exigiría una dependencia de sistema de archivos. El resultado es equivalente.
+2. Antes de **cualquier** migración (SQL por `user_version` o de datos por `saveVersion`) se hace una **copia de seguridad** en `myworld.backup.db` (también antes de reiniciar el mundo, HU-GAME-055). Implementación: `ATTACH` del archivo de backup y copia tabla a tabla (`DELETE` + `INSERT … SELECT`), porque `VACUUM INTO` falla si el archivo ya existe y borrarlo exigiría una dependencia de sistema de archivos. El resultado es equivalente.
 3. Si una migración falla:
    - se restaura la copia;
    - se muestra una pantalla amable "no pudimos cargar tu mundo";

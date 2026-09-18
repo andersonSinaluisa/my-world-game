@@ -84,7 +84,7 @@ Todos los comandos pasan por el `GameFacade` (§6). La UI y el Input **nunca** l
 | `takeFromInventory { slot, worldPoint }` | HUD | Inventario → escena en el punto del dedo e inicia el drag (`{ ok, startDrag, entityId }`); `dragCancel` lo devuelve a su slot. Fallos: `entityNotFound` (slot vacío), `alreadyDragging` |
 | `claimDailyGift {}` | Title o HUD (al entrar en Play) | Si `player.dailyReward.lastClaimDate` ≠ hoy (fecha local), suma `newGame.dailyGiftCoins` y guarda la fecha |
 | `setSetting { key, value }` | Settings UI | Actualiza `player.settings` (`musicVolume`/`sfxVolume` 0..1 en pasos de 0,1, `muted`) y emite `playerChanged { keys: ['settings'] }`. Fallo: `invalidCommand` |
-| `resetWorld { keepCharacters }` | Settings (parental) | SaveService.reset |
+| `resetWorld { keepCharacters }` | Settings (parental) | `SaveService.resetWorld`: backup previo (si falla, nada cambia), conserva `settings`; sin personajes borra el slot (partida nueva); con personajes los deja de pie en el spawn de `newGame` con su ropa |
 
 ## 5. Eventos (salida del motor)
 

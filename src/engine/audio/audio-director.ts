@@ -16,6 +16,8 @@ export interface AudioSettings {
   musicVolume: number;
   sfxVolume: number;
   muted: boolean;
+  /** UI language (HU-GAME-075); undefined = device default. */
+  language?: 'es' | 'en';
 }
 
 /** HU-GAME-058 RN-5: defaults of a new game. */

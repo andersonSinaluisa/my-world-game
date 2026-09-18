@@ -232,6 +232,20 @@ export class GameEngine {
     return this.drag?.entityId;
   }
 
+  /**
+   * Forgets every loaded entity and the active scene, as after a cold start (HU-GAME-055 reset). The save
+   * is not touched: entities leave as "unload".
+   */
+  unloadAll(): void {
+    this.drag = undefined;
+    this.world.transaction(() => {
+      for (const e of this.world.all()) this.world.remove(e.id, { unload: true });
+    });
+    this.activeScene = undefined;
+    this.zoneId = undefined;
+    this.player = { settings: this.player.settings };
+  }
+
   /** Restores player state from a save (HU-GAME-053). */
   setPlayerState(player: PlayerState): void {
     this.player = { ...player };
@@ -470,9 +484,12 @@ export class GameEngine {
   }
 
   /** HU-GAME-058: volumes 0..1 in steps of 0.1, muted boolean; persisted through playerChanged. */
-  private setSetting(key: 'musicVolume' | 'sfxVolume' | 'muted', value: number | boolean): CommandResult {
+  private setSetting(key: 'musicVolume' | 'sfxVolume' | 'muted' | 'language', value: number | boolean | string): CommandResult {
     const current = this.settings;
-    if (key === 'muted') {
+    if (key === 'language') {
+      if (value !== 'es' && value !== 'en') return { ok: false, reason: 'invalidCommand' };
+      current.language = value;
+    } else if (key === 'muted') {
       if (typeof value !== 'boolean') return { ok: false, reason: 'invalidCommand' };
       current.muted = value;
     } else {

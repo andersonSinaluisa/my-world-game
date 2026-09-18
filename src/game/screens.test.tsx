@@ -12,16 +12,21 @@ import CreatorScreen from '@/app/creator';
 // The preview is the Skia character renderer: verified on devices, not in Jest.
 jest.mock('@/game/character-preview', () => ({ CharacterPreview: () => null }));
 
-const mockRouter = { back: jest.fn(), push: jest.fn(), dismissTo: jest.fn() };
+const mockRouter = { back: jest.fn(), push: jest.fn(), dismissTo: jest.fn(), replace: jest.fn(), dismissAll: jest.fn(), canGoBack: () => true };
 let mockParams: { id?: string } = {};
 jest.mock('expo-router', () => ({
   get router() {
     return mockRouter;
   },
   useLocalSearchParams: () => mockParams,
+  useFocusEffect: (cb: () => void) => {
+    const { useEffect } = jest.requireActual('react');
+    useEffect(cb, [cb]);
+  },
+  Link: ({ children }: { children: unknown }) => children,
 }));
 
-const mockSession = { textures: {}, assetSource: () => undefined, flush: jest.fn(async () => {}), requestFocus: jest.fn() };
+const mockSession = { textures: {}, assetSource: () => undefined, flush: jest.fn(async () => {}), requestFocus: jest.fn(), uiTap: jest.fn(), start: jest.fn(async () => 'loaded') };
 jest.mock('@/game/game-context', () => {
   const actual = jest.requireActual('@/game/game-context');
   return { ...actual, useGameSession: () => mockSession };
@@ -134,5 +139,51 @@ describe('backpack HUD (HU-GAME-037/038)', () => {
     await act(async () => fireEvent.press(screen.getByRole('button', { name: 'ui.backpack.label' })));
     expect(screen.getAllByLabelText('ui.backpack.empty')).toHaveLength(11);
     expect(screen.getByLabelText('Pelota')).toBeTruthy();
+  });
+});
+
+describe('title and settings (HU-GAME-073/075)', () => {
+  it('without a save only "create a character" is offered', async () => {
+    const TitleScreen = jest.requireActual('@/app/index').default;
+    (mockSession as unknown as { inspect: () => Promise<string> }).inspect = async () => 'none';
+    const { facade } = setup();
+    await render(
+      <GameProvider facade={facade}>
+        <TitleScreen />
+      </GameProvider>,
+    );
+    await act(async () => {});
+    expect(screen.queryByRole('button', { name: 'Jugar' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'ui.title.create' })).toBeTruthy();
+  });
+
+  it('with a save, Continue and Create are shown; the gear never opens settings with a tap', async () => {
+    const TitleScreen = jest.requireActual('@/app/index').default;
+    (mockSession as unknown as { inspect: () => Promise<string> }).inspect = async () => 'save';
+    const { facade } = setup();
+    await render(
+      <GameProvider facade={facade}>
+        <TitleScreen />
+      </GameProvider>,
+    );
+    await act(async () => {});
+    expect(screen.getByRole('button', { name: 'Jugar' })).toBeTruthy();
+    await act(async () => fireEvent.press(screen.getByRole('button', { name: 'ui.settings.open' })));
+    expect(mockRouter.push).not.toHaveBeenCalledWith('/settings');
+  });
+
+  it('settings: changing the effects volume dispatches setSetting', async () => {
+    const SettingsScreen = jest.requireActual('@/app/settings').default;
+    const { facade, game } = setup();
+    await render(
+      <GameProvider facade={facade}>
+        <SettingsScreen />
+      </GameProvider>,
+    );
+    const minus = screen.getAllByRole('button', { name: '−' });
+    await act(async () => fireEvent.press(minus[1]));
+    expect(game.engine.settings.sfxVolume).toBe(0.8);
+    await act(async () => fireEvent.press(screen.getByRole('button', { name: 'English' })));
+    expect(game.engine.settings.language).toBe('en');
   });
 });

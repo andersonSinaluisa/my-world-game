@@ -37,7 +37,9 @@ export default function CreatorScreen() {
   const body = catalog.bodyTypes.find((b) => b.id === draft.appearance.bodyType) ?? catalog.bodyTypes[0];
   const t = (key: string | undefined, fallback: string) => (key ? game.t(key) : fallback);
 
-  const confirm = () => {
+  const confirm = async () => {
+    // First time: the new game starts here, then the character appears in newGame.sceneId (HU-GAME-073 RN-2).
+    if (!game.selectors.activeScene()) await session.start();
     if (original) {
       // Edit mode: only the changed fields, plus one setOutfitSlot per changed slot (HU-GAME-022 R6).
       const patch = appearancePatch(original.appearance, draft);
@@ -140,7 +142,7 @@ export default function CreatorScreen() {
           ))}
         </View>
         <ScrollView contentContainerStyle={styles.options}>{content}</ScrollView>
-        <IconButton label={game.t('ui.creator.confirm')} glyph="✓" color="#7ED957" size={88} onPress={confirm} style={styles.confirm} />
+        <IconButton label={game.t('ui.creator.confirm')} glyph="✓" color="#7ED957" size={88} onPress={() => void confirm()} style={styles.confirm} />
       </View>
     </SafeAreaView>
   );
