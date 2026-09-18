@@ -2,6 +2,7 @@ import type { z } from 'zod';
 
 import {
   AnimationsSchema,
+  ContainerSchema,
   DraggableSchema,
   HitboxSchema,
   OpenableSchema,
@@ -12,6 +13,7 @@ import {
   SwitchableSchema,
   TransformSchema,
   type Animations,
+  type Container,
   type Draggable,
   type Hitbox,
   type Openable,
@@ -35,6 +37,7 @@ export interface ComponentMap {
   states: States;
   openable: Openable;
   switchable: Switchable;
+  container: Container;
   animations: Animations;
   sounds: Sounds;
 }
@@ -51,6 +54,7 @@ export const COMPONENT_SCHEMAS: { [K in ComponentName]: z.ZodType<ComponentMap[K
   states: StatesSchema,
   openable: OpenableSchema,
   switchable: SwitchableSchema,
+  container: ContainerSchema,
   animations: AnimationsSchema,
   sounds: SoundsSchema,
 };
@@ -59,51 +63,111 @@ export function isComponentName(name: string): name is ComponentName {
   return Object.prototype.hasOwnProperty.call(COMPONENT_SCHEMAS, name);
 }
 
+export type ComponentIssueCode =
+  | 'unknownComponent'
+  | 'unknownField'
+  | 'invalidValue'
+  | 'missingDependency'
+  | 'invalidStateRef'
+  | 'slotsCapacityMismatch';
+
+/** Structured issue; `path` is relative to the component bag (JSON pointer segments). */
+export interface ComponentIssue {
+  code: ComponentIssueCode;
+  path: (string | number)[];
+  message: string;
+}
+
 export class ComponentValidationError extends Error {
   constructor(
     readonly entityId: string,
-    readonly issues: string[],
+    readonly issues: ComponentIssue[],
   ) {
-    super(`Invalid components for entity "${entityId}": ${issues.join('; ')}`);
+    super(
+      `Invalid components for entity "${entityId}": ${issues
+        .map((i) => `${i.path.join('.')}: ${i.message}`)
+        .join('; ')}`,
+    );
     this.name = 'ComponentValidationError';
   }
 }
 
-/** Validates a component bag; returns parsed components or throws ComponentValidationError. */
-export function validateComponents(entityId: string, components: Record<string, unknown>): Components {
-  const issues: string[] = [];
+/** Per-component schema checks (strict). Returns parsed components and issues. */
+export function checkComponentShapes(components: Record<string, unknown>): {
+  parsed: Components;
+  issues: ComponentIssue[];
+} {
+  const issues: ComponentIssue[] = [];
   const parsed: Record<string, unknown> = {};
   for (const [name, value] of Object.entries(components)) {
-    if (value === undefined) continue;
+    if (value === undefined || value === null) continue;
     if (!isComponentName(name)) {
-      issues.push(`unknown component "${name}"`);
+      issues.push({ code: 'unknownComponent', path: [name], message: `unknown component "${name}"` });
       continue;
     }
     const result = COMPONENT_SCHEMAS[name].safeParse(value);
     if (result.success) {
       parsed[name] = result.data;
-    } else {
-      for (const issue of result.error.issues) {
-        issues.push(`${name}${issue.path.length ? '.' + issue.path.join('.') : ''}: ${issue.message}`);
+      continue;
+    }
+    for (const issue of result.error.issues) {
+      const path = [name, ...issue.path.map((p) => (typeof p === 'symbol' ? String(p) : p))];
+      if (issue.code === 'unrecognized_keys') {
+        for (const key of issue.keys) {
+          issues.push({ code: 'unknownField', path: [...path, key], message: `unknown field "${key}"` });
+        }
+      } else {
+        issues.push({ code: 'invalidValue', path, message: issue.message });
       }
     }
   }
-  // Cross-component dependencies (OBJECT_SCHEMA §6).
-  const states = parsed.states as States | undefined;
-  const openable = parsed.openable as Openable | undefined;
-  const switchable = parsed.switchable as Switchable | undefined;
-  if (openable) {
-    if (!states) issues.push('openable requires states');
-    else if (!states.values.includes(openable.openState) || !states.values.includes(openable.closedState)) {
-      issues.push('openable states must be listed in states.values');
+  return { parsed: parsed as Components, issues };
+}
+
+/** Cross-component dependencies (OBJECT_SCHEMA §6). Operates on already-shaped components. */
+export function checkComponentDependencies(c: Components): ComponentIssue[] {
+  const issues: ComponentIssue[] = [];
+  const states = c.states;
+  const stateRef = (path: (string | number)[], state: string) => {
+    if (states && !states.values.includes(state)) {
+      issues.push({ code: 'invalidStateRef', path, message: `state "${state}" is not in states.values` });
+    }
+  };
+  if (c.openable) {
+    if (!states) issues.push({ code: 'missingDependency', path: ['openable'], message: 'openable requires states' });
+    stateRef(['openable', 'openState'], c.openable.openState);
+    stateRef(['openable', 'closedState'], c.openable.closedState);
+  }
+  if (c.switchable) {
+    if (!states) issues.push({ code: 'missingDependency', path: ['switchable'], message: 'switchable requires states' });
+    stateRef(['switchable', 'onState'], c.switchable.onState);
+    stateRef(['switchable', 'offState'], c.switchable.offState);
+  }
+  if (c.container?.slots && c.container.slots.length !== c.container.capacity) {
+    issues.push({
+      code: 'slotsCapacityMismatch',
+      path: ['container', 'slots'],
+      message: `container has ${c.container.slots.length} slots but capacity ${c.container.capacity}`,
+    });
+  }
+  if (c.sprite?.byState) {
+    for (const state of Object.keys(c.sprite.byState)) {
+      if (!states?.values.includes(state)) {
+        issues.push({
+          code: 'invalidStateRef',
+          path: ['sprite', 'byState'],
+          message: `sprite.byState references unknown state "${state}"`,
+        });
+      }
     }
   }
-  if (switchable) {
-    if (!states) issues.push('switchable requires states');
-    else if (!states.values.includes(switchable.onState) || !states.values.includes(switchable.offState)) {
-      issues.push('switchable states must be listed in states.values');
-    }
-  }
+  return issues;
+}
+
+/** Shapes + dependencies; throws ComponentValidationError. Used by the World. */
+export function validateComponents(entityId: string, components: Record<string, unknown>): Components {
+  const { parsed, issues } = checkComponentShapes(components);
+  issues.push(...checkComponentDependencies(parsed));
   if (issues.length) throw new ComponentValidationError(entityId, issues);
-  return parsed as Components;
+  return parsed;
 }

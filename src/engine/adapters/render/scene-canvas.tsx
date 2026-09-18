@@ -4,7 +4,7 @@ import { StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 
-import { useCameraPan, type GestureTargetKind } from '../input/use-camera-pan';
+import { useWorldGesture, type WorldInputHandlers } from '../input/use-world-gesture';
 import { sceneBounds, type ActiveSceneInfo } from '../../scene/scene-types';
 import { BackgroundLayers } from './background-layers';
 import { DebugGrid } from './debug-grid';
@@ -19,10 +19,16 @@ export interface SceneCanvasProps {
   cullX: number;
   onViewportChange: (viewport: Viewport) => void;
   onCameraSettled: (cameraX: number) => void;
-  resolveTarget?: (worldX: number, worldY: number) => GestureTargetKind;
+  /** Tap / drag callbacks (JS thread). Without them every touch pans. */
+  input?: WorldInputHandlers;
+  /** Finger position in world units while dragging, shared with the DragProxy. */
+  pointerX: SharedValue<number>;
+  pointerY: SharedValue<number>;
   showGrid?: boolean;
   /** Entity sprites, already culled and sorted (layers + z) by the facade selector. */
   children?: ReactNode;
+  /** Drawn above every entity: the DragProxy (HU-GAME-027) and effects. */
+  overlay?: ReactNode;
 }
 
 /**
@@ -37,9 +43,12 @@ export function SceneCanvas({
   cullX,
   onViewportChange,
   onCameraSettled,
-  resolveTarget,
+  input,
+  pointerX,
+  pointerY,
   showGrid = false,
   children,
+  overlay,
 }: SceneCanvasProps) {
   const [viewport, setViewport] = useState<Viewport | null>(null);
 
@@ -54,19 +63,23 @@ export function SceneCanvas({
   );
 
   const bounds = useMemo(() => sceneBounds(scene), [scene]);
-  const pan = useCameraPan({
+  const gesture = useWorldGesture({
     cameraX,
+    pointerX,
+    pointerY,
     scale: viewport?.scale ?? 1,
     viewportW: viewport?.viewportW ?? scene.size.width,
+    canvasWidthDp: viewport?.canvasWidthDp ?? 0,
+    canvasHeightDp: viewport?.canvasHeightDp ?? 0,
     bounds,
     onSettled: onCameraSettled,
-    resolveTarget,
+    handlers: input,
   });
 
   const cameraTransform = useDerivedValue(() => [{ translateX: -cameraX.get() }]);
 
   return (
-    <GestureDetector gesture={pan}>
+    <GestureDetector gesture={gesture}>
       <View style={styles.fill} onLayout={onLayout} collapsable={false}>
         {viewport && (
           <Canvas style={styles.fill}>
@@ -80,7 +93,7 @@ export function SceneCanvas({
                   textures={textures}
                 />
                 {children}
-                {/* DragProxy (HU-GAME-027) and Effects go here, always on top. */}
+                {overlay}
                 {showGrid && <DebugGrid width={scene.size.width} />}
               </Group>
             </Group>

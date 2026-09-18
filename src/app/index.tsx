@@ -2,16 +2,26 @@ import { Link } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useGame } from '@/game/game-context';
+
 /**
  * Placeholder title screen (HU-GAME-001 R5). The real Title screen is HU-GAME-073.
- * In development it links to the render sandbox used to verify EPIC-002 on devices.
+ * "Jugar" loads the save or starts a new game (HU-GAME-053/054). In development it also links to the
+ * render sandbox used to verify EPIC-002 on devices.
  */
 export default function TitleScreen() {
+  const game = useGame();
+  const play = game.t('ui.play.label');
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title} accessibilityRole="header">
-        MyWorld
+        {game.t('ui.title.label')}
       </Text>
+      <Link href="/play" asChild>
+        <Pressable style={playButtonStyle} accessibilityRole="button" accessibilityLabel={play}>
+          <Text style={playTextStyle}>{play}</Text>
+        </Pressable>
+      </Link>
       {__DEV__ && (
         <View style={styles.devRow}>
           <Link href="/dev-render" asChild>
@@ -31,4 +41,10 @@ const styles = StyleSheet.create({
   devRow: { flexDirection: 'row', gap: 16 },
   button: { minHeight: 64, minWidth: 64, paddingHorizontal: 24, justifyContent: 'center', borderRadius: 20, backgroundColor: '#4FB3F6' },
   buttonText: { color: '#FFFFFF', fontSize: 18, fontWeight: '700' },
+  play: { minHeight: 88, minWidth: 220, alignItems: 'center', backgroundColor: '#FF8A3D' },
+  playText: { fontSize: 32, fontWeight: '800' },
 });
+
+// <Link asChild> forwards the child's style through <Slot>, which rejects style arrays.
+const playButtonStyle = StyleSheet.flatten([styles.button, styles.play]);
+const playTextStyle = StyleSheet.flatten([styles.buttonText, styles.playText]);

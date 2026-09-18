@@ -45,6 +45,10 @@ export class InMemorySaveStore implements SaveStore {
   }
 
   async writeBatch(batch: WriteBatch): Promise<void> {
+    if (this.failNextWrite) {
+      this.failNextWrite = false;
+      throw new Error('Simulated write failure');
+    }
     // Serialize everything first: any failure aborts before touching state (atomicity).
     const rows = batch.upserts.map((e) => ({
       id: e.id,
@@ -60,11 +64,32 @@ export class InMemorySaveStore implements SaveStore {
       delete entities[id];
       removed.add(id);
     }
+    for (const id of batch.deletes ?? []) delete entities[id];
     next.removed[batch.slotId] = [...removed];
     if (slotJson) next.slots[batch.slotId] = slotJson;
     this.state = next;
     this.writeBatchCount++;
     this.rowsWritten += rows.length;
+  }
+
+  async replaceAll(data: { slot: SaveSlotData; entities: SavedEntity[]; removed: EntityId[] }): Promise<void> {
+    const rows = data.entities.map((e) => ({ id: e.id, sceneId: e.location.kind === 'scene' ? e.location.sceneId : undefined, data: strictJson(e) }));
+    const slot = strictJson(data.slot);
+    const next: StoreState = JSON.parse(JSON.stringify(this.state));
+    next.slots[data.slot.slotId] = slot;
+    next.entities[data.slot.slotId] = Object.fromEntries(rows.map((r) => [r.id, { sceneId: r.sceneId, data: r.data }]));
+    next.removed[data.slot.slotId] = [...data.removed];
+    this.state = next;
+    this.writeBatchCount++;
+    this.rowsWritten += rows.length;
+  }
+
+  /** Test helper: fail the next write (HU-GAME-052 "un fallo de escritura no molesta al niño"). */
+  failNextWrite = false;
+
+  /** Test helper: exact serialized state, to assert "untouched" (HU-GAME-072 R7). */
+  dump(): string {
+    return JSON.stringify(this.state);
   }
 
   async backup(): Promise<void> {

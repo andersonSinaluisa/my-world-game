@@ -1,0 +1,93 @@
+{
+  "images": {
+    "env_home_bg_living_01": {
+      "file": "assets/images/env_home_bg_living_01.webp",
+      "w": 1920,
+      "h": 1080,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/background-elements-remastered"
+    },
+    "env_home_bg_kitchen_01": {
+      "file": "assets/images/env_home_bg_kitchen_01.webp",
+      "w": 1920,
+      "h": 1080,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/background-elements-remastered"
+    },
+    "env_home_bg_bedroom_01": {
+      "file": "assets/images/env_home_bg_bedroom_01.webp",
+      "w": 1920,
+      "h": 1080,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/background-elements-remastered"
+    },
+    "env_home_bg_bathroom_01": {
+      "file": "assets/images/env_home_bg_bathroom_01.webp",
+      "w": 1920,
+      "h": 1080,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/background-elements-remastered"
+    },
+    "env_home_table_round": {
+      "file": "assets/images/env_home_table_round.webp",
+      "w": 320,
+      "h": 123,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_toybox_closed": {
+      "file": "assets/images/env_home_toybox_closed.webp",
+      "w": 200,
+      "h": 83,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_toybox_open": {
+      "file": "assets/images/env_home_toybox_open.webp",
+      "w": 200,
+      "h": 78,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_lamp_floor_off": {
+      "file": "assets/images/env_home_lamp_floor_off.webp",
+      "w": 170,
+      "h": 280,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_lamp_floor_on": {
+      "file": "assets/images/env_home_lamp_floor_on.webp",
+      "w": 170,
+      "h": 280,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "obj_food_apple_red": {
+      "file": "assets/images/obj_food_apple_red.webp",
+      "w": 72,
+      "h": 72,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-food-drink-items-svg"
+    },
+    "obj_toy_ball": {
+      "file": "assets/images/obj_toy_ball.webp",
+      "w": 80,
+      "h": 80,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (own drawing)"
+    }
+  },
+  "audio": {}
+}

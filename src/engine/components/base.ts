@@ -85,6 +85,16 @@ export const StatesSchema = z
 export const OpenableSchema = z.strictObject({ openState: z.string().min(1), closedState: z.string().min(1) });
 export const SwitchableSchema = z.strictObject({ onState: z.string().min(1), offState: z.string().min(1) });
 
+// §5.8 (registered in HU-GAME-024 because the core pack's toy box uses it; behaviour arrives with EPIC-009)
+export const ContainerSchema = z.strictObject({
+  capacity: z.number().int().min(1).max(64),
+  accepts: z.array(z.string().min(1)).optional(),
+  rejects: z.array(z.string().min(1)).optional(),
+  requiresOpen: z.boolean().optional(),
+  slots: z.array(z.strictObject({ x: finite, y: finite })).optional(),
+  showContentsWhenOpen: z.boolean().optional(),
+});
+
 // §5.7c
 export const AnimationsSchema = z.partialRecord(z.enum(ANIMATION_TRIGGERS), z.enum(TWEEN_PRESETS));
 
@@ -100,5 +110,6 @@ export type Surface = z.infer<typeof SurfaceSchema>;
 export type States = z.infer<typeof StatesSchema>;
 export type Openable = z.infer<typeof OpenableSchema>;
 export type Switchable = z.infer<typeof SwitchableSchema>;
+export type Container = z.infer<typeof ContainerSchema>;
 export type Animations = z.infer<typeof AnimationsSchema>;
 export type Sounds = z.infer<typeof SoundsSchema>;

@@ -1,0 +1,63 @@
+{
+  "id": "toybox",
+  "category": "container",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_toybox_closed",
+      "layer": "furniture",
+      "size": {
+        "w": 200,
+        "h": 83
+      },
+      "byState": {
+        "open": "env_home_toybox_open"
+      }
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -100,
+        "y": -83,
+        "w": 200,
+        "h": 83
+      },
+      "zones": {
+        "inside": {
+          "type": "rect",
+          "x": -80,
+          "y": -83,
+          "w": 160,
+          "h": 50
+        }
+      }
+    },
+    "states": {
+      "current": "closed",
+      "values": [
+        "closed",
+        "open"
+      ]
+    },
+    "openable": {
+      "openState": "open",
+      "closedState": "closed"
+    },
+    "container": {
+      "capacity": 4,
+      "accepts": [
+        "toy"
+      ]
+    },
+    "animations": {
+      "tap": "bounce"
+    }
+  },
+  "metadata": {
+    "name": "object.toybox.name",
+    "placeholder": true,
+    "license": "CC0"
+  }
+}

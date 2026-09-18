@@ -19,6 +19,10 @@ export interface SavedEntity {
 export interface PlayerState {
   currentSceneId?: SceneId;
   cameraX?: number;
+  wallet?: { coins: number };
+  unlocks?: string[];
+  inventory?: { capacity: number };
+  flags?: Record<string, boolean | number | string>;
   [key: string]: unknown;
 }
 
@@ -34,7 +38,10 @@ export interface SaveSlotData {
 export interface WriteBatch {
   slotId: string;
   upserts: SavedEntity[];
+  /** Scene-declared entities gone for good: row deleted and id recorded in entity_removed. */
   removals: EntityId[];
+  /** Runtime entities gone: only their row is deleted (HU-GAME-052 RN-7). */
+  deletes?: EntityId[];
   /** Full slot row to write (player + metadata), when it changed. */
   slot?: SaveSlotData;
 }
@@ -44,6 +51,8 @@ export interface SaveStore {
   /** Entities of a scene, or all entities of the slot when sceneId is omitted. */
   loadEntities(slotId: string, sceneId?: SceneId): Promise<SavedEntity[]>;
   loadRemoved(slotId: string): Promise<EntityId[]>;
+  /** Replaces the whole slot (used after migrations). Atomic. */
+  replaceAll(data: { slot: SaveSlotData; entities: SavedEntity[]; removed: EntityId[] }): Promise<void>;
   /** Atomic: either everything is written or nothing is. */
   writeBatch(batch: WriteBatch): Promise<void>;
   backup(): Promise<void>;

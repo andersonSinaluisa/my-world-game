@@ -2,19 +2,22 @@ import { memo, useCallback, useEffect, useImperativeHandle, useMemo, useState, t
 import { useAnimatedReaction, useSharedValue, withTiming } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import type { GestureTargetKind } from '@/engine/adapters/input/use-camera-pan';
+import type { WorldInputHandlers } from '@/engine/adapters/input/use-world-gesture';
+import { DragProxy } from '@/engine/adapters/render/drag-proxy';
 import { SceneCanvas } from '@/engine/adapters/render/scene-canvas';
 import { SpriteNode } from '@/engine/adapters/render/sprite-node';
 import type { TextureStore } from '@/engine/adapters/render/texture-store';
 import type { Viewport } from '@/engine/adapters/render/viewport';
-import type { EntityId } from '@/engine/core/types';
+import type { Transform } from '@/engine/components/base';
+import type { AssetKey, EntityId } from '@/engine/core/types';
+import { MIN_HIT_DP } from '@/engine/rules/hit-test';
 import { CAMERA_JUMP_MS, cameraTargetFor, clampCameraX } from '@/engine/scene/camera-math';
 import { CULLING_RECOMPUTE_RATIO } from '@/engine/scene/culling';
 import { sceneBounds } from '@/engine/scene/scene-types';
 
-import { resolveAsset } from './facade';
+import { resolveAsset, type GameFacade } from './facade';
 import { useGame } from './game-context';
-import { useActiveScene, useEntity, useVisibleEntities } from './hooks';
+import { useActiveScene, useEntityOf, useVisibleEntities } from './hooks';
 
 export interface CameraController {
   /** Centers the camera on world x with a 450 ms animation (RENDERING §5), then reports cameraSettled. */
@@ -27,17 +30,36 @@ export interface CameraController {
 export interface SceneViewProps {
   textures: TextureStore;
   showGrid?: boolean;
-  resolveTarget?: (worldX: number, worldY: number) => GestureTargetKind;
+  /** Tap and drag of world objects (HU-GAME-027/031). Off = the canvas only pans (render sandbox). */
+  interactive?: boolean;
   cameraRef?: Ref<CameraController>;
   onViewport?: (viewport: Viewport) => void;
 }
 
+interface DragVisual {
+  id: EntityId;
+  asset: AssetKey;
+  transform: Transform;
+  pivot: { x: number; y: number };
+  size?: { w: number; h: number };
+  liftOffset?: number;
+  grabOffset: { x: number; y: number };
+}
+
+interface EntityNodeProps {
+  /** Passed explicitly: this renders inside the Skia <Canvas>, where React context is not available. */
+  game: GameFacade;
+  id: EntityId;
+  textures: TextureStore;
+  hidden: boolean;
+}
+
 /** Subscribes to a single entity so only it re-renders when it changes (PERFORMANCE §4 rule 2). */
-const EntityNode = memo(function EntityNode({ id, textures }: { id: EntityId; textures: TextureStore }) {
-  const game = useGame();
-  const entity = useEntity(id);
+const EntityNode = memo(function EntityNode({ game, id, textures, hidden }: EntityNodeProps) {
+  const entity = useEntityOf(game, id);
   const sprite = entity?.components.sprite;
-  if (!entity || !sprite || entity.location.kind !== 'scene') return null;
+  // The original is hidden while its DragProxy is on screen (HU-GAME-027 R5).
+  if (hidden || !entity || !sprite || entity.location.kind !== 'scene') return null;
   return (
     <SpriteNode
       id={id}
@@ -52,18 +74,22 @@ const EntityNode = memo(function EntityNode({ id, textures }: { id: EntityId; te
 });
 
 /**
- * World view for the active scene: Skia canvas + camera + culled, sorted entities.
- * The camera lives in a SharedValue; React only re-renders when the culling window moves past
- * its threshold (10 % of the viewport, RENDERING §7) or when entities change.
+ * World view for the active scene: Skia canvas + camera + culled, sorted entities + drag proxy.
+ * The camera and the dragged item live in SharedValues; React only re-renders when the culling window
+ * moves past its threshold (10 % of the viewport, RENDERING §7), when entities change, or when a drag
+ * starts/ends.
  */
-export function SceneView({ textures, showGrid, resolveTarget, cameraRef, onViewport }: SceneViewProps) {
+export function SceneView({ textures, showGrid, interactive = true, cameraRef, onViewport }: SceneViewProps) {
   const game = useGame();
   const scene = useActiveScene();
-  const cameraX = useSharedValue(0);
-  const lastCullX = useSharedValue(0);
+  const cameraX = useSharedValue(game.selectors.cameraX() ?? 0);
+  const lastCullX = useSharedValue(game.selectors.cameraX() ?? 0);
   const viewportW = useSharedValue(0);
+  const pointerX = useSharedValue(0);
+  const pointerY = useSharedValue(0);
   const [viewport, setViewport] = useState<Viewport | null>(null);
-  const [cullX, setCullX] = useState(0);
+  const [cullX, setCullX] = useState(() => game.selectors.cameraX() ?? 0);
+  const [drag, setDrag] = useState<DragVisual | null>(null);
 
   const bounds = useMemo(() => (scene ? sceneBounds(scene) : { minX: 0, maxX: 0 }), [scene]);
 
@@ -75,10 +101,31 @@ export function SceneView({ textures, showGrid, resolveTarget, cameraRef, onView
     game.setAssetSizeLookup((key) => textures.registry.size(key));
   }, [game, textures]);
 
+  // A new scene places the camera where the engine decided (sceneLoaded.cameraX, SCENE_SYSTEM §2 step 6).
+  // The initial scene is read on mount (initial values above); later ones arrive as events.
+  useEffect(
+    () =>
+      game.events.subscribe((batch) => {
+        for (const event of batch) {
+          if (event.type !== 'sceneLoaded') continue;
+          const active = game.selectors.activeScene();
+          const w = viewportW.get();
+          const x = event.cameraX ?? 0;
+          const clamped = active && w > 0 ? clampCameraX(x, sceneBounds(active), w) : x;
+          cameraX.set(clamped);
+          lastCullX.set(clamped);
+          setCullX(clamped);
+          setDrag(null);
+        }
+      }),
+    [game, cameraX, lastCullX, viewportW],
+  );
+
   const handleViewport = useCallback(
     (v: Viewport) => {
       setViewport(v);
       viewportW.set(v.viewportW);
+      game.dispatch({ type: 'viewportChanged', viewportW: v.viewportW });
       // HU-GAME-005 R6 / HU-GAME-007 R9: keep the camera inside the new bounds.
       const clamped = clampCameraX(cameraX.get(), bounds, v.viewportW);
       cameraX.set(clamped);
@@ -86,7 +133,7 @@ export function SceneView({ textures, showGrid, resolveTarget, cameraRef, onView
       setCullX(clamped);
       onViewport?.(v);
     },
-    [bounds, cameraX, lastCullX, viewportW, onViewport],
+    [bounds, cameraX, lastCullX, viewportW, onViewport, game],
   );
 
   const settle = useCallback(
@@ -97,6 +144,43 @@ export function SceneView({ textures, showGrid, resolveTarget, cameraRef, onView
     },
     [game, viewport, viewportW],
   );
+
+  const input = useMemo<WorldInputHandlers | undefined>(() => {
+    if (!interactive) return undefined;
+    // INPUT_SYSTEM §8: 44 dp minimum touch size, converted to world units with the current scale.
+    const minHitWorld = viewport ? MIN_HIT_DP / viewport.scale : undefined;
+    return {
+      pickDraggable: (x, y) => game.pickDraggable({ x, y }, minHitWorld),
+      dragStart(id, x, y) {
+        const result = game.dispatch({ type: 'dragStart', entityId: id, worldPoint: { x, y } });
+        const e = game.getEntity(id);
+        const sprite = e?.components.sprite;
+        if (!result.ok || !e || !sprite) return false;
+        const t = e.components.transform ?? { x, y };
+        setDrag({
+          id,
+          asset: resolveAsset(e),
+          transform: t,
+          pivot: sprite.pivot ?? { x: 0.5, y: 1 },
+          size: sprite.size,
+          liftOffset: e.components.draggable?.liftOffset,
+          grabOffset: { x: x - t.x, y: y - t.y },
+        });
+        return true;
+      },
+      dragEnd(id, x, y) {
+        game.dispatch({ type: 'dragEnd', entityId: id, worldPoint: { x, y }, minHitWorld });
+        setDrag(null);
+      },
+      dragCancel(id) {
+        game.dispatch({ type: 'dragCancel', entityId: id });
+        setDrag(null);
+      },
+      tap(x, y) {
+        game.dispatch({ type: 'pointerTap', worldPoint: { x, y }, minHitWorld });
+      },
+    };
+  }, [game, interactive, viewport]);
 
   // Culling window follows the camera only past the threshold; never a React render per frame.
   useAnimatedReaction(
@@ -146,10 +230,27 @@ export function SceneView({ textures, showGrid, resolveTarget, cameraRef, onView
       cullX={cullX}
       onViewportChange={handleViewport}
       onCameraSettled={settle}
-      resolveTarget={resolveTarget}
-      showGrid={showGrid}>
+      input={input}
+      pointerX={pointerX}
+      pointerY={pointerY}
+      showGrid={showGrid}
+      overlay={
+        drag && (
+          <DragProxy
+            asset={drag.asset}
+            transform={drag.transform}
+            pivot={drag.pivot}
+            size={drag.size}
+            grabOffset={drag.grabOffset}
+            liftOffset={drag.liftOffset}
+            pointerX={pointerX}
+            pointerY={pointerY}
+            textures={textures}
+          />
+        )
+      }>
       {visible.map((d) => (
-        <EntityNode key={d.id} id={d.id} textures={textures} />
+        <EntityNode key={d.id} game={game} id={d.id} textures={textures} hidden={drag?.id === d.id} />
       ))}
     </SceneCanvas>
   );

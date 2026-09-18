@@ -5,7 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SANDBOX_ASSETS } from '@content/sandbox/assets';
 import sandbox from '@content/sandbox/render-sandbox.json';
-import { useGame } from '@/game/game-context';
+import { createSandboxFacade } from '@/game/sandbox';
+import { GameProvider, useGame } from '@/game/game-context';
 import { useVisibleEntities } from '@/game/hooks';
 import { SceneView, type CameraController } from '@/game/scene-view';
 import { createTextureStore } from '@/game/textures';
@@ -18,6 +19,17 @@ const JUMPS = [960, 2880, 4800, 6720];
  * camera pan + inertia + jumpTo, culling counters and tween presets. Uses CC0 placeholders.
  */
 export default function RenderSandboxScreen() {
+  // Own engine: the sandbox never touches the player's game or its save.
+  const facade = useMemo(() => createSandboxFacade(), []);
+  if (!__DEV__) return null;
+  return (
+    <GameProvider facade={facade}>
+      <RenderSandbox />
+    </GameProvider>
+  );
+}
+
+function RenderSandbox() {
   const game = useGame();
   const camera = useRef<CameraController>(null);
   const [grid, setGrid] = useState(true);
@@ -28,8 +40,6 @@ export default function RenderSandboxScreen() {
     game.dev.activateScene(sandbox.scene as never, sandbox.entities as never);
   }, [game]);
 
-  if (!__DEV__) return null;
-
   const playAll = () => {
     const bushes = sandbox.entities.filter((e) => e.id.includes('bush')).slice(0, PRESETS.length);
     bushes.forEach((e, i) => game.dev.playEffect(e.id, PRESETS[i]));
@@ -37,7 +47,7 @@ export default function RenderSandboxScreen() {
 
   return (
     <View style={styles.root}>
-      <SceneView textures={textures} showGrid={grid} cameraRef={camera} />
+      <SceneView textures={textures} showGrid={grid} cameraRef={camera} interactive={false} />
       <SafeAreaView style={styles.hud} pointerEvents="box-none" edges={['top', 'left', 'right']}>
         <View style={styles.row} pointerEvents="box-none">
           <HudButton label="◀ Back" onPress={() => router.back()} />

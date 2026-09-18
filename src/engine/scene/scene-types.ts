@@ -22,12 +22,41 @@ export interface SceneBounds {
   maxX: number;
 }
 
+export interface FloorSegment {
+  y: number;
+  x1?: number;
+  x2?: number;
+}
+
+export interface SpawnPointInfo {
+  id: string;
+  x: number;
+  y: number;
+  facing?: 'left' | 'right';
+}
+
+export interface ZoneInfo {
+  id: string;
+  name: string;
+  x1: number;
+  x2: number;
+  snapCameraX?: number;
+  audio?: { music?: string; ambience?: string };
+}
+
 export interface ActiveSceneInfo {
   id: SceneId;
   size: { width: number; height: 1080 };
   bounds?: SceneBounds;
   background: { layers: BackgroundLayer[] };
+  /** Floor segments (absolute). Defaults to a single floor at y = DEFAULT_FLOOR_Y when absent (sandbox). */
+  floor?: FloorSegment[];
+  spawnPoints?: SpawnPointInfo[];
+  zones?: ZoneInfo[];
+  camera?: { startX?: number; startSpawnId?: string };
 }
+
+export const DEFAULT_FLOOR_Y = 960;
 
 export const WORLD_HEIGHT = 1080;
 

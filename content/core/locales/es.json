@@ -1,0 +1,16 @@
+{
+  "pack.core.name": "Mundo base",
+  "scene.home.name": "Casa",
+  "zone.living.name": "Salón",
+  "zone.kitchen.name": "Cocina",
+  "zone.bedroom.name": "Dormitorio",
+  "zone.bathroom.name": "Baño",
+  "object.table_round.name": "Mesa redonda",
+  "object.apple_red.name": "Manzana roja",
+  "object.ball.name": "Pelota",
+  "object.toybox.name": "Caja de juguetes",
+  "object.lamp_floor.name": "Lámpara de pie",
+  "ui.play.label": "Jugar",
+  "ui.title.label": "MyWorld",
+  "ui.back.label": "Volver"
+}
