@@ -81,7 +81,7 @@ Todos los comandos pasan por el `GameFacade` (§6). La UI y el Input **nunca** l
 | `updateAppearance { characterId, patch }` | Creator UI | Actualiza solo los campos del `patch` (recalcula sprite y hitbox si cambia el cuerpo). No toca location, pose ni ropa. Fallos: `entityNotFound`, `notCharacter`, `invalidPart` |
 | `setOutfitSlot { characterId, slot, prefabId \| null }` | Creator UI (modo edición) | Viste una instancia nueva del prefab. La prenda anterior va al **armario** si hay espacio o, si no, a los pies del personaje |
 | `focusEntity { entityId }` | UI (lista de personajes, vuelta del creador) | Si la entidad está en otra escena, entra en ella; después emite `focusRequested { entityId, x }` y la vista anima la cámara como un salto de zona |
-| `takeFromInventory { slot, worldPoint }` | HUD | Inventario → escena (inicia el drag) |
+| `takeFromInventory { slot, worldPoint }` | HUD | Inventario → escena en el punto del dedo e inicia el drag (`{ ok, startDrag, entityId }`); `dragCancel` lo devuelve a su slot. Fallos: `entityNotFound` (slot vacío), `alreadyDragging` |
 | `claimDailyGift {}` | Title o HUD (al entrar en Play) | Si `player.dailyReward.lastClaimDate` ≠ hoy (fecha local), suma `newGame.dailyGiftCoins` y guarda la fecha |
 | `setSetting { key, value }` | Settings UI | Actualiza `player.settings` |
 | `resetWorld { keepCharacters }` | Settings (parental) | SaveService.reset |
@@ -92,8 +92,8 @@ Todos los comandos pasan por el `GameFacade` (§6). La UI y el Input **nunca** l
 |---|---|---|
 | `entityCreated` / `entityChanged` / `entityRemoved` | `{ id, components? }` | Render, DirtyTracker |
 | `entityMoved` | `{ id, from: Location, to: Location }` | Render, Audio (pickup/drop), DirtyTracker |
-| `interactionPerformed` | `{ ruleId, sourceId?, targetId?, actions }` | Audio, animaciones, futuros recuerdos y analytics |
-| `interactionRejected` | `{ ruleId?, reason, sourceId?, targetId? }` | Feedback (shake + sonido "nop") |
+| `interactionPerformed` | `{ ruleId, sourceId?, targetId?, uiTarget?, actions }` | Audio, animaciones, HUD (bounce de la mochila), futuros recuerdos y analytics |
+| `interactionRejected` | `{ ruleId?, reason, sourceId?, targetId?, uiTarget? }` | Feedback (shake del target o del botón de la HUD + sonido "nop") |
 | `dropPreview` | `{ targetId?, ok, reason? }` | Resaltado (HU-GAME-033) |
 | `sceneWillChange` / `sceneLoaded` | `{ from?, to }` | Transición, Audio, SaveService (flush) |
 | `walletChanged` | `{ coins, delta }` | HUD, SaveService (flush inmediato) |

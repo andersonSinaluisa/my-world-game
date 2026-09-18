@@ -1,4 +1,5 @@
 import { isOpenEntity } from '../actions/container-actions';
+import { DEFAULT_INVENTORY_CAPACITY } from '../actions/inventory-actions';
 import type { ActionEnv } from '../actions/types';
 import { handAnchor } from '../characters/catalog';
 import { CharacterCommands } from '../characters/character-commands';
@@ -166,8 +167,16 @@ export class GameEngine {
   absoluteTransform(id: EntityId): Components['transform'] | undefined {
     const e = this.world.get(id);
     if (!e) return undefined;
-    if (e.location.kind === 'container') return this.slotTransform(e);
-    return absoluteTransform((x) => this.world.get(x), e);
+    switch (e.location.kind) {
+      case 'scene':
+        return absoluteTransform((x) => this.world.get(x), e);
+      case 'container':
+        return this.slotTransform(e);
+      case 'held':
+        return this.heldTransform(id);
+      default:
+        return undefined; // backpack, worn, limbo: not in the world
+    }
   }
 
   private slotTransform(e: Entity): Components['transform'] | undefined {
@@ -232,6 +241,7 @@ export class GameEngine {
       logger: this.logger,
       scene: this.activeScene,
       characters: this.characters,
+      inventoryCapacity: () => this.inventoryCapacity,
     };
   }
 
@@ -291,6 +301,8 @@ export class GameEngine {
         return this.characterCommands.setOutfitSlot(command.characterId, command.slot, command.prefabId ?? null);
       case 'focusEntity':
         return this.focusEntity(command.entityId);
+      case 'takeFromInventory':
+        return this.takeFromInventory(command.slot, command.worldPoint);
       default:
         return { ok: false, reason: 'unknownCommand' };
     }
@@ -399,6 +411,36 @@ export class GameEngine {
     if (next === this.zoneId) return;
     this.zoneId = next;
     this.world.emit({ type: 'zoneChanged', sceneId: scene.id, zoneId: next });
+  }
+
+  get inventoryCapacity(): number {
+    return this.player.inventory?.capacity ?? DEFAULT_INVENTORY_CAPACITY;
+  }
+
+  /** Backpack slots, 0..capacity-1, with the entity in each (HU-GAME-038 R1). */
+  inventorySlots(): (EntityId | null)[] {
+    const occupied = this.world.index.inventory();
+    return Array.from({ length: this.inventoryCapacity }, (_, i) => occupied[i] ?? null);
+  }
+
+  /**
+   * Takes an item out of the backpack at the finger and starts its drag (HU-GAME-038 R2). dragCancel puts
+   * it back in the same slot (R8) because the drag origin is the inventory location.
+   */
+  private takeFromInventory(slot: number, point: WorldPoint): CommandResult {
+    if (!this.activeScene) return { ok: false, reason: 'noActiveScene' };
+    if (this.drag) return { ok: false, reason: 'alreadyDragging' };
+    const id = this.world.index.inventory()[slot];
+    const e = id ? this.world.get(id) : undefined;
+    if (!e) return { ok: false, reason: 'entityNotFound' };
+    const origin: DragState['origin'] = { location: e.location, transform: e.components.transform };
+    this.world.transaction(() => {
+      this.locations.move(e.id, { kind: 'scene', sceneId: this.activeScene!.id });
+      this.world.update(e.id, { transform: { ...(e.components.transform ?? {}), x: point.x, y: point.y } });
+    });
+    this.drag = { entityId: e.id, origin };
+    this.lastPreview = undefined;
+    return { ok: true, startDrag: e.id, entityId: e.id };
   }
 
   /** Moves the camera to an entity; enters its scene first when it is elsewhere (GAME_ENGINE §4). */

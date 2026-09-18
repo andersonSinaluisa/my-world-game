@@ -53,7 +53,7 @@ flowchart LR
    - Se ordenan de la más cercana al frente a la más lejana (el orden de render invertido).
    - Se excluye el propio `source` y lo que lleva encima (lo que sostiene, lo que viste).
    - La transparencia al input ([INPUT_SYSTEM §5](INPUT_SYSTEM.md), punto 3) vale para `tap` y `longPress`. En un `drop`, **toda** entidad con hitbox es candidata: una caja sin reglas `tap` sigue pudiendo recibir objetos.
-   - Si el punto cae sobre un elemento de UI registrado como drop target (la mochila), ese elemento es el **primer** candidato.
+   - Si el punto cae sobre un elemento de UI registrado como drop target (la mochila), ese elemento es el **primer** candidato. Además **tapa** lo que hay debajo: con `uiTarget`, solo las reglas de ese target son candidatas (HU-GAME-037 R3).
 2. **Por cada candidato**, se calcula la **zona** tocada: entre las `hitbox.zones` que contienen el punto, gana la de **menor área** (la más específica: `mouth` gana a `head`, y `handL` gana a `body`). Si empatan en área, la de nombre alfabéticamente menor. Si ninguna contiene el punto, la zona es `body`. **El orden de las claves del JSON no importa.**
 3. **Reglas aplicables.** Del RuleIndex se toman las reglas con el `trigger` dado. Cada regla pasa si cumple todo esto:
    - `source` coincide con el source;

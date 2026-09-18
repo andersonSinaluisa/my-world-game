@@ -26,6 +26,14 @@ export interface EntityRenderData {
   size?: { w: number; h: number };
 }
 
+/** A backpack slot for the tray (HU-GAME-038 R1). */
+export interface InventorySlotView {
+  slot: number;
+  entityId?: EntityId;
+  asset?: AssetKey;
+  name?: string;
+}
+
 export interface ViewportQuery {
   cameraX: number;
   viewportW: number;
@@ -57,6 +65,8 @@ export interface GameFacade {
     activeZone(): string | undefined;
     /** Layers of a character, memoized (same array while its look does not change, HU-GAME-013 R7). */
     characterLayers(id: EntityId): CharacterLayerData[];
+    /** Backpack slots 0..capacity-1 (HU-GAME-038). Same array while nothing changes. */
+    inventorySlots(): InventorySlotView[];
     /** Player characters, oldest first (HU-GAME-022 R4). Same array while nothing changes. */
     characters(): CharacterSummary[];
     /** Options of the creator (HU-GAME-018 R2). */
@@ -114,6 +124,7 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
   // One entry per viewport key: several consumers (sandbox counter + SceneView) must each get a stable
   // array for useSyncExternalStore. Entries of an older snapshot version are dropped.
   let charactersCache: { version: number; data: CharacterSummary[] } | undefined;
+  let inventoryCache: { version: number; data: InventorySlotView[] } | undefined;
   const previewCache = new Map<string, CharacterLayerData[]>();
   let clothingCache: ClothingOption[] | undefined;
   let visibleCache: { version: number; byKey: Map<string, EntityRenderData[]> } = { version: -1, byKey: new Map() };
@@ -187,6 +198,17 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
       cameraX: () => engine.playerState.cameraX,
       activeZone: () => engine.activeZoneId,
       characterLayers: (id) => engine.characterLayers(id),
+      inventorySlots() {
+        if (inventoryCache?.version !== snapshot.version) {
+          const data = engine.inventorySlots().map((id, slot) => {
+            const e = id ? engine.world.get(id) : undefined;
+            const name = e?.prefabId && engine.content?.hasPrefab(e.prefabId) ? engine.content.prefab(e.prefabId)?.metadata.name : undefined;
+            return { slot, entityId: id ?? undefined, asset: e?.components.sprite ? resolveAsset(e) : undefined, name };
+          });
+          inventoryCache = { version: snapshot.version, data };
+        }
+        return inventoryCache.data;
+      },
       characters() {
         if (charactersCache?.version !== snapshot.version) {
           charactersCache = { version: snapshot.version, data: engine.characterCommands.characters() };

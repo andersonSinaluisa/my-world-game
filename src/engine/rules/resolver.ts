@@ -84,11 +84,13 @@ export class InteractionResolver {
     const out: Candidate[] = [];
     const rules = this.index.rules(input.trigger);
     if (input.uiTarget) {
+      // The HUD button covers the world below it: only its rules are candidates (HU-GAME-037 R3).
       for (const rule of rules) {
         if (rule.target.ui === input.uiTarget && (!source || matches(source, rule.source))) {
           if (!disabledFor(rule, this.prefabDisabledRules, source)) out.push({ rule, rank: -1 });
         }
       }
+      return out.sort((a, b) => (b.rule.priority ?? 0) - (a.rule.priority ?? 0) || (a.rule.qualifiedId < b.rule.qualifiedId ? -1 : 1));
     }
     hits.forEach((hit, rank) => {
       const entity = env.world.get(hit.id)!;
@@ -186,6 +188,7 @@ export class InteractionResolver {
           ruleId: c.rule.qualifiedId,
           sourceId: input.sourceId,
           targetId: c.target?.id,
+          uiTarget: c.target ? undefined : c.rule.target.ui,
           actions: c.rule.actions.map((a) => a.type),
         });
         return { kind: 'performed', ruleId: c.rule.qualifiedId, targetId: c.target?.id };
@@ -255,7 +258,14 @@ export class InteractionResolver {
 
   private reject(env: ActionEnv, input: ResolveInput, c: Candidate, reason: string): ResolveOutcome {
     env.world.transaction(() => {
-      env.world.emit({ type: 'interactionRejected', ruleId: c.rule.qualifiedId, reason, sourceId: input.sourceId, targetId: c.target?.id });
+      env.world.emit({
+        type: 'interactionRejected',
+        ruleId: c.rule.qualifiedId,
+        reason,
+        sourceId: input.sourceId,
+        targetId: c.target?.id,
+        uiTarget: c.target ? undefined : c.rule.target.ui,
+      });
       if (c.target) env.effects.rejected(c.target.id);
       // Fallback of the failing rule (HU-GAME-031 R3.6). 'returnToOrigin' arrives with HU-GAME-064/066.
       if (input.trigger === 'drop' && input.sourceId) this.place(env, input.sourceId, input.point);

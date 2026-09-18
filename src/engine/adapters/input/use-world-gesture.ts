@@ -28,11 +28,12 @@ export interface WorldInputHandlers {
   pickDraggable(worldX: number, worldY: number): EntityId | undefined;
   /** Dispatches dragStart; false = the engine refused it and the gesture becomes a pan. */
   dragStart(id: EntityId, worldX: number, worldY: number): boolean;
-  dragEnd(id: EntityId, worldX: number, worldY: number): void;
+  /** screenX/screenY: finger in dp, to detect HUD drop targets such as the backpack (HU-GAME-037 R3). */
+  dragEnd(id: EntityId, worldX: number, worldY: number, screenX: number, screenY: number): void;
   /** Gesture cancelled by the system (HU-GAME-027 R11). */
   dragCancel(id: EntityId): void;
   /** Finger position while dragging, sampled at ≤ 10 Hz, for the drop preview (HU-GAME-033 R1 fallback). */
-  dragMove?(id: EntityId, worldX: number, worldY: number): void;
+  dragMove?(id: EntityId, worldX: number, worldY: number, screenX: number, screenY: number): void;
   tap(worldX: number, worldY: number): void;
 }
 
@@ -86,7 +87,7 @@ export function useWorldGesture(o: WorldGestureOptions) {
       const py = pointerY.get();
       if (frame.timestamp - last.t >= PREVIEW_INTERVAL_MS && (px !== last.x || py !== last.y)) {
         lastPreview.set({ t: frame.timestamp, x: px, y: py });
-        scheduleOnRN(dragMove, dragId.get(), px, py);
+        scheduleOnRN(dragMove, dragId.get(), px, py, fingerX.get(), fingerY.get());
       }
     }
     const v = mode.get() === DRAG && fingerX.get() >= 0 ? autoScrollVelocity(fingerX.get(), l.widthDp) : 0;
@@ -130,7 +131,7 @@ export function useWorldGesture(o: WorldGestureOptions) {
       dragId.set('');
       if (current === DRAG && id) {
         const p = screenToWorld(x, y, scale, camera);
-        if (success) handlers?.dragEnd(id, p.x, p.y);
+        if (success) handlers?.dragEnd(id, p.x, p.y, x, y);
         else handlers?.dragCancel(id);
       } else if (current === PENDING || current === IDLE) {
         onSettled(cameraX.get());

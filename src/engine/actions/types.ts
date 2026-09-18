@@ -17,6 +17,8 @@ export interface ActionEnv {
   logger: Logger;
   scene: ActiveSceneInfo;
   characters: CharacterSystem;
+  /** Backpack size from player.inventory.capacity (HU-GAME-037 R2). */
+  inventoryCapacity: () => number;
 }
 
 /** Context of one interaction: who is `$source`, who is `$target`, where the finger was. */

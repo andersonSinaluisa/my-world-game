@@ -1,4 +1,5 @@
 import { holdAction, releaseAction, setExpressionAction } from './character-actions';
+import { addToInventoryAction } from './inventory-actions';
 import { closeAction, openAction, storeAction, toggleOpenAction, toggleSwitchAction } from './container-actions';
 import { placeAction } from './place';
 import { cycleStateAction, setStateAction } from './state-actions';
@@ -21,6 +22,7 @@ export const ACTIONS: Record<string, ActionHandler<never>> = Object.fromEntries(
     closeAction,
     toggleSwitchAction,
     storeAction,
+    addToInventoryAction,
   ].map((a) => [a.type, a as unknown as ActionHandler<never>]),
 );
 

@@ -75,5 +75,8 @@
   "ui.creator.tab.face": "Face",
   "ui.creator.tab.hair": "Hair",
   "ui.creator.tab.clothes": "Clothes",
-  "ui.creator.confirm": "Done"
+  "ui.creator.confirm": "Done",
+  "ui.backpack.label": "Backpack",
+  "ui.backpack.tray": "Backpack items",
+  "ui.backpack.empty": "Empty slot"
 }

@@ -7,6 +7,7 @@ import {
   ExpressionSchema,
   HolderSchema,
   PoseSchema,
+  PurchasableSchema,
   WearableSchema,
   ContainerSchema,
   DraggableSchema,
@@ -24,6 +25,7 @@ import {
   type Expression,
   type Holder,
   type Pose,
+  type Purchasable,
   type Wearable,
   type Container,
   type Draggable,
@@ -58,6 +60,7 @@ export interface ComponentMap {
   holder: Holder;
   pose: Pose;
   expression: Expression;
+  purchasable: Purchasable;
 }
 
 export type ComponentName = keyof ComponentMap;
@@ -81,6 +84,7 @@ export const COMPONENT_SCHEMAS: { [K in ComponentName]: z.ZodType<ComponentMap[K
   holder: HolderSchema,
   pose: PoseSchema,
   expression: ExpressionSchema,
+  purchasable: PurchasableSchema,
 };
 
 export function isComponentName(name: string): name is ComponentName {

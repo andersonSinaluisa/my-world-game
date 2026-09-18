@@ -114,6 +114,17 @@ export type Container = z.infer<typeof ContainerSchema>;
 export type Animations = z.infer<typeof AnimationsSchema>;
 export type Sounds = z.infer<typeof SoundsSchema>;
 
+// §5.14 (Fase 2; isPurchased needs it for the backpack rule)
+export const PurchasableSchema = z.strictObject({
+  price: z.number().int().min(0),
+  purchased: z.boolean().optional(),
+  restock: z.boolean().optional(),
+  origin: z
+    .union([z.strictObject({ x: finite, y: finite }), z.strictObject({ containerId: z.string().min(1), slot: z.number().int().min(0) })])
+    .optional(),
+});
+export type Purchasable = z.infer<typeof PurchasableSchema>;
+
 // ---------- characters (CHARACTER_SCHEMA §2-§3, HU-GAME-013..017) ----------
 
 /** Fixed draw order of a character, back to front (CHARACTER_SCHEMA §3). */

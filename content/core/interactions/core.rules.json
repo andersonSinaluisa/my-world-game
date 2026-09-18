@@ -118,5 +118,37 @@
     "feedback": {
       "rejectHint": "ui_hint_container_full"
     }
+  },
+  {
+    "id": "store_in_backpack",
+    "trigger": "drop",
+    "source": {
+      "has": [
+        "draggable"
+      ],
+      "notTags": [
+        "character",
+        "furniture"
+      ]
+    },
+    "target": {
+      "ui": "inventory"
+    },
+    "conditions": [
+      {
+        "type": "inventoryHasSpace"
+      },
+      {
+        "type": "isPurchased",
+        "value": true,
+        "ifMissing": true
+      }
+    ],
+    "actions": [
+      {
+        "type": "addToInventory"
+      }
+    ],
+    "priority": 100
   }
 ]

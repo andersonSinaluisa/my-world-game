@@ -1,22 +1,28 @@
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { ActivityIndicator, StyleSheet, View, type LayoutChangeEvent, type LayoutRectangle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Backpack } from '@/game/backpack';
 import { useGame, useGameSession } from '@/game/game-context';
-import { COLORS, IconButton } from '@/ui/buttons';
 import { useActiveScene } from '@/game/hooks';
-import { SceneView } from '@/game/scene-view';
+import { SceneView, type CameraController } from '@/game/scene-view';
+import { COLORS, IconButton } from '@/ui/buttons';
+
+/** Extra margin around the backpack button that still counts as dropping on it (children's fingers). */
+const DROP_SLOP = 12;
 
 /**
  * Play screen (HU-GAME-053/054): measures the screen, loads the save or starts a new game, then shows
- * the world. Game HUD (backpack, map…) arrives with its own HUs.
+ * the world with its HUD: back, characters (EPIC-005) and the backpack (EPIC-010). No text.
  */
 export default function PlayScreen() {
   const game = useGame();
   const session = useGameSession();
   const scene = useActiveScene();
   const [started, setStarted] = useState(false);
+  const camera = useRef<CameraController>(null);
+  const backpack = useRef<LayoutRectangle | null>(null);
 
   // Back from the creator: center the new character (HU-GAME-023 R4).
   useFocusEffect(
@@ -37,23 +43,38 @@ export default function PlayScreen() {
     [session, started],
   );
 
+  // The backpack button is the first drop candidate when the finger is over it (HU-GAME-037 R3).
+  const uiTargetAt = useCallback((x: number, y: number) => {
+    const r = backpack.current;
+    if (!r) return undefined;
+    const inside = x >= r.x - DROP_SLOP && x <= r.x + r.width + DROP_SLOP && y >= r.y - DROP_SLOP && y <= r.y + r.height + DROP_SLOP;
+    return inside ? ('inventory' as const) : undefined;
+  }, []);
+
   if (!session) return null;
   return (
     <View style={styles.root} onLayout={onLayout}>
-      {scene ? <SceneView textures={session.textures} /> : <ActivityIndicator style={styles.fill} size="large" color="#3E2C4A" />}
-      <SafeAreaView style={styles.hud} pointerEvents="box-none" edges={['top', 'left', 'right']}>
-        <View style={styles.hudRow} pointerEvents="box-none">
-        <Pressable
-          style={styles.back}
-          onPress={() => {
-            void session.flush();
-            router.back();
-          }}
-          accessibilityRole="button"
-          accessibilityLabel={game.t('ui.back.label')}>
-          <Text style={styles.backText}>◀</Text>
-        </Pressable>
-        <IconButton label={game.t('ui.play.characters')} glyph="☺" color={COLORS.selected} onPress={() => router.push('/characters')} style={styles.hudButton} />
+      {scene ? (
+        <SceneView textures={session.textures} cameraRef={camera} uiTargetAt={uiTargetAt} />
+      ) : (
+        <ActivityIndicator style={styles.fill} size="large" color={COLORS.ink} />
+      )}
+      <SafeAreaView style={styles.hud} pointerEvents="box-none" edges={['top', 'left', 'right', 'bottom']}>
+        <View style={styles.topRow} pointerEvents="box-none">
+          <IconButton
+            label={game.t('ui.back.label')}
+            glyph="◀"
+            color={COLORS.panel}
+            onPress={() => {
+              void session.flush();
+              router.back();
+            }}
+          />
+          <IconButton label={game.t('ui.play.characters')} glyph="☺" color={COLORS.selected} onPress={() => router.push('/characters')} />
+        </View>
+        {/* Bottom center: away from the auto-scroll edge zones (HU-GAME-037 open question). */}
+        <View style={styles.bottomRow} pointerEvents="box-none">
+          {scene && <Backpack cameraRef={camera} onBounds={(r) => (backpack.current = r)} />}
         </View>
       </SafeAreaView>
     </View>
@@ -61,19 +82,9 @@ export default function PlayScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#FFF6E9' },
+  root: { flex: 1, backgroundColor: COLORS.paper },
   fill: { flex: 1 },
-  hud: { ...StyleSheet.absoluteFill },
-  hudRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  hudButton: { margin: 16 },
-  back: {
-    margin: 16,
-    width: 64,
-    height: 64,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(62,44,74,0.85)',
-  },
-  backText: { color: '#FFFFFF', fontSize: 28, fontWeight: '800' },
+  hud: { ...StyleSheet.absoluteFill, justifyContent: 'space-between' },
+  topRow: { flexDirection: 'row', justifyContent: 'space-between', padding: 16 },
+  bottomRow: { alignItems: 'center', paddingBottom: 12 },
 });
