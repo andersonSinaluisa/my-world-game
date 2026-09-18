@@ -18,8 +18,8 @@ export default function TitleScreen() {
         {game.t('ui.title.label')}
       </Text>
       <Link href="/play" asChild>
-        <Pressable style={[styles.button, styles.play]} accessibilityRole="button" accessibilityLabel={play}>
-          <Text style={[styles.buttonText, styles.playText]}>{play}</Text>
+        <Pressable style={playButtonStyle} accessibilityRole="button" accessibilityLabel={play}>
+          <Text style={playTextStyle}>{play}</Text>
         </Pressable>
       </Link>
       {__DEV__ && (
@@ -44,3 +44,7 @@ const styles = StyleSheet.create({
   play: { minHeight: 88, minWidth: 220, alignItems: 'center', backgroundColor: '#FF8A3D' },
   playText: { fontSize: 32, fontWeight: '800' },
 });
+
+// <Link asChild> forwards the child's style through <Slot>, which rejects style arrays.
+const playButtonStyle = StyleSheet.flatten([styles.button, styles.play]);
+const playTextStyle = StyleSheet.flatten([styles.buttonText, styles.playText]);
