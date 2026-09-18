@@ -106,7 +106,9 @@ function main(argv: string[]): number {
     for (const e of result.errors) console.error(e);
     return 1;
   }
-  const stale = result.files.filter((f) => !fs.existsSync(f.file) || fs.readFileSync(f.file, 'utf8') !== f.content);
+  // Line endings are normalized: git may check files out with CRLF on Windows.
+  const onDisk = (file: string) => fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
+  const stale = result.files.filter((f) => !fs.existsSync(f.file) || onDisk(f.file) !== f.content);
   if (check) {
     if (stale.length) {
       for (const f of stale) console.error(`Stale generated file: ${path.relative(ROOT, f.file)}`);

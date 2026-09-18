@@ -69,7 +69,7 @@ describe('content:assets generator (HU-GAME-068 R6)', () => {
     const b = generate(CONTENT);
     expect(a.errors).toEqual([]);
     expect(a.files).toEqual(b.files);
-    for (const f of a.files) expect(fs.readFileSync(f.file, 'utf8')).toBe(f.content);
+    for (const f of a.files) expect(fs.readFileSync(f.file, 'utf8').replace(/\r\n/g, '\n')).toBe(f.content);
   });
 
   it('reports assets whose file is missing', () => {
