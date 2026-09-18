@@ -1,10 +1,10 @@
-import type { Clock } from '@/engine/core/runtime';
+import type { Clock, Scheduler } from '@/engine/core/runtime';
 
 export const DEFAULT_TEST_TIME = Date.parse('2026-01-01T00:00:00Z');
 export const DEFAULT_TEST_SEED = 20260101;
 
 /** Deterministic clock: time only moves with `advance(ms)`. Never use real timers in tests. */
-export class FakeClock implements Clock {
+export class FakeClock implements Clock, Scheduler {
   private current: number;
   private timers: { at: number; fn: () => void; id: number }[] = [];
   private nextId = 1;
@@ -24,7 +24,7 @@ export class FakeClock implements Clock {
     return id;
   }
 
-  clearTimeout(id: number): void {
+  clearTimeout(id: unknown): void {
     this.timers = this.timers.filter((t) => t.id !== id);
   }
 

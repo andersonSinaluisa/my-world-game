@@ -21,6 +21,17 @@ export interface Logger {
 
 export const systemClock: Clock = { now: () => Date.now() };
 
+/** Timers are injected too, so debounce logic is deterministic in tests (FakeClock implements it). */
+export interface Scheduler {
+  setTimeout(fn: () => void, ms: number): unknown;
+  clearTimeout(handle: unknown): void;
+}
+
+export const systemScheduler: Scheduler = {
+  setTimeout: (fn, ms) => setTimeout(fn, ms),
+  clearTimeout: (h) => clearTimeout(h as ReturnType<typeof setTimeout>),
+};
+
 export const mathRandom: Random = { next: () => Math.random() };
 
 export const silentLogger: Logger = {

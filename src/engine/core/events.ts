@@ -7,11 +7,23 @@ import type { EntityId, SceneId } from './types';
 export type GameEvent =
   | { type: 'entityCreated'; id: EntityId }
   | { type: 'entityChanged'; id: EntityId; components: ComponentName[] }
-  | { type: 'entityRemoved'; id: EntityId }
+  /** `unload: true` = the entity left memory because its scene unloaded; it still exists in the save. */
+  | { type: 'entityRemoved'; id: EntityId; unload?: boolean }
   | { type: 'entityMoved'; id: EntityId; from: Location; to: Location }
   | { type: 'visualEffect'; entityId: EntityId; preset: TweenPresetId }
   | { type: 'playerChanged'; keys: string[] }
-  | { type: 'sceneLoaded'; to: SceneId };
+  | { type: 'interactionPerformed'; ruleId: string; sourceId?: EntityId; targetId?: EntityId; actions: string[] }
+  | { type: 'interactionRejected'; ruleId?: string; reason: string; sourceId?: EntityId; targetId?: EntityId }
+  | { type: 'sceneWillChange'; from?: SceneId; to: SceneId }
+  | { type: 'sceneLoaded'; from?: SceneId; to: SceneId; cameraX?: number };
+
+/** Events that never change game state (presentation / notifications only). */
+export const PRESENTATION_EVENTS: ReadonlySet<GameEvent['type']> = new Set([
+  'visualEffect',
+  'interactionPerformed',
+  'interactionRejected',
+  'sceneWillChange',
+]);
 
 export type GameEventType = GameEvent['type'];
 

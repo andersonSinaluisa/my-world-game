@@ -1,4 +1,10 @@
-import { validateComponents, type ComponentName } from '../components/registry';
+import {
+  checkComponentDependencies,
+  checkComponentShapes,
+  ComponentValidationError,
+  validateComponents,
+  type ComponentName,
+} from '../components/registry';
 import type { ComponentPatch, Entity, EntityInit } from './entity';
 import { EventBus, type GameEvent } from './events';
 import { LocationSchema, type Hand, type Location, type LocationKind, type WearSlot } from './location';
@@ -55,6 +61,9 @@ export class World {
   private depth = 0;
   private pending: GameEvent[] = [];
   private snapshot: Map<EntityId, Entity> | null = null;
+  /** Derived, non-persisted: which furniture supports an item (RENDERING §4, HU-GAME-028). */
+  private support = new Map<EntityId, EntityId>();
+  private supportSnapshot: Map<EntityId, EntityId> | null = null;
 
   constructor(private readonly options: WorldOptions) {}
 
@@ -119,6 +128,7 @@ export class World {
       }
       return Array.from(slots, (id) => id ?? null);
     },
+    supportOf: (id: EntityId): EntityId | undefined => this.support.get(id),
     /** Occupant of a seat/bed. Derived from the `pose.seatId` of characters (pose arrives with HU-GAME-014/045). */
     seatOccupant: (seatId: EntityId): EntityId | undefined => {
       for (const e of this.entities.values()) {
@@ -134,6 +144,7 @@ export class World {
   transaction<T>(fn: () => T): T {
     if (this.depth === 0) {
       this.snapshot = new Map(this.entities);
+      this.supportSnapshot = new Map(this.support);
       this.pending = [];
     }
     this.depth++;
@@ -184,14 +195,14 @@ export class World {
         else next[name] = value;
       }
       if (touched.length === 0) return current;
-      // Validate only touched components; untouched ones keep their reference.
-      const validatedTouched = validateComponents(
-        id,
+      // Shape-check only touched components (untouched ones keep their reference),
+      // then cross-component dependencies on the full bag (e.g. openable ↔ states).
+      const { parsed, issues } = checkComponentShapes(
         Object.fromEntries(touched.filter((n) => next[n] !== undefined).map((n) => [n, next[n]])),
       );
-      Object.assign(next, validatedTouched);
-      // Cross-component checks need the full bag (e.g. openable ↔ states).
-      validateComponents(id, next);
+      Object.assign(next, parsed);
+      issues.push(...checkComponentDependencies(next));
+      if (issues.length) throw new ComponentValidationError(id, issues);
       const entity = this.freeze({ ...current, components: next });
       this.entities.set(id, entity);
       this.pending.push({ type: 'entityChanged', id, components: touched });
@@ -199,7 +210,8 @@ export class World {
     });
   }
 
-  remove(id: EntityId): boolean {
+  /** `unload`: removal caused by a scene unload, not gameplay (the save keeps the entity). */
+  remove(id: EntityId, options: { unload?: boolean } = {}): boolean {
     return this.transaction(() => {
       const current = this.entities.get(id);
       if (!current) {
@@ -209,9 +221,17 @@ export class World {
       const key = occupancyKey(current.location);
       if (key) this.occupancy.delete(key);
       this.entities.delete(id);
-      this.pending.push({ type: 'entityRemoved', id });
+      this.support.delete(id);
+      for (const [item, supporter] of this.support) if (supporter === id) this.support.delete(item);
+      this.pending.push(options.unload ? { type: 'entityRemoved', id, unload: true } : { type: 'entityRemoved', id });
       return true;
     });
+  }
+
+  /** Sets or clears the derived support relation (SurfaceSystem only). Not an event: it is recomputed on load. */
+  setSupport(id: EntityId, supporterId: EntityId | undefined): void {
+    if (supporterId === undefined) this.support.delete(id);
+    else this.support.set(id, supporterId);
   }
 
   /** Emits a non-entity-state event inside the current transaction (e.g. visualEffect). */
@@ -276,12 +296,15 @@ export class World {
     const batch = this.pending;
     this.pending = [];
     this.snapshot = null;
+    this.supportSnapshot = null;
     this.options.bus.publish(batch);
   }
 
   private rollback(): void {
     if (this.snapshot) this.entities = this.snapshot;
+    if (this.supportSnapshot) this.support = this.supportSnapshot;
     this.snapshot = null;
+    this.supportSnapshot = null;
     this.pending = [];
     this.occupancy.clear();
     for (const e of this.entities.values()) {
