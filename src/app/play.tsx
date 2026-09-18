@@ -8,7 +8,9 @@ import { GateGear } from '@/game/gate-gear';
 import { PerfOverlay } from '@/game/perf-overlay';
 import { useGame, useGameSession } from '@/game/game-context';
 import { useActiveScene } from '@/game/hooks';
+import { MapButton, MapOverlay } from '@/game/map-overlay';
 import { SceneView, type CameraController } from '@/game/scene-view';
+import { TransitionOverlay } from '@/game/transition-overlay';
 import { COLORS, IconButton } from '@/ui/buttons';
 
 /** Extra margin around the backpack button that still counts as dropping on it (children's fingers). */
@@ -16,7 +18,7 @@ const DROP_SLOP = 12;
 
 /**
  * Play screen (HU-GAME-053/054): measures the screen, loads the save or starts a new game, then shows
- * the world with its HUD: back, characters (EPIC-005) and the backpack (EPIC-010). No text.
+ * the world with its HUD: back, map (EPIC-014), characters (EPIC-005) and the backpack (EPIC-010). No text.
  */
 export default function PlayScreen() {
   const game = useGame();
@@ -25,6 +27,7 @@ export default function PlayScreen() {
   const [started, setStarted] = useState(false);
   const camera = useRef<CameraController>(null);
   const backpack = useRef<LayoutRectangle | null>(null);
+  const [mapOpen, setMapOpen] = useState(false);
 
   // Back from the creator: center the new character (HU-GAME-023 R4).
   useFocusEffect(
@@ -73,6 +76,7 @@ export default function PlayScreen() {
             }}
           />
           <View style={styles.topRight} pointerEvents="box-none">
+            {scene && <MapButton onOpen={() => setMapOpen(true)} />}
             <IconButton label={game.t('ui.play.characters')} glyph="☺" color={COLORS.selected} onPress={() => router.push('/characters')} />
             <GateGear onPassed={() => router.push('/settings')} />
           </View>
@@ -82,6 +86,8 @@ export default function PlayScreen() {
           {scene && <Backpack cameraRef={camera} onBounds={(r) => (backpack.current = r)} />}
         </View>
       </SafeAreaView>
+      <MapOverlay visible={mapOpen} onClose={() => setMapOpen(false)} onZone={(id) => camera.current?.jumpToZone(id)} />
+      <TransitionOverlay />
       {__DEV__ && scene && <PerfOverlay />}
     </View>
   );

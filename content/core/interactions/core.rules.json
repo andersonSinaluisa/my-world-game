@@ -1,5 +1,25 @@
 [
   {
+    "id": "travel_portal",
+    "trigger": "drop",
+    "source": {
+      "has": [
+        "character"
+      ]
+    },
+    "target": {
+      "has": [
+        "portal"
+      ]
+    },
+    "actions": [
+      {
+        "type": "teleport"
+      }
+    ],
+    "priority": 95
+  },
+  {
     "id": "tap_open",
     "trigger": "tap",
     "target": {

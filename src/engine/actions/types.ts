@@ -36,7 +36,14 @@ export interface InteractionContext {
   point: WorldPoint;
   ruleId?: string;
   /** Results an action hands back to the command (unwear → startDrag, HU-GAME-040 R4). */
-  output: { startDrag?: EntityId };
+  output: { startDrag?: EntityId; travel?: TravelRequest };
+}
+
+/** Scene change asked by an action (teleport) or by the map; played by the engine (HU-GAME-049/050). */
+export interface TravelRequest {
+  sceneId: string;
+  spawnId: string;
+  travelers: EntityId[];
 }
 
 export type RoleRef = '$source' | '$target';

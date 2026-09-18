@@ -85,6 +85,14 @@
   ],
   "entities": [
     {
+      "localId": "front_door",
+      "prefabId": "door_front",
+      "transform": {
+        "x": 120,
+        "y": 960
+      }
+    },
+    {
       "localId": "sofa",
       "prefabId": "sofa",
       "transform": {
@@ -160,7 +168,7 @@
       "localId": "plant",
       "prefabId": "plant",
       "transform": {
-        "x": 120,
+        "x": 1660,
         "y": 960
       }
     },
@@ -490,5 +498,6 @@
   },
   "metadata": {
     "placeholder": true
-  }
+  },
+  "transitionColor": "#FFE3C2"
 }

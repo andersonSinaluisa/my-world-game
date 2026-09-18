@@ -11,6 +11,10 @@ export type GameCommand =
   | { type: 'cameraSettled'; cameraX: number; viewportW: number }
   | { type: 'viewportChanged'; viewportW: number }
   | { type: 'enterScene'; sceneId: SceneId; spawnId: string; travelers?: EntityId[] }
+  /** Map travel (HU-GAME-051): through the transition, nobody moves. */
+  | { type: 'travelTo'; sceneId: SceneId; spawnId: string }
+  /** The UI finished the fade-in: input is accepted again (HU-GAME-050 RN-4). */
+  | { type: 'transitionDone' }
   | { type: 'pointerTap'; worldPoint: WorldPoint; minHitWorld?: number }
   | { type: 'pointerLongPress'; worldPoint: WorldPoint; minHitWorld?: number }
   | { type: 'dragStart'; entityId: EntityId; worldPoint: WorldPoint }
@@ -31,6 +35,7 @@ export type CommandFailure =
   | 'noActiveScene'
   | 'noContent'
   | 'unknownScene'
+  | 'transitioning'
   | 'notDraggable'
   | 'notDragging'
   | 'alreadyDragging'

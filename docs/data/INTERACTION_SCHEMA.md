@@ -111,7 +111,7 @@ Los **roles** de cada acción se indican con `"$source"` y `"$target"`. Cada acc
 | `toggleSwitch` | `entity=$target` | Cambia de estado usando `switchable` | StateSystem | NOW |
 | `setState` / `cycleState` | `entity`, `state?` | Cambia `states.current` | StateSystem | NOW |
 | `spawn` | `spawner=$target` | Instancia `spawner.prefabId` junto al spawner | SpawnSystem | NOW |
-| `teleport` | `traveler=$source`, `portal=$target` | Mueve al personaje (y lo que sostiene) a otra escena. `validate` rechaza con `notPurchased` si sostiene un producto sin comprar | SceneService | NOW (Fase 2) |
+| `teleport` | `traveler=$source`, `portal=$target` | Mueve al personaje (y lo que sostiene) a otra escena. `validate` rechaza con `notPurchased` si sostiene un producto sin comprar y con `notAccepted` si no cumple `portal.accepts`. El cambio de escena ocurre después de la interacción, con la transición de HU-GAME-050 | SceneService | NOW (Fase 2) |
 | `addToInventory` | `item=$source` | Location → `inventory` | InventorySystem | NOW (P1) |
 | `purchase` | `item=$source`, `register=$target` | Descuenta monedas y pone `purchased=true` | EconomySystem | NOW (Fase 2) |
 | `collect` | `entity=$target` | Aplica `collectible.reward` y elimina la entidad (→ `limbo` + `entity_removed`) | EconomySystem | NOW (P2) |

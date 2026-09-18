@@ -56,6 +56,8 @@ const FALLBACK: Record<string, AudioKey> = {
 export const SFX_REJECT = 'sfx_reject_soft';
 export const SFX_COIN = 'sfx_coin';
 export const SFX_UI_TAP = 'sfx_ui_tap';
+/** Scene travel through a door or the map (HU-GAME-049 assets). */
+export const SFX_TRAVEL = 'sfx_portal_whoosh';
 
 /** Role of a performed interaction by its first action (RN-1 "fallback por tipo de acción"). */
 const ACTION_ROLE: Record<string, string> = {
@@ -102,6 +104,11 @@ export class AudioDirector {
     this.unsubscribe();
   }
 
+  /** Soft rejection of a HUD button (locked map card, HU-GAME-051 RN-6). */
+  reject(): void {
+    this.play(SFX_REJECT, 'reject');
+  }
+
   /** UI button sound (HUD and menus). */
   uiTap(): void {
     this.play(SFX_UI_TAP, 'ui');
@@ -131,6 +138,9 @@ export class AudioDirector {
           break;
         case 'walletChanged':
           if (e.delta > 0) this.play(SFX_COIN, 'coin');
+          break;
+        case 'transitionStarted':
+          this.play(SFX_TRAVEL, 'travel');
           break;
         case 'sceneWillChange':
           this.d.port.setMusic(undefined, 0, MUSIC_CROSSFADE_MS);

@@ -42,6 +42,7 @@ export interface ZoneInfo {
   x2: number;
   snapCameraX?: number;
   audio?: { music?: string; ambience?: string };
+  icon?: string;
 }
 
 export interface ActiveSceneInfo {

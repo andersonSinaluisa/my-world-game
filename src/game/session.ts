@@ -16,6 +16,7 @@ import type { SaveStore } from '@/engine/persistence/save-store';
 import { createGameFacade, type GameFacade } from './facade';
 import { ParentalGate } from './parental-gate';
 import { createTextureStore, type TextureStore } from './textures';
+import { TransitionDirector } from './transition-director';
 
 const isDev = () => (typeof __DEV__ !== 'undefined' ? __DEV__ : true);
 
@@ -55,6 +56,9 @@ export class GameSession {
   readonly audio: AudioDirector | undefined;
   /** Parental gate state for the whole app: a 30 s lock survives screen changes (HU-GAME-074 RN-3). */
   readonly gate = new ParentalGate(Math.random, Date.now);
+  /** Scene changes by door or map, with fades and locked input (HU-GAME-050). */
+  readonly transition: TransitionDirector;
+  private viewportW: number | undefined;
 
   constructor(
     private readonly openStore: () => Promise<{ store: SaveStore; status: 'ok' | 'incompatible' }>,
@@ -65,6 +69,16 @@ export class GameSession {
     this.engine = GameEngine.create({ content: this.content, logger });
     this.facade = createGameFacade(this.engine, { assetSize: (k) => this.content.assetSize(k), locale: defaultLocale(deviceLanguageTag()) });
     this.textures = createTextureStore(bundledTextureEntries(this.content), { logger });
+    this.transition = new TransitionDirector({
+      wait: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+      flush: () => this.flush(),
+      enter: (r) => this.engine.dispatch({ type: 'enterScene', sceneId: r.sceneId, spawnId: r.spawnId, travelers: r.travelers }).ok,
+      preload: () => this.preloadVisible(),
+      done: () => void this.engine.dispatch({ type: 'transitionDone' }),
+      now: Date.now,
+      onError: (error) => logger.error('Scene transition failed', { error: String(error) }),
+    });
+    this.engine.travelHandler = (request) => void this.transition.run(request);
     if (audioPort) {
       const port = audioPort((key) => BUNDLED_ASSET_MODULES[key]);
       const engine = this.engine;
@@ -99,7 +113,22 @@ export class GameSession {
   /** Screen size in dp, so the first camera of a scene is centered correctly (SCENE_SYSTEM §2). */
   setScreenSize(widthDp: number, heightDp: number): void {
     const { viewportW } = computeViewport(widthDp, heightDp);
-    if (viewportW > 0) this.engine.dispatch({ type: 'viewportChanged', viewportW });
+    if (viewportW > 0) {
+      this.viewportW = viewportW;
+      this.engine.dispatch({ type: 'viewportChanged', viewportW });
+    }
+  }
+
+  /** Textures of what the camera shows in the new scene (RENDERING §6); the rest loads on demand. */
+  private async preloadVisible(): Promise<void> {
+    const scene = this.engine.scene;
+    const cameraX = this.facade.selectors.cameraX();
+    if (!scene) return;
+    this.textures.setActiveScene(scene.id);
+    const viewport = cameraX !== undefined && this.viewportW ? { cameraX, viewportW: this.viewportW } : undefined;
+    const keys = new Set(this.facade.selectors.visibleEntities(viewport).map((e) => e.asset));
+    for (const layer of scene.background?.layers ?? []) for (const c of layer.chunks) keys.add(c.asset);
+    await Promise.all([...keys].map((k) => this.textures.load(k)));
   }
 
   /**

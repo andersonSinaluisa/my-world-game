@@ -32,6 +32,7 @@ interface SceneDefinition {
   entities: SceneEntity[];            // instancias de prefabs o entidades inline
   audio?: { music?: AudioKey; ambience?: AudioKey };  // default de la escena; las zonas pueden sobrescribir
   camera?: { startX?: number; startSpawnId?: string };
+  transitionColor?: string;          // "#RRGGBB" del fundido al entrar (HU-GAME-050 RN-2); default de la paleta
   metadata?: { author?: string; placeholder?: boolean };
 }
 
@@ -48,6 +49,7 @@ interface Zone {
   x1: number; x2: number;             // rango horizontal semiabierto: x1 ≤ x < x2 (el borde pertenece a la zona siguiente)
   audio?: { music?: AudioKey; ambience?: AudioKey };
   snapCameraX?: number;               // x central de la zona para "saltar" desde el mapa
+  icon?: AssetKey;                    // icono del botón de zona en el mapa (HU-GAME-051); sin icono, inicial del nombre
 }
 
 // Reglas de zonas (HU-GAME-012, las comprueba el validador):
