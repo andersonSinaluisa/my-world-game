@@ -1,0 +1,32 @@
+{
+  "id": "toothbrush",
+  "category": "misc",
+  "tags": [
+    "bath"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_bath_toothbrush",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -48,
+        "y": -50,
+        "w": 96,
+        "h": 50
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    }
+  },
+  "metadata": {
+    "name": "object.toothbrush.name",
+    "placeholder": true
+  }
+}

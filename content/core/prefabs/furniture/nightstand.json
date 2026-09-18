@@ -1,0 +1,36 @@
+{
+  "id": "nightstand",
+  "category": "furniture",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_nightstand",
+      "layer": "furniture"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -119,
+        "y": -120,
+        "w": 238,
+        "h": 120
+      }
+    },
+    "surface": {
+      "segments": [
+        {
+          "x1": -109,
+          "x2": 109,
+          "y": -112
+        }
+      ],
+      "carriesItems": true
+    }
+  },
+  "metadata": {
+    "name": "object.nightstand.name",
+    "placeholder": true
+  }
+}

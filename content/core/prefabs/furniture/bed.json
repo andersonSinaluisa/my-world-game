@@ -1,0 +1,42 @@
+{
+  "id": "bed",
+  "category": "furniture",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_bed",
+      "layer": "furniture"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -221.5,
+        "y": -170,
+        "w": 443,
+        "h": 170
+      }
+    },
+    "surface": {
+      "segments": [
+        {
+          "x1": -191.5,
+          "x2": 191.5,
+          "y": -93.50000000000001
+        }
+      ]
+    },
+    "bed": {
+      "anchor": {
+        "x": 0,
+        "y": -94
+      },
+      "coverAsset": "env_home_bed_cover"
+    }
+  },
+  "metadata": {
+    "name": "object.bed.name",
+    "placeholder": true
+  }
+}

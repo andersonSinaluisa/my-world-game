@@ -1,0 +1,68 @@
+{
+  "id": "cupboard",
+  "category": "container",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_cupboard",
+      "layer": "furniture"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -110,
+        "y": -300,
+        "w": 220,
+        "h": 300
+      },
+      "zones": {
+        "inside": {
+          "type": "rect",
+          "x": -100,
+          "y": -290,
+          "w": 200,
+          "h": 276
+        }
+      }
+    },
+    "container": {
+      "capacity": 6,
+      "accepts": [
+        "food",
+        "drink"
+      ],
+      "slots": [
+        {
+          "x": -64,
+          "y": -220
+        },
+        {
+          "x": 0,
+          "y": -220
+        },
+        {
+          "x": 64,
+          "y": -220
+        },
+        {
+          "x": -64,
+          "y": -124
+        },
+        {
+          "x": 0,
+          "y": -124
+        },
+        {
+          "x": 64,
+          "y": -124
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "name": "object.cupboard.name",
+    "placeholder": true
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "id": "toilet",
+  "category": "furniture",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_toilet",
+      "layer": "furniture"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -70,
+        "y": -176,
+        "w": 140,
+        "h": 176
+      }
+    },
+    "seat": {
+      "anchor": {
+        "x": 0,
+        "y": -85
+      }
+    }
+  },
+  "metadata": {
+    "name": "object.toilet.name",
+    "placeholder": true
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "milk_carton",
+  "category": "drink",
+  "tags": [
+    "drink"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_drink_milk",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -32,
+        "y": -120,
+        "w": 64,
+        "h": 120
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    },
+    "drinkable": {
+      "sips": 3,
+      "onFinish": {
+        "type": "replace",
+        "prefabId": "milk_carton_empty"
+      }
+    }
+  },
+  "metadata": {
+    "name": "object.milk_carton.name",
+    "placeholder": true
+  }
+}

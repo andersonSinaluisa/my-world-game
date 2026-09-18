@@ -1,0 +1,38 @@
+{
+  "id": "sandwich",
+  "category": "food",
+  "tags": [
+    "food"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_food_sandwich",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -55,
+        "y": -80,
+        "w": 110,
+        "h": 80
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    },
+    "edible": {
+      "bites": 2,
+      "spriteByBitesLeft": {
+        "1": "obj_food_sandwich_bite_1"
+      }
+    }
+  },
+  "metadata": {
+    "name": "object.sandwich.name",
+    "placeholder": true
+  }
+}

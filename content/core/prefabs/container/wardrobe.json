@@ -1,0 +1,105 @@
+{
+  "id": "wardrobe",
+  "category": "container",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_wardrobe_closed",
+      "layer": "furniture",
+      "byState": {
+        "open": "env_home_wardrobe_open"
+      }
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -130,
+        "y": -420,
+        "w": 260,
+        "h": 420
+      },
+      "zones": {
+        "inside": {
+          "type": "rect",
+          "x": -116,
+          "y": -404,
+          "w": 232,
+          "h": 388
+        }
+      }
+    },
+    "states": {
+      "current": "closed",
+      "values": [
+        "closed",
+        "open"
+      ]
+    },
+    "openable": {
+      "openState": "open",
+      "closedState": "closed"
+    },
+    "container": {
+      "capacity": 12,
+      "accepts": [
+        "clothing"
+      ],
+      "slots": [
+        {
+          "x": -72,
+          "y": -300
+        },
+        {
+          "x": 0,
+          "y": -300
+        },
+        {
+          "x": 72,
+          "y": -300
+        },
+        {
+          "x": -72,
+          "y": -210
+        },
+        {
+          "x": 0,
+          "y": -210
+        },
+        {
+          "x": 72,
+          "y": -210
+        },
+        {
+          "x": -72,
+          "y": -120
+        },
+        {
+          "x": 0,
+          "y": -120
+        },
+        {
+          "x": 72,
+          "y": -120
+        },
+        {
+          "x": -72,
+          "y": -30
+        },
+        {
+          "x": 0,
+          "y": -30
+        },
+        {
+          "x": 72,
+          "y": -30
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "name": "object.wardrobe.name",
+    "placeholder": true
+  }
+}

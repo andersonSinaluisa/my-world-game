@@ -1,0 +1,32 @@
+{
+  "id": "milk_carton_empty",
+  "category": "misc",
+  "tags": [
+    "misc"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_drink_milk_empty",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -32,
+        "y": -120,
+        "w": 64,
+        "h": 120
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    }
+  },
+  "metadata": {
+    "name": "object.milk_carton_empty.name",
+    "placeholder": true
+  }
+}

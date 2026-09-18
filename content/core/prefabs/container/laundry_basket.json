@@ -1,0 +1,62 @@
+{
+  "id": "laundry_basket",
+  "category": "container",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_laundry_basket",
+      "layer": "furniture"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -68,
+        "y": -116,
+        "w": 136,
+        "h": 116
+      },
+      "zones": {
+        "inside": {
+          "type": "rect",
+          "x": -56,
+          "y": -108,
+          "w": 112,
+          "h": 90
+        }
+      }
+    },
+    "draggable": {
+      "mode": "floorOnly"
+    },
+    "container": {
+      "capacity": 4,
+      "accepts": [
+        "clothing"
+      ],
+      "slots": [
+        {
+          "x": -45,
+          "y": -40
+        },
+        {
+          "x": -15,
+          "y": -40
+        },
+        {
+          "x": 15,
+          "y": -40
+        },
+        {
+          "x": 45,
+          "y": -40
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "name": "object.laundry_basket.name",
+    "placeholder": true
+  }
+}

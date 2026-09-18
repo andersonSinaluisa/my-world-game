@@ -1,0 +1,43 @@
+{
+  "id": "juice_glass",
+  "category": "drink",
+  "tags": [
+    "drink"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_drink_juice",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -32,
+        "y": -88,
+        "w": 64,
+        "h": 88
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    },
+    "drinkable": {
+      "sips": 3,
+      "spriteBySipsLeft": {
+        "1": "obj_drink_juice_1",
+        "2": "obj_drink_juice_2"
+      },
+      "onFinish": {
+        "type": "replace",
+        "prefabId": "glass_empty"
+      }
+    }
+  },
+  "metadata": {
+    "name": "object.juice_glass.name",
+    "placeholder": true
+  }
+}

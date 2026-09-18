@@ -22,6 +22,17 @@
     "animations": {
       "drop": "squash",
       "tap": "bounce"
+    },
+    "edible": {
+      "bites": 3,
+      "spriteByBitesLeft": {
+        "1": "obj_food_apple_red_bite_1",
+        "2": "obj_food_apple_red_bite_2"
+      },
+      "onFinish": {
+        "type": "replace",
+        "prefabId": "apple_core"
+      }
     }
   },
   "metadata": {

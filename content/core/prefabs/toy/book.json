@@ -1,0 +1,32 @@
+{
+  "id": "book",
+  "category": "toy",
+  "tags": [
+    "toy"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_toy_book",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -45,
+        "y": -70,
+        "w": 90,
+        "h": 70
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    }
+  },
+  "metadata": {
+    "name": "object.book.name",
+    "placeholder": true
+  }
+}

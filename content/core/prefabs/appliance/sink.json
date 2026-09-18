@@ -1,0 +1,40 @@
+{
+  "id": "sink",
+  "category": "appliance",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_sink_off",
+      "layer": "furniture",
+      "byState": {
+        "on": "env_home_sink_on"
+      }
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -100,
+        "y": -216,
+        "w": 200,
+        "h": 216
+      }
+    },
+    "states": {
+      "current": "off",
+      "values": [
+        "off",
+        "on"
+      ]
+    },
+    "switchable": {
+      "onState": "on",
+      "offState": "off"
+    }
+  },
+  "metadata": {
+    "name": "object.sink.name",
+    "placeholder": true
+  }
+}

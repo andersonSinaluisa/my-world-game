@@ -1,0 +1,32 @@
+{
+  "id": "towel",
+  "category": "misc",
+  "tags": [
+    "bath"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_bath_towel",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -45,
+        "y": -76,
+        "w": 90,
+        "h": 76
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    }
+  },
+  "metadata": {
+    "name": "object.towel.name",
+    "placeholder": true
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "id": "bathtub",
+  "category": "furniture",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_bathtub",
+      "layer": "furniture"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -220,
+        "y": -176,
+        "w": 440,
+        "h": 176
+      }
+    },
+    "seat": {
+      "anchor": {
+        "x": -60,
+        "y": -60
+      }
+    }
+  },
+  "metadata": {
+    "name": "object.bathtub.name",
+    "placeholder": true
+  }
+}

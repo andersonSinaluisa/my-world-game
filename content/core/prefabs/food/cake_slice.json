@@ -1,0 +1,36 @@
+{
+  "id": "cake_slice",
+  "category": "food",
+  "tags": [
+    "food",
+    "sweet"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_food_cake",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -45,
+        "y": -60,
+        "w": 90,
+        "h": 60
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    },
+    "edible": {
+      "bites": 2
+    }
+  },
+  "metadata": {
+    "name": "object.cake_slice.name",
+    "placeholder": true
+  }
+}

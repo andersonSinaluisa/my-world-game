@@ -1,0 +1,35 @@
+{
+  "id": "armchair",
+  "category": "furniture",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_armchair",
+      "layer": "furniture"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -87.5,
+        "y": -240,
+        "w": 175,
+        "h": 240
+      }
+    },
+    "seat": {
+      "anchor": {
+        "x": 0,
+        "y": -100
+      }
+    },
+    "draggable": {
+      "mode": "floorOnly"
+    }
+  },
+  "metadata": {
+    "name": "object.armchair.name",
+    "placeholder": true
+  }
+}

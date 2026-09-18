@@ -1,0 +1,39 @@
+{
+  "id": "coffee_table",
+  "category": "furniture",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_coffee_table",
+      "layer": "furniture"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -211.5,
+        "y": -90,
+        "w": 423,
+        "h": 90
+      }
+    },
+    "surface": {
+      "segments": [
+        {
+          "x1": -199.5,
+          "x2": 199.5,
+          "y": -80
+        }
+      ],
+      "carriesItems": true
+    },
+    "draggable": {
+      "mode": "floorOnly"
+    }
+  },
+  "metadata": {
+    "name": "object.coffee_table.name",
+    "placeholder": true
+  }
+}

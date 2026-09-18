@@ -1,0 +1,32 @@
+{
+  "id": "rubber_duck",
+  "category": "toy",
+  "tags": [
+    "toy"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_toy_duck",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -55,
+        "y": -100,
+        "w": 110,
+        "h": 100
+      },
+      "padding": 10
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "wiggle"
+    }
+  },
+  "metadata": {
+    "name": "object.rubber_duck.name",
+    "placeholder": true
+  }
+}
