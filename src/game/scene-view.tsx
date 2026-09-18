@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useImperativeHandle, useMemo, useState, type Ref } from 'react';
+import { memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState, type Ref } from 'react';
 import { Easing, useAnimatedReaction, useSharedValue, withRepeat, withTiming, type SharedValue } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
@@ -120,6 +120,8 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
   const [cullX, setCullX] = useState(() => game.selectors.cameraX() ?? 0);
   const [drag, setDrag] = useState<DragVisual | null>(null);
   const breath = useSharedValue(0);
+  // focusEntity (HU-GAME-023 R4) animates like a zone jump; the latest jumpTo is kept in a ref.
+  const focusRef = useRef<(x: number) => void>(() => {});
 
   useEffect(() => {
     breath.set(withRepeat(withTiming(Math.PI * 2, { duration: BREATH_PERIOD_MS, easing: Easing.linear }), -1, false));
@@ -141,6 +143,10 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
     () =>
       game.events.subscribe((batch) => {
         for (const event of batch) {
+          if (event.type === 'focusRequested') {
+            focusRef.current(event.x);
+            continue;
+          }
           if (event.type !== 'sceneLoaded') continue;
           const active = game.selectors.activeScene();
           const w = viewportW.get();
@@ -242,6 +248,10 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
     },
     [bounds, cameraX, settle, viewportW],
   );
+
+  useEffect(() => {
+    focusRef.current = jumpTo;
+  }, [jumpTo]);
 
   useImperativeHandle(
     cameraRef,

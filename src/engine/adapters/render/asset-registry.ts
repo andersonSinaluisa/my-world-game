@@ -33,6 +33,11 @@ export class AssetRegistry {
     return Object.prototype.hasOwnProperty.call(this.entries, key);
   }
 
+  /** Metro module of an asset, for React Native <Image> (creator icons). Never throws. */
+  source(key: AssetKey): number | undefined {
+    return this.entries[key]?.source;
+  }
+
   size(key: AssetKey): { w: number; h: number } | undefined {
     const entry = this.entries[key];
     return entry ? { w: entry.w, h: entry.h } : undefined;

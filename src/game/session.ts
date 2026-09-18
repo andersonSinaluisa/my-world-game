@@ -42,6 +42,8 @@ export class GameSession {
   readonly facade: GameFacade;
   readonly textures: TextureStore;
   private save: SaveService | undefined;
+  /** Character to center when the play screen shows again (HU-GAME-023 R4). */
+  private pendingFocus: string | undefined;
   private starting: Promise<LoadStatus> | undefined;
   private appState: { remove(): void } | undefined;
 
@@ -103,6 +105,22 @@ export class GameSession {
     if (!ng) throw new Error('No newGame configuration in the content packs');
     this.engine.setPlayerState({ currentSceneId: ng.sceneId, wallet: { coins: ng.coins }, unlocks: [...ng.unlocks], inventory: { capacity: ng.inventoryCapacity }, flags: {} });
     this.engine.dispatch({ type: 'enterScene', sceneId: ng.sceneId, spawnId: ng.spawnId });
+  }
+
+  requestFocus(entityId: string): void {
+    this.pendingFocus = entityId;
+  }
+
+  /** Returns and clears the pending focus. */
+  takeFocus(): string | undefined {
+    const id = this.pendingFocus;
+    this.pendingFocus = undefined;
+    return id;
+  }
+
+  /** Metro module of an asset key, for React Native icons. */
+  assetSource(key: string): number | undefined {
+    return this.textures.registry.source(key);
   }
 
   flush(): Promise<void> {

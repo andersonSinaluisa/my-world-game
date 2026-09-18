@@ -17,7 +17,9 @@ export type GameEvent =
   | { type: 'sceneWillChange'; from?: SceneId; to: SceneId }
   | { type: 'sceneLoaded'; from?: SceneId; to: SceneId; cameraX?: number }
   /** Active zone of the camera changed (HU-GAME-012). Derived state: never saved. */
-  | { type: 'zoneChanged'; sceneId: SceneId; zoneId?: string };
+  | { type: 'zoneChanged'; sceneId: SceneId; zoneId?: string }
+  /** Camera should center this world x (focusEntity, HU-GAME-023 R4). Presentation only. */
+  | { type: 'focusRequested'; entityId: EntityId; x: number };
 
 /** Events that never change game state (presentation / notifications only). */
 export const PRESENTATION_EVENTS: ReadonlySet<GameEvent['type']> = new Set([
@@ -25,6 +27,7 @@ export const PRESENTATION_EVENTS: ReadonlySet<GameEvent['type']> = new Set([
   'interactionPerformed',
   'interactionRejected',
   'sceneWillChange',
+  'focusRequested',
 ]);
 
 export type GameEventType = GameEvent['type'];

@@ -65,5 +65,15 @@
   "haircolor.hair_berry.name": "Frambuesa",
   "haircolor.hair_blue.name": "Azul",
   "haircolor.hair_white.name": "Blanco",
-  "haircolor.hair_green.name": "Verde"
+  "haircolor.hair_green.name": "Verde",
+  "ui.play.characters": "Personajes",
+  "ui.characters.new": "Nuevo personaje",
+  "ui.characters.full": "No caben más personajes",
+  "ui.characters.edit": "Cambiar personaje",
+  "ui.creator.tab.body": "Cuerpo",
+  "ui.creator.tab.skin": "Piel",
+  "ui.creator.tab.face": "Cara",
+  "ui.creator.tab.hair": "Pelo",
+  "ui.creator.tab.clothes": "Ropa",
+  "ui.creator.confirm": "Listo"
 }

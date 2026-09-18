@@ -1,5 +1,6 @@
 import type { ActionEnv } from '../actions/types';
 import { handAnchor } from '../characters/catalog';
+import { CharacterCommands } from '../characters/character-commands';
 import { CharacterSystem, type DragOrigin } from '../characters/character-system';
 import { CharacterLayerSelector, HELD_SCALE, type CharacterLayerData } from '../characters/layers';
 import type { ContentRegistry } from '../content/registry';
@@ -77,6 +78,7 @@ export class GameEngine {
   readonly rules: RuleIndex;
   readonly resolver: InteractionResolver;
   readonly characters: CharacterSystem;
+  readonly characterCommands: CharacterCommands;
   private readonly layerSelector: CharacterLayerSelector;
 
   private activeScene: ActiveSceneInfo | undefined;
@@ -102,6 +104,16 @@ export class GameEngine {
     this.effects = new VisualEffects(this.world);
     const catalog = () => this.content?.characterCatalog();
     this.characters = new CharacterSystem(this.world, this.events, this.clock, this.scheduler, this.logger, catalog);
+    this.characterCommands = new CharacterCommands({
+      world: this.world,
+      locations: this.locations,
+      characters: this.characters,
+      content: this.content,
+      clock: this.clock,
+      logger: this.logger,
+      newId: () => this.newRuntimeId(),
+      scene: () => this.activeScene,
+    });
     this.layerSelector = new CharacterLayerSelector(
       this.world,
       () => {
@@ -210,6 +222,14 @@ export class GameEngine {
         return this.dragEnd(command.entityId, command.worldPoint, command.uiTarget, command.minHitWorld);
       case 'dragCancel':
         return this.dragCancel(command.entityId);
+      case 'createCharacter':
+        return this.characterCommands.createCharacter(command.appearance, command.outfit ?? {});
+      case 'updateAppearance':
+        return this.characterCommands.updateAppearance(command.characterId, command.patch ?? {});
+      case 'setOutfitSlot':
+        return this.characterCommands.setOutfitSlot(command.characterId, command.slot, command.prefabId ?? null);
+      case 'focusEntity':
+        return this.focusEntity(command.entityId);
       default:
         return { ok: false, reason: 'unknownCommand' };
     }
@@ -318,6 +338,19 @@ export class GameEngine {
     if (next === this.zoneId) return;
     this.zoneId = next;
     this.world.emit({ type: 'zoneChanged', sceneId: scene.id, zoneId: next });
+  }
+
+  /** Moves the camera to an entity; enters its scene first when it is elsewhere (GAME_ENGINE §4). */
+  private focusEntity(entityId: EntityId): CommandResult {
+    const e = this.world.get(entityId);
+    if (!e) return { ok: false, reason: 'entityNotFound' };
+    if (e.location.kind !== 'scene') return { ok: false, reason: 'invalidCommand' };
+    if (this.activeScene?.id !== e.location.sceneId) {
+      const r = this.enterScene(e.location.sceneId, 'default');
+      if (!r.ok) return r;
+    }
+    this.world.emit({ type: 'focusRequested', entityId, x: e.components.transform?.x ?? 0 });
+    return { ok: true, entityId };
   }
 
   // ---------- input (HU-GAME-027/028/031/032) ----------

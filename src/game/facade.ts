@@ -4,11 +4,15 @@ import type { GameEngine } from '@/engine/core/engine';
 import type { Entity, EntityInit } from '@/engine/core/entity';
 import { entityIdOf, PRESENTATION_EVENTS, type EventBus, type GameEvent } from '@/engine/core/events';
 import type { AssetKey, EntityId, WorldPoint } from '@/engine/core/types';
+import type { CharacterPartsCatalog } from '@/engine/characters/catalog';
+import type { CharacterDraft, CharacterSummary, ClothingOption } from '@/engine/characters/character-commands';
 import type { CharacterLayerData } from '@/engine/characters/layers';
 import type { LocaleId } from '@/engine/content/schemas';
 import { cullEntities, cullingRange, type AssetSizeLookup } from '@/engine/scene/culling';
 import { isRenderable, sortForRender } from '@/engine/scene/render-order';
 import type { ActiveSceneInfo } from '@/engine/scene/scene-types';
+
+export { MAX_CHARACTERS } from '@/engine/characters/character-system';
 
 /** Data ready for the renderer (GAME_ENGINE §6). */
 export interface EntityRenderData {
@@ -49,6 +53,14 @@ export interface GameFacade {
     activeZone(): string | undefined;
     /** Layers of a character, memoized (same array while its look does not change, HU-GAME-013 R7). */
     characterLayers(id: EntityId): CharacterLayerData[];
+    /** Player characters, oldest first (HU-GAME-022 R4). Same array while nothing changes. */
+    characters(): CharacterSummary[];
+    /** Options of the creator (HU-GAME-018 R2). */
+    characterCatalog(): CharacterPartsCatalog | undefined;
+    /** starterClothes with their slot and icon (HU-GAME-021). */
+    clothingOptions(): ClothingOption[];
+    /** Layers of an unsaved draft, idle and neutral (HU-GAME-018 R5). Same array for an equal draft. */
+    previewCharacterLayers(draft: CharacterDraft): CharacterLayerData[];
     visibleEntities(viewport?: ViewportQuery): EntityRenderData[];
   };
   /** For adapters (audio, effects). UI reads state through selectors, never through events. */
@@ -97,6 +109,9 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
   let snapshot: GameSnapshot = { version: 0 };
   // One entry per viewport key: several consumers (sandbox counter + SceneView) must each get a stable
   // array for useSyncExternalStore. Entries of an older snapshot version are dropped.
+  let charactersCache: { version: number; data: CharacterSummary[] } | undefined;
+  const previewCache = new Map<string, CharacterLayerData[]>();
+  let clothingCache: ClothingOption[] | undefined;
   let visibleCache: { version: number; byKey: Map<string, EntityRenderData[]> } = { version: -1, byKey: new Map() };
 
   // Commands dispatched from listeners are queued and run after the current one (deterministic order).
@@ -166,6 +181,27 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
       cameraX: () => engine.playerState.cameraX,
       activeZone: () => engine.activeZoneId,
       characterLayers: (id) => engine.characterLayers(id),
+      characters() {
+        if (charactersCache?.version !== snapshot.version) {
+          charactersCache = { version: snapshot.version, data: engine.characterCommands.characters() };
+        }
+        return charactersCache.data;
+      },
+      characterCatalog: () => engine.content?.characterCatalog(),
+      clothingOptions() {
+        clothingCache ??= engine.characterCommands.clothingOptions();
+        return clothingCache;
+      },
+      previewCharacterLayers(draft) {
+        const key = JSON.stringify([draft.appearance, draft.outfit]);
+        let layers = previewCache.get(key);
+        if (!layers) {
+          if (previewCache.size >= 16) previewCache.delete(previewCache.keys().next().value!);
+          layers = engine.characterCommands.previewLayers(draft);
+          previewCache.set(key, layers);
+        }
+        return layers;
+      },
       visibleEntities(viewport) {
         const scene = engine.scene;
         if (!scene) return NO_ENTITIES;
