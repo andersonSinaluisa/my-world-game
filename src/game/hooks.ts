@@ -4,12 +4,19 @@ import type { Entity } from '@/engine/core/entity';
 import type { EntityId } from '@/engine/core/types';
 import type { ActiveSceneInfo } from '@/engine/scene/scene-types';
 
-import type { EntityRenderData, ViewportQuery } from './facade';
+import type { EntityRenderData, GameFacade, ViewportQuery } from './facade';
 import { useGame } from './game-context';
 
 /** Re-renders only when this entity changes (PERFORMANCE §4 rule 2). */
 export function useEntity(id: EntityId): Entity | undefined {
-  const game = useGame();
+  return useEntityOf(useGame(), id);
+}
+
+/**
+ * Same as useEntity with an explicit facade. Required inside the Skia <Canvas>: its reconciler does not
+ * reliably forward React context from the host tree.
+ */
+export function useEntityOf(game: GameFacade, id: EntityId): Entity | undefined {
   const subscribe = useCallback((listener: () => void) => game.subscribeEntity(id, listener), [game, id]);
   const get = useCallback(() => game.getEntity(id), [game, id]);
   return useSyncExternalStore(subscribe, get, get);

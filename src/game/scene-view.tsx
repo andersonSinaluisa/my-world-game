@@ -15,9 +15,9 @@ import { CAMERA_JUMP_MS, cameraTargetFor, clampCameraX } from '@/engine/scene/ca
 import { CULLING_RECOMPUTE_RATIO } from '@/engine/scene/culling';
 import { sceneBounds } from '@/engine/scene/scene-types';
 
-import { resolveAsset } from './facade';
+import { resolveAsset, type GameFacade } from './facade';
 import { useGame } from './game-context';
-import { useActiveScene, useEntity, useVisibleEntities } from './hooks';
+import { useActiveScene, useEntityOf, useVisibleEntities } from './hooks';
 
 export interface CameraController {
   /** Centers the camera on world x with a 450 ms animation (RENDERING §5), then reports cameraSettled. */
@@ -46,10 +46,17 @@ interface DragVisual {
   grabOffset: { x: number; y: number };
 }
 
+interface EntityNodeProps {
+  /** Passed explicitly: this renders inside the Skia <Canvas>, where React context is not available. */
+  game: GameFacade;
+  id: EntityId;
+  textures: TextureStore;
+  hidden: boolean;
+}
+
 /** Subscribes to a single entity so only it re-renders when it changes (PERFORMANCE §4 rule 2). */
-const EntityNode = memo(function EntityNode({ id, textures, hidden }: { id: EntityId; textures: TextureStore; hidden: boolean }) {
-  const game = useGame();
-  const entity = useEntity(id);
+const EntityNode = memo(function EntityNode({ game, id, textures, hidden }: EntityNodeProps) {
+  const entity = useEntityOf(game, id);
   const sprite = entity?.components.sprite;
   // The original is hidden while its DragProxy is on screen (HU-GAME-027 R5).
   if (hidden || !entity || !sprite || entity.location.kind !== 'scene') return null;
@@ -243,7 +250,7 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
         )
       }>
       {visible.map((d) => (
-        <EntityNode key={d.id} id={d.id} textures={textures} hidden={drag?.id === d.id} />
+        <EntityNode key={d.id} game={game} id={d.id} textures={textures} hidden={drag?.id === d.id} />
       ))}
     </SceneCanvas>
   );
