@@ -45,10 +45,17 @@ interface BackgroundLayer {
 interface Zone {
   id: string;                         // "kitchen"
   name: I18nKey;
-  x1: number; x2: number;             // rango horizontal
+  x1: number; x2: number;             // rango horizontal semiabierto: x1 ≤ x < x2 (el borde pertenece a la zona siguiente)
   audio?: { music?: AudioKey; ambience?: AudioKey };
   snapCameraX?: number;               // x central de la zona para "saltar" desde el mapa
 }
+
+// Reglas de zonas (HU-GAME-012, las comprueba el validador):
+// - están dentro de 0..width, con x1 < x2 (`invalidZone`);
+// - sus `id` son únicos (`duplicateZoneId`);
+// - no se solapan (`zoneOverlap`, error en /zones/<i> de la segunda);
+// - puede haber huecos: ahí la zona activa anterior se mantiene;
+// - sin snapCameraX, el salto centra (x1 + x2) / 2.
 
 interface SpawnPoint {
   id: string;                         // "default", "front_door"

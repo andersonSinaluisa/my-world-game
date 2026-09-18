@@ -44,6 +44,8 @@ export interface GameFacade {
     activeScene(): ActiveSceneInfo | undefined;
     /** Last settled camera position (player.cameraX), set by sceneLoaded and cameraSettled. */
     cameraX(): number | undefined;
+    /** Active zone (room) of the camera; updated on cameraSettled and scene entry (HU-GAME-012). */
+    activeZone(): string | undefined;
     visibleEntities(viewport?: ViewportQuery): EntityRenderData[];
   };
   /** For adapters (audio, effects). UI reads state through selectors, never through events. */
@@ -159,6 +161,7 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
     selectors: {
       activeScene: () => engine.scene,
       cameraX: () => engine.playerState.cameraX,
+      activeZone: () => engine.activeZoneId,
       visibleEntities(viewport) {
         const scene = engine.scene;
         if (!scene) return NO_ENTITIES;

@@ -8,6 +8,7 @@ import { RuleIndex } from '../rules/rule-index';
 import { clampCameraX } from '../scene/camera-math';
 import { buildScene, type SavedSceneState } from '../scene/scene-builder';
 import { sceneBounds, type ActiveSceneInfo } from '../scene/scene-types';
+import { activeZoneFor } from '../scene/zones';
 import { recomputeSupport } from '../systems/surface-system';
 import { VisualEffects } from '../systems/visual-effects';
 import type { Components } from '../components/registry';
@@ -64,6 +65,7 @@ export class GameEngine {
   private activeScene: ActiveSceneInfo | undefined;
   private player: PlayerState = {};
   private viewportW: number | undefined;
+  private zoneId: string | undefined;
   private drag: DragState | undefined;
   /** Saved diff per scene, provided by the SaveService (HU-GAME-053). */
   savedSceneProvider: ((sceneId: SceneId) => SavedSceneState | undefined) | undefined;
@@ -107,6 +109,11 @@ export class GameEngine {
     return this.player;
   }
 
+  /** Active zone of the active scene (HU-GAME-012). */
+  get activeZoneId(): string | undefined {
+    return this.zoneId;
+  }
+
   get draggingId(): EntityId | undefined {
     return this.drag?.entityId;
   }
@@ -131,6 +138,7 @@ export class GameEngine {
       for (const e of entities) this.world.create(e);
       const from = this.activeScene?.id;
       this.activeScene = scene;
+      this.zoneId = undefined;
       this.player = { ...this.player, currentSceneId: scene.id };
       recomputeSupport(this.world, scene);
       this.world.emit({ type: 'sceneLoaded', from, to: scene.id });
@@ -233,6 +241,9 @@ export class GameEngine {
       this.player = { ...this.player, currentSceneId: sceneId, cameraX };
       recomputeSupport(this.world, built.info);
       this.world.emit({ type: 'sceneLoaded', from, to: sceneId, cameraX });
+      // The zone is computed with the initial camera (HU-GAME-012 R2); a new scene starts without zone.
+      this.zoneId = undefined;
+      this.updateZone(built.info, cameraX);
     });
     return OK;
   }
@@ -253,11 +264,24 @@ export class GameEngine {
     if (!Number.isFinite(x) || !(viewportW > 0)) return { ok: false, reason: 'invalidCommand' };
     if (!this.activeScene) return { ok: false, reason: 'noActiveScene' };
     this.viewportW = viewportW;
-    const cameraX = clampCameraX(x, sceneBounds(this.activeScene), viewportW);
-    if (this.player.cameraX === cameraX) return OK;
-    this.player = { ...this.player, cameraX };
-    this.world.emit({ type: 'playerChanged', keys: ['cameraX'] });
+    const scene = this.activeScene;
+    const cameraX = clampCameraX(x, sceneBounds(scene), viewportW);
+    this.world.transaction(() => {
+      if (this.player.cameraX !== cameraX) {
+        this.player = { ...this.player, cameraX };
+        this.world.emit({ type: 'playerChanged', keys: ['cameraX'] });
+      }
+      this.updateZone(scene, cameraX);
+    });
     return OK;
+  }
+
+  /** Recomputes the active zone; emits zoneChanged only when it changes (HU-GAME-012 R2-R3). */
+  private updateZone(scene: ActiveSceneInfo, cameraX: number): void {
+    const next = activeZoneFor(scene, cameraX, this.viewportW, this.zoneId);
+    if (next === this.zoneId) return;
+    this.zoneId = next;
+    this.world.emit({ type: 'zoneChanged', sceneId: scene.id, zoneId: next });
   }
 
   // ---------- input (HU-GAME-027/028/031/032) ----------
