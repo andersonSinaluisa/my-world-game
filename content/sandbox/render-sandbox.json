@@ -1,0 +1,1108 @@
+{
+  "_comment": "Render sandbox for EPIC-002 manual checks. Temporary until HU-GAME-010 loads scenes from packs (SCENE_SCHEMA).",
+  "scene": {
+    "id": "sandbox:render",
+    "size": {
+      "width": 7680,
+      "height": 1080
+    },
+    "background": {
+      "layers": [
+        {
+          "id": "ground",
+          "chunks": [
+            {
+              "asset": "env_sandbox_bg_grass_01",
+              "x": 0,
+              "width": 1920
+            },
+            {
+              "asset": "env_sandbox_bg_forest_01",
+              "x": 1920,
+              "width": 1920
+            },
+            {
+              "asset": "env_sandbox_bg_grass_01",
+              "x": 3840,
+              "width": 1920
+            },
+            {
+              "asset": "env_sandbox_bg_forest_01",
+              "x": 5760,
+              "width": 1920
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "entities": [
+    {
+      "id": "sandbox:render/sun",
+      "tags": [],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 900,
+          "y": 260
+        },
+        "sprite": {
+          "asset": "env_sandbox_sun_01",
+          "layer": "wallDecor"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/cloud_0",
+      "tags": [],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 500,
+          "y": 330
+        },
+        "sprite": {
+          "asset": "env_sandbox_cloud_01",
+          "layer": "wallDecor"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/cloud_1",
+      "tags": [],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 2300,
+          "y": 330
+        },
+        "sprite": {
+          "asset": "env_sandbox_cloud_01",
+          "layer": "wallDecor"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/cloud_2",
+      "tags": [],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 4100,
+          "y": 330
+        },
+        "sprite": {
+          "asset": "env_sandbox_cloud_01",
+          "layer": "wallDecor"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/cloud_3",
+      "tags": [],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 5900,
+          "y": 330
+        },
+        "sprite": {
+          "asset": "env_sandbox_cloud_01",
+          "layer": "wallDecor"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/cloud_4",
+      "tags": [],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 7200,
+          "y": 330
+        },
+        "sprite": {
+          "asset": "env_sandbox_cloud_01",
+          "layer": "wallDecor"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/house_a",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 700,
+          "y": 940
+        },
+        "sprite": {
+          "asset": "env_sandbox_house_01",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/house_b",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 2500,
+          "y": 940
+        },
+        "sprite": {
+          "asset": "env_sandbox_house_02",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/house_c",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 4300,
+          "y": 940
+        },
+        "sprite": {
+          "asset": "env_sandbox_house_01",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/house_d",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 6100,
+          "y": 940
+        },
+        "sprite": {
+          "asset": "env_sandbox_house_02",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/tree_0",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 200,
+          "y": 950
+        },
+        "sprite": {
+          "asset": "env_sandbox_tree_02",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/tree_1",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 840,
+          "y": 950
+        },
+        "sprite": {
+          "asset": "env_sandbox_tree_01",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/tree_2",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 1480,
+          "y": 950
+        },
+        "sprite": {
+          "asset": "env_sandbox_tree_02",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/tree_3",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 2120,
+          "y": 950
+        },
+        "sprite": {
+          "asset": "env_sandbox_tree_01",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/tree_4",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 2760,
+          "y": 950
+        },
+        "sprite": {
+          "asset": "env_sandbox_tree_02",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/tree_5",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 3400,
+          "y": 950
+        },
+        "sprite": {
+          "asset": "env_sandbox_tree_01",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/tree_6",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 4040,
+          "y": 950
+        },
+        "sprite": {
+          "asset": "env_sandbox_tree_02",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/tree_7",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 4680,
+          "y": 950
+        },
+        "sprite": {
+          "asset": "env_sandbox_tree_01",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/tree_8",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 5320,
+          "y": 950
+        },
+        "sprite": {
+          "asset": "env_sandbox_tree_02",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/tree_9",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 5960,
+          "y": 950
+        },
+        "sprite": {
+          "asset": "env_sandbox_tree_01",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/tree_10",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 6600,
+          "y": 950
+        },
+        "sprite": {
+          "asset": "env_sandbox_tree_02",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/tree_11",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 7240,
+          "y": 950
+        },
+        "sprite": {
+          "asset": "env_sandbox_tree_01",
+          "layer": "furniture"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/fence_0",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 360,
+          "y": 980
+        },
+        "sprite": {
+          "asset": "env_sandbox_fence_01",
+          "layer": "furniture",
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/fence_1",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 1260,
+          "y": 980
+        },
+        "sprite": {
+          "asset": "env_sandbox_fence_01",
+          "layer": "furniture",
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/fence_2",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 2160,
+          "y": 980
+        },
+        "sprite": {
+          "asset": "env_sandbox_fence_01",
+          "layer": "furniture",
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/fence_3",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 3060,
+          "y": 980
+        },
+        "sprite": {
+          "asset": "env_sandbox_fence_01",
+          "layer": "furniture",
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/fence_4",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 3960,
+          "y": 980
+        },
+        "sprite": {
+          "asset": "env_sandbox_fence_01",
+          "layer": "furniture",
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/fence_5",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 4860,
+          "y": 980
+        },
+        "sprite": {
+          "asset": "env_sandbox_fence_01",
+          "layer": "furniture",
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/fence_6",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 5760,
+          "y": 980
+        },
+        "sprite": {
+          "asset": "env_sandbox_fence_01",
+          "layer": "furniture",
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/fence_7",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 6660,
+          "y": 980
+        },
+        "sprite": {
+          "asset": "env_sandbox_fence_01",
+          "layer": "furniture",
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/fence_8",
+      "tags": [
+        "furniture"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 7560,
+          "y": 980
+        },
+        "sprite": {
+          "asset": "env_sandbox_fence_01",
+          "layer": "furniture",
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_0",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 300,
+          "y": 1000
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_02",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "bounce",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_1",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 720,
+          "y": 1020
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_01",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "wiggle",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_2",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 1140,
+          "y": 1040
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_02",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "squash",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_3",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 1560,
+          "y": 1000
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_01",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "pulse",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_4",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 1980,
+          "y": 1020
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_02",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "shake",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_5",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 2400,
+          "y": 1040
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_01",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "spin",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_6",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 2820,
+          "y": 1000
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_02",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "bounce",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_7",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 3240,
+          "y": 1020
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_01",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "wiggle",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_8",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 3660,
+          "y": 1040
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_02",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "squash",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_9",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 4080,
+          "y": 1000
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_01",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "pulse",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_10",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 4500,
+          "y": 1020
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_02",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "shake",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_11",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 4920,
+          "y": 1040
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_01",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "spin",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_12",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 5340,
+          "y": 1000
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_02",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "bounce",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_13",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 5760,
+          "y": 1020
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_01",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "wiggle",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_14",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 6180,
+          "y": 1040
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_02",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "squash",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_15",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 6600,
+          "y": 1000
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_01",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "pulse",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_16",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 7020,
+          "y": 1020
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_02",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "shake",
+          "drop": "squash"
+        }
+      }
+    },
+    {
+      "id": "sandbox:render/bush_17",
+      "tags": [
+        "plant"
+      ],
+      "location": {
+        "kind": "scene",
+        "sceneId": "sandbox:render"
+      },
+      "components": {
+        "transform": {
+          "x": 7440,
+          "y": 1040
+        },
+        "sprite": {
+          "asset": "obj_sandbox_bush_01",
+          "layer": "props"
+        },
+        "draggable": {},
+        "animations": {
+          "tap": "spin",
+          "drop": "squash"
+        }
+      }
+    }
+  ]
+}
