@@ -65,5 +65,15 @@
   "haircolor.hair_berry.name": "Berry",
   "haircolor.hair_blue.name": "Blue",
   "haircolor.hair_white.name": "White",
-  "haircolor.hair_green.name": "Green"
+  "haircolor.hair_green.name": "Green",
+  "ui.play.characters": "Characters",
+  "ui.characters.new": "New character",
+  "ui.characters.full": "No room for more characters",
+  "ui.characters.edit": "Change character",
+  "ui.creator.tab.body": "Body",
+  "ui.creator.tab.skin": "Skin",
+  "ui.creator.tab.face": "Face",
+  "ui.creator.tab.hair": "Hair",
+  "ui.creator.tab.clothes": "Clothes",
+  "ui.creator.confirm": "Done"
 }

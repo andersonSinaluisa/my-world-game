@@ -1,4 +1,6 @@
-import type { EntityId, SceneId, WorldPoint } from './types';
+import type { Appearance } from '../components/base';
+import type { WearSlot } from './location';
+import type { EntityId, PrefabId, SceneId, WorldPoint } from './types';
 
 /**
  * Commands (GAME_ENGINE §4). Only the ones implemented so far are listed; each HU adds its own.
@@ -12,7 +14,11 @@ export type GameCommand =
   | { type: 'pointerTap'; worldPoint: WorldPoint; minHitWorld?: number }
   | { type: 'dragStart'; entityId: EntityId; worldPoint: WorldPoint }
   | { type: 'dragEnd'; entityId: EntityId; worldPoint: WorldPoint; uiTarget?: 'inventory' | 'trash'; minHitWorld?: number }
-  | { type: 'dragCancel'; entityId: EntityId };
+  | { type: 'dragCancel'; entityId: EntityId }
+  | { type: 'createCharacter'; appearance: Appearance; outfit: Partial<Record<WearSlot, PrefabId>> }
+  | { type: 'updateAppearance'; characterId: EntityId; patch: Partial<Appearance> }
+  | { type: 'setOutfitSlot'; characterId: EntityId; slot: WearSlot; prefabId: PrefabId | null }
+  | { type: 'focusEntity'; entityId: EntityId };
 
 export type CommandFailure =
   | 'unknownCommand'
@@ -24,9 +30,13 @@ export type CommandFailure =
   | 'notDraggable'
   | 'notDragging'
   | 'alreadyDragging'
+  | 'maxCharacters'
+  | 'invalidPart'
+  | 'notCharacter'
   | 'notImplemented'
   | 'internalError';
 
-export type CommandResult = { ok: true; startDrag?: EntityId } | { ok: false; reason: CommandFailure };
+/** `entityId`: entity created or affected (createCharacter returns the new character, HU-GAME-023 R4). */
+export type CommandResult = { ok: true; startDrag?: EntityId; entityId?: EntityId } | { ok: false; reason: CommandFailure };
 
 export const OK: CommandResult = { ok: true };

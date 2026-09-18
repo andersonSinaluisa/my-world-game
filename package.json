@@ -91,7 +91,10 @@
         "moduleNameMapper": {
           "^@/(.*)$": "<rootDir>/src/$1",
           "^@content/(.*)$": "<rootDir>/content/$1"
-        }
+        },
+        "setupFiles": [
+          "<rootDir>/src/test/jest-app-setup.ts"
+        ]
       }
     ]
   }

@@ -77,10 +77,10 @@ Todos los comandos pasan por el `GameFacade` (§6). La UI y el Input **nunca** l
 | `viewportChanged { viewportW }` | Render (al medir la Canvas o rotar) | Guarda el ancho visible en world units para centrar la cámara inicial de cada escena ([SCENE_SYSTEM §2](SCENE_SYSTEM.md), paso 6). Sin viewport conocido, la cámara inicial usa la x del spawn. |
 | `enterScene { sceneId, spawnId, travelers? }` | Carga de partida, puertas | Descarga la escena activa (eventos `entityRemoved` con `unload: true`), instancia la nueva (prefab ⊕ overrides ⊕ diff guardado) y emite `sceneLoaded { cameraX }`. Fallos: `noContent`, `unknownScene`. |
 | `enterScene { sceneId, spawnId }` | UI (mapa) o acción `teleport` | SceneService |
-| `createCharacter { appearance, outfit }` | Creator UI | Crea la entidad y las prendas |
-| `updateAppearance { characterId, patch }` | Creator UI | Actualiza `appearance` |
+| `createCharacter { appearance, outfit }` | Creator UI | Crea el personaje en el spawn `default` de la escena activa (desplazado 120 u si está ocupado) y una instancia `worn` por prenda, en una transacción. Devuelve `{ ok: true, entityId }`. Fallos: `maxCharacters` (12), `invalidPart`, `noActiveScene` |
+| `updateAppearance { characterId, patch }` | Creator UI | Actualiza solo los campos del `patch` (recalcula sprite y hitbox si cambia el cuerpo). No toca location, pose ni ropa. Fallos: `entityNotFound`, `notCharacter`, `invalidPart` |
 | `setOutfitSlot { characterId, slot, prefabId \| null }` | Creator UI (modo edición) | Viste una instancia nueva del prefab. La prenda anterior va al **armario** si hay espacio o, si no, a los pies del personaje |
-| `focusEntity { entityId }` | UI (lista de personajes) | Mueve la cámara hasta la entidad y, si está en otra escena, entra en esa escena |
+| `focusEntity { entityId }` | UI (lista de personajes, vuelta del creador) | Si la entidad está en otra escena, entra en ella; después emite `focusRequested { entityId, x }` y la vista anima la cámara como un salto de zona |
 | `takeFromInventory { slot, worldPoint }` | HUD | Inventario → escena (inicia el drag) |
 | `claimDailyGift {}` | Title o HUD (al entrar en Play) | Si `player.dailyReward.lastClaimDate` ≠ hoy (fecha local), suma `newGame.dailyGiftCoins` y guarda la fecha |
 | `setSetting { key, value }` | Settings UI | Actualiza `player.settings` |
@@ -100,6 +100,7 @@ Todos los comandos pasan por el `GameFacade` (§6). La UI y el Input **nunca** l
 | `playerChanged` | `{ keys }` | UI de ajustes, DirtyTracker |
 | `visualEffect` | `{ entityId, preset }` | Render (tweens de `animations`) |
 | `zoneChanged` | `{ sceneId, zoneId? }` | Audio (música o ambiente de la zona), UI |
+| `focusRequested` | `{ entityId, x }` | Render (cámara). Solo presentación |
 
 - Los eventos son **datos**: nada de funciones ni referencias vivas.
 - Se emiten **después** de terminar la transacción, **en un único lote** (`EventBus.subscribe(listener(batch))`): los consumidores reaccionan una vez por transacción.

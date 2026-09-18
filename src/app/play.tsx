@@ -1,9 +1,10 @@
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useGame, useGameSession } from '@/game/game-context';
+import { COLORS, IconButton } from '@/ui/buttons';
 import { useActiveScene } from '@/game/hooks';
 import { SceneView } from '@/game/scene-view';
 
@@ -16,6 +17,14 @@ export default function PlayScreen() {
   const session = useGameSession();
   const scene = useActiveScene();
   const [started, setStarted] = useState(false);
+
+  // Back from the creator: center the new character (HU-GAME-023 R4).
+  useFocusEffect(
+    useCallback(() => {
+      const id = session?.takeFocus();
+      if (id) game.dispatch({ type: 'focusEntity', entityId: id });
+    }, [game, session]),
+  );
 
   const onLayout = useCallback(
     (e: LayoutChangeEvent) => {
@@ -33,6 +42,7 @@ export default function PlayScreen() {
     <View style={styles.root} onLayout={onLayout}>
       {scene ? <SceneView textures={session.textures} /> : <ActivityIndicator style={styles.fill} size="large" color="#3E2C4A" />}
       <SafeAreaView style={styles.hud} pointerEvents="box-none" edges={['top', 'left', 'right']}>
+        <View style={styles.hudRow} pointerEvents="box-none">
         <Pressable
           style={styles.back}
           onPress={() => {
@@ -43,6 +53,8 @@ export default function PlayScreen() {
           accessibilityLabel={game.t('ui.back.label')}>
           <Text style={styles.backText}>◀</Text>
         </Pressable>
+        <IconButton label={game.t('ui.play.characters')} glyph="☺" color={COLORS.selected} onPress={() => router.push('/characters')} style={styles.hudButton} />
+        </View>
       </SafeAreaView>
     </View>
   );
@@ -52,6 +64,8 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#FFF6E9' },
   fill: { flex: 1 },
   hud: { ...StyleSheet.absoluteFill },
+  hudRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  hudButton: { margin: 16 },
   back: {
     margin: 16,
     width: 64,

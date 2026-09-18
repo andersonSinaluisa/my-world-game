@@ -59,12 +59,12 @@ flowchart LR
 | [HU-GAME-014](mvp/EPIC-004-characters.md) | Poses del personaje | EPIC-004 | Must | 1 | HU-GAME-013 | Done (sprites de pose sit/sleep/eat llegan con su arte; fallback a idle) |
 | [HU-GAME-016](mvp/EPIC-004-characters.md) | Sostener objetos en las manos | EPIC-004 | Must | 1 | HU-GAME-014, HU-GAME-031 | Done |
 | [HU-GAME-017](mvp/EPIC-004-characters.md) | Arrastrar personajes | EPIC-004 | Must | 1 | HU-GAME-014, HU-GAME-027 | Done (auto-scroll en HU-GAME-029; asientos en EPIC-013) |
-| [HU-GAME-018](mvp/EPIC-005-creator.md) | Abrir el creador y elegir cuerpo y tono de piel | EPIC-005 | Must | 1 | HU-GAME-013, HU-GAME-004 | Draft |
-| [HU-GAME-019](mvp/EPIC-005-creator.md) | Elegir ojos y boca | EPIC-005 | Must | 1 | HU-GAME-018 | Draft |
-| [HU-GAME-020](mvp/EPIC-005-creator.md) | Elegir peinado y color de pelo | EPIC-005 | Must | 1 | HU-GAME-018 | Draft |
-| [HU-GAME-021](mvp/EPIC-005-creator.md) | Elegir ropa inicial | EPIC-005 | Must | 1 | HU-GAME-018 | Draft |
-| [HU-GAME-022](mvp/EPIC-005-creator.md) | Guardar, listar y editar personajes | EPIC-005 | Must | 1 | HU-GAME-018, HU-GAME-052 | Draft |
-| [HU-GAME-023](mvp/EPIC-005-creator.md) | Colocar personajes creados en el mundo | EPIC-005 | Must | 1 | HU-GAME-022, HU-GAME-010 | Draft |
+| [HU-GAME-018](mvp/EPIC-005-creator.md) | Abrir el creador y elegir cuerpo y tono de piel | EPIC-005 | Must | 1 | HU-GAME-013, HU-GAME-004 | Done (verificación en Android/iOS y tablet pendiente) |
+| [HU-GAME-019](mvp/EPIC-005-creator.md) | Elegir ojos y boca | EPIC-005 | Must | 1 | HU-GAME-018 | Done |
+| [HU-GAME-020](mvp/EPIC-005-creator.md) | Elegir peinado y color de pelo | EPIC-005 | Must | 1 | HU-GAME-018 | Done (iconos de pelo sin teñir: propuesta R4 pendiente) |
+| [HU-GAME-021](mvp/EPIC-005-creator.md) | Elegir ropa inicial | EPIC-005 | Must | 1 | HU-GAME-018 | Done (armario de contenido llega con HU-GAME-041) |
+| [HU-GAME-022](mvp/EPIC-005-creator.md) | Guardar, listar y editar personajes | EPIC-005 | Must | 1 | HU-GAME-018, HU-GAME-052 | Done |
+| [HU-GAME-023](mvp/EPIC-005-creator.md) | Colocar personajes creados en el mundo | EPIC-005 | Must | 1 | HU-GAME-022, HU-GAME-010 | Done (foco de cámara: verificación en dispositivo) |
 | [HU-GAME-034](mvp/EPIC-009-containers.md) | Abrir y cerrar muebles | EPIC-009 | Must | 1 | HU-GAME-025, HU-GAME-032 | Draft |
 | [HU-GAME-035](mvp/EPIC-009-containers.md) | Guardar objetos en contenedores | EPIC-009 | Must | 1 | HU-GAME-034, HU-GAME-031 | Draft |
 | [HU-GAME-036](mvp/EPIC-009-containers.md) | Sacar objetos de contenedores | EPIC-009 | Must | 1 | HU-GAME-035 | Draft |
