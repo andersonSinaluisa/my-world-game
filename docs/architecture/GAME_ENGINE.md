@@ -70,7 +70,7 @@ Todos los comandos pasan por el `GameFacade` (§6). La UI y el Input **nunca** l
 | `pointerTap { worldPoint }` | Input | hit test → InteractionResolver (`tap`) |
 | `pointerLongPress { worldPoint }` | Input | hit test → InteractionResolver (`longPress`). Puede devolver `startDrag` |
 | `dragStart { entityId, worldPoint }` | Input | DragSystem valida y libera (standUp, takeOut, release) |
-| `dragPreview { entityId, worldPoint }` | Input (solo al cambiar de target) | `resolver.preview` → evento `dropPreview` |
+| `dragPreview { entityId, worldPoint, uiTarget?, minHitWorld? }` | Input (muestreo ≤ 10 Hz durante el drag) | `resolver.preview` (pura) → evento `dropPreview { sourceId, targetId?, zone?, ruleId?, ok, reason?, highlight, rejectHint? }`, solo cuando cambia el resultado. Fallo: `notDragging` |
 | `dragEnd { entityId, worldPoint, uiTarget? }` | Input | InteractionResolver (`drop`) o `place` |
 | `dragCancel { entityId }` | Input (gesto cancelado) | Deshace las transiciones de `dragStart` y vuelve a la location y posición originales |
 | `cameraSettled { cameraX, viewportW }` | Input o Render (fin del paneo o de la inercia, fin del auto-scroll o de un salto de zona) | Actualiza `player.cameraX` (limitado a los bounds; por eso lleva `viewportW`, que el motor no conoce) y la zona activa. **No** se envía por frame. |

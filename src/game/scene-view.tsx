@@ -4,7 +4,7 @@ import { scheduleOnRN } from 'react-native-worklets';
 
 import type { WorldInputHandlers } from '@/engine/adapters/input/use-world-gesture';
 import { CharacterSprite } from '@/engine/adapters/render/character-sprite';
-import { CharacterDragProxy, DragProxy } from '@/engine/adapters/render/drag-proxy';
+import { CharacterDragProxy, DragProxy, type CarriedVisual } from '@/engine/adapters/render/drag-proxy';
 import { SceneCanvas } from '@/engine/adapters/render/scene-canvas';
 import { SpriteNode } from '@/engine/adapters/render/sprite-node';
 import type { TextureStore } from '@/engine/adapters/render/texture-store';
@@ -54,6 +54,7 @@ interface DragVisual {
   size?: { w: number; h: number };
   liftOffset?: number;
   grabOffset: { x: number; y: number };
+  carried?: CarriedVisual[];
 }
 
 interface EntityNodeProps {
@@ -62,11 +63,15 @@ interface EntityNodeProps {
   id: EntityId;
   textures: TextureStore;
   hidden: boolean;
+  /** Valid drop target under the finger (HU-GAME-033). */
+  highlighted?: boolean;
+  /** Id of the dragged furniture: the items it carries are drawn by its proxy. */
+  hiddenParent?: EntityId;
   breath: SharedValue<number>;
 }
 
 /** A character: its memoized layer stack in one Group, breathing while idle (HU-GAME-013, HU-GAME-014 R6). */
-const CharacterNode = memo(function CharacterNode({ game, id, textures, breath }: Omit<EntityNodeProps, 'hidden'>) {
+const CharacterNode = memo(function CharacterNode({ game, id, textures, breath }: Omit<EntityNodeProps, 'hidden' | 'hiddenParent' | 'highlighted'>) {
   const entity = useEntityOf(game, id);
   const layers = useCharacterLayersOf(game, id);
   if (!entity) return null;
@@ -83,21 +88,23 @@ const CharacterNode = memo(function CharacterNode({ game, id, textures, breath }
 });
 
 /** Subscribes to a single entity so only it re-renders when it changes (PERFORMANCE §4 rule 2). */
-const EntityNode = memo(function EntityNode({ game, id, textures, hidden, breath }: EntityNodeProps) {
+const EntityNode = memo(function EntityNode({ game, id, textures, hidden, hiddenParent, highlighted, breath }: EntityNodeProps) {
   const entity = useEntityOf(game, id);
   const sprite = entity?.components.sprite;
-  // The original is hidden while its DragProxy is on screen (HU-GAME-027 R5).
-  if (hidden || !entity || !sprite || entity.location.kind !== 'scene') return null;
+  // The original is hidden while its DragProxy is on screen (HU-GAME-027 R5), and so is what it carries.
+  const parentId = entity?.components.transform?.parentId;
+  if (hidden || (parentId && hiddenParent === parentId) || !entity || !sprite || entity.location.kind !== 'scene') return null;
   if (entity.components.character) return <CharacterNode game={game} id={id} textures={textures} breath={breath} />;
   return (
     <SpriteNode
       id={id}
       asset={resolveAsset(entity)}
-      transform={entity.components.transform ?? { x: 0, y: 0 }}
+      transform={game.absoluteTransform(id) ?? { x: 0, y: 0 }}
       pivot={sprite.pivot ?? { x: 0.5, y: 1 }}
       size={sprite.size}
       textures={textures}
       events={game.events}
+      highlight={highlighted}
     />
   );
 });
@@ -119,6 +126,7 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
   const [viewport, setViewport] = useState<Viewport | null>(null);
   const [cullX, setCullX] = useState(() => game.selectors.cameraX() ?? 0);
   const [drag, setDrag] = useState<DragVisual | null>(null);
+  const [highlightId, setHighlightId] = useState<EntityId | undefined>(undefined);
   const breath = useSharedValue(0);
   // focusEntity (HU-GAME-023 R4) animates like a zone jump; the latest jumpTo is kept in a ref.
   const focusRef = useRef<(x: number) => void>(() => {});
@@ -143,6 +151,10 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
     () =>
       game.events.subscribe((batch) => {
         for (const event of batch) {
+          if (event.type === 'dropPreview') {
+            setHighlightId(event.ok && event.highlight ? event.targetId : undefined);
+            continue;
+          }
           if (event.type === 'focusRequested') {
             focusRef.current(event.x);
             continue;
@@ -206,16 +218,26 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
           size: sprite.size,
           liftOffset: e.components.draggable?.liftOffset,
           grabOffset: { x: x - t.x, y: y - t.y },
+          carried: game.carriedBy(id).flatMap((c) => {
+            const ct = c.components.transform;
+            const cs = c.components.sprite;
+            return ct && cs ? [{ id: c.id, asset: resolveAsset(c), x: ct.x, y: ct.y, pivot: cs.pivot ?? { x: 0.5, y: 1 }, size: cs.size }] : [];
+          }),
         });
         return true;
       },
       dragEnd(id, x, y) {
         game.dispatch({ type: 'dragEnd', entityId: id, worldPoint: { x, y }, minHitWorld });
         setDrag(null);
+        setHighlightId(undefined);
       },
       dragCancel(id) {
         game.dispatch({ type: 'dragCancel', entityId: id });
         setDrag(null);
+        setHighlightId(undefined);
+      },
+      dragMove(id, x, y) {
+        game.dispatch({ type: 'dragPreview', entityId: id, worldPoint: { x, y }, minHitWorld });
       },
       tap(x, y) {
         game.dispatch({ type: 'pointerTap', worldPoint: { x, y }, minHitWorld });
@@ -313,11 +335,21 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
             pointerX={pointerX}
             pointerY={pointerY}
             textures={textures}
+            carried={drag.carried}
           />
         ) : null
       }>
       {visible.map((d) => (
-        <EntityNode key={d.id} game={game} id={d.id} textures={textures} hidden={drag?.id === d.id} breath={breath} />
+        <EntityNode
+          key={d.id}
+          game={game}
+          id={d.id}
+          textures={textures}
+          hidden={drag?.id === d.id}
+          hiddenParent={drag?.id}
+          highlighted={highlightId === d.id}
+          breath={breath}
+        />
       ))}
     </SceneCanvas>
   );

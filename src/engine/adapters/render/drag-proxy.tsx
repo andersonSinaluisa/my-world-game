@@ -12,6 +12,25 @@ import { useTexture } from './use-texture';
 export const DEFAULT_LIFT_OFFSET = 16;
 export const DRAG_PROXY_SCALE = 1.05;
 
+/** An item carried by the dragged furniture, relative to its pivot (HU-GAME-030 R4). */
+export interface CarriedVisual {
+  id: string;
+  asset: AssetKey;
+  x: number;
+  y: number;
+  pivot: { x: number; y: number };
+  size?: { w: number; h: number };
+}
+
+function CarriedImage({ item, textures }: { item: CarriedVisual; textures: TextureStore }) {
+  const image = useTexture(textures, item.asset);
+  const native = textures.registry.size(item.asset);
+  const w = item.size?.w ?? native?.w ?? 0;
+  const h = item.size?.h ?? native?.h ?? 0;
+  if (!image || !w || !h) return null;
+  return <Image image={image} x={item.x - item.pivot.x * w} y={item.y - item.pivot.y * h} width={w} height={h} fit="fill" />;
+}
+
 export interface DragProxyProps {
   asset: AssetKey;
   transform: Transform;
@@ -23,13 +42,14 @@ export interface DragProxyProps {
   pointerX: SharedValue<number>;
   pointerY: SharedValue<number>;
   textures: TextureStore;
+  carried?: CarriedVisual[];
 }
 
 /**
  * The dragged item, drawn above everything and moved on the UI thread (INPUT_SYSTEM §3).
  * The World does not change until dragEnd; the original sprite is hidden meanwhile.
  */
-export function DragProxy({ asset, transform, pivot, size, grabOffset, liftOffset, pointerX, pointerY, textures }: DragProxyProps) {
+export function DragProxy({ asset, transform, pivot, size, grabOffset, liftOffset, pointerX, pointerY, textures, carried }: DragProxyProps) {
   const image = useTexture(textures, asset);
   const native = textures.registry.size(asset);
   const w = size?.w ?? native?.w ?? 0;
@@ -52,6 +72,7 @@ export function DragProxy({ asset, transform, pivot, size, grabOffset, liftOffse
   return (
     <Group transform={matrix}>
       <Image image={image} x={-pivot.x * w} y={-pivot.y * h} width={w} height={h} fit="fill" />
+      {carried?.map((c) => <CarriedImage key={c.id} item={c} textures={textures} />)}
     </Group>
   );
 }

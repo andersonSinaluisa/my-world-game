@@ -1,3 +1,4 @@
+import type { Transform } from '../components/base';
 import type { Entity } from '../core/entity';
 import type { AssetKey } from '../core/types';
 import type { BackgroundChunk, BackgroundLayer } from './scene-types';
@@ -22,6 +23,8 @@ export interface Aabb {
 }
 
 export type AssetSizeLookup = (key: AssetKey) => { w: number; h: number } | undefined;
+/** World transform of an entity (items carried by furniture are relative, HU-GAME-030). */
+export type TransformOf = (entity: Entity) => Transform | undefined;
 
 export function cullingRange(cameraX: number, viewportW: number, marginRatio = CULLING_MARGIN_RATIO): HorizontalRange {
   const margin = viewportW * marginRatio;
@@ -29,9 +32,9 @@ export function cullingRange(cameraX: number, viewportW: number, marginRatio = C
 }
 
 /** World-space AABB of an entity's sprite (pivot, size or native asset size, scale). */
-export function spriteAabb(entity: Entity, assetSize: AssetSizeLookup): Aabb | undefined {
+export function spriteAabb(entity: Entity, assetSize: AssetSizeLookup, transformOf?: TransformOf): Aabb | undefined {
   const sprite = entity.components.sprite;
-  const t = entity.components.transform;
+  const t = transformOf ? transformOf(entity) : entity.components.transform;
   if (!sprite || !t) return undefined;
   const size = sprite.size ?? assetSize(sprite.asset);
   if (!size) return undefined;
@@ -49,9 +52,9 @@ export function intersects(aabb: Aabb, range: HorizontalRange): boolean {
 }
 
 /** Entities whose AABB intersects the range. Entities without a known size are kept (never hidden by mistake). */
-export function cullEntities(entities: Entity[], range: HorizontalRange, assetSize: AssetSizeLookup): Entity[] {
+export function cullEntities(entities: Entity[], range: HorizontalRange, assetSize: AssetSizeLookup, transformOf?: TransformOf): Entity[] {
   return entities.filter((e) => {
-    const box = spriteAabb(e, assetSize);
+    const box = spriteAabb(e, assetSize, transformOf);
     return box === undefined || intersects(box, range);
   });
 }

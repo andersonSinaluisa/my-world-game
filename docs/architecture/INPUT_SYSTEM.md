@@ -46,6 +46,7 @@ sequenceDiagram
 ```
 
 - **Previsualización (`dragPreview`):** para no llamar al JS en cada frame, el worklet mantiene los bounds del target de la última previsualización y solo llama al JS cuando el dedo sale de ellos o entra en otra zona. Si el cálculo en el UI thread no es viable, se usa como fallback un muestreo a ≤ 10 Hz.
+  - **Implementado (HU-GAME-033):** el fallback. Un frame callback muestrea la posición del dedo cada 100 ms si se movió y llama a `dragPreview`; el motor solo emite `dropPreview` cuando cambian el target, la zona, el UI target, la regla o el resultado. El seguimiento de bounds en el worklet queda como optimización futura.
 - **Latencia del primer frame:** el hit test ocurre en JS. Hay 1 o 2 frames de latencia antes de que el objeto "se pegue" al dedo, lo que es aceptable. El proxy arranca con `offset = punto del dedo - posición del pivot`, así que no hay salto visible.
 - ⚠️ **Spike de la Fase 0:** medirlo en Android de gama baja. Si molesta, se pasa a una réplica de hitboxes en un SharedValue para hacer el hit test en el UI thread. Ver [ADR-009](../decisions/ADR-009-STATE-AND-THREADING.md).
 - **Mientras dura el drag:**

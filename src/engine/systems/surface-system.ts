@@ -3,6 +3,7 @@ import type { Logger } from '../core/runtime';
 import type { EntityId, WorldPoint } from '../core/types';
 import type { World } from '../core/world';
 import { absoluteSegment } from '../scene/geometry';
+import { absoluteTransform, canCarry } from '../scene/parenting';
 import { sortForRender } from '../scene/render-order';
 import { DEFAULT_FLOOR_Y, type ActiveSceneInfo } from '../scene/scene-types';
 
@@ -74,7 +75,7 @@ export function findRestingPlace(
     for (const e of [...ordered, ...withoutSprite]) {
       if (excluded.has(e.id)) continue;
       const surface = e.components.surface;
-      const t = e.components.transform;
+      const t = absoluteTransform((id) => world.get(id), e);
       if (!surface || !t) continue;
       for (const seg of surface.segments) {
         const abs = absoluteSegment(seg, t);
@@ -99,9 +100,17 @@ export function placeItem(
   const item = world.get(itemId);
   if (!item) return undefined;
   const rest = findRestingPlace(world, scene, itemId, point, logger);
-  const current = item.components.transform;
+  const { parentId: _old, ...current } = item.components.transform ?? { x: 0, y: 0 };
+  void _old;
+  const supporter = rest.supporterId ? world.get(rest.supporterId) : undefined;
+  const st = supporter?.components.transform;
   world.transaction(() => {
-    world.update(itemId, { transform: { ...(current ?? {}), x: rest.x, y: rest.y } });
+    // Carriers link the item with coordinates relative to their pivot (HU-GAME-030 R2).
+    if (supporter && st && canCarry(world, supporter, item)) {
+      world.update(itemId, { transform: { ...current, x: rest.x - st.x, y: rest.y - st.y, parentId: supporter.id } });
+    } else {
+      world.update(itemId, { transform: { ...current, x: rest.x, y: rest.y } });
+    }
     world.setSupport(itemId, rest.supporterId);
   });
   return rest;
@@ -114,8 +123,15 @@ export function placeItem(
 export function recomputeSupport(world: World, scene: ActiveSceneInfo): void {
   const entities = world.query({ sceneId: scene.id });
   const surfaces = entities.filter((e) => e.components.surface && e.components.transform);
+  const abs = (e: (typeof entities)[number]) => absoluteTransform((id) => world.get(id), e);
   for (const item of entities) {
-    const t = item.components.transform;
+    const own = item.components.transform;
+    // Linked items: parentId is the only source of the relation (HU-GAME-030 R2b).
+    if (own?.parentId) {
+      world.setSupport(item.id, world.has(own.parentId) ? own.parentId : undefined);
+      continue;
+    }
+    const t = abs(item);
     if (!t || item.components.draggable?.mode === 'floorOnly') {
       world.setSupport(item.id, undefined);
       continue;
@@ -124,8 +140,8 @@ export function recomputeSupport(world: World, scene: ActiveSceneInfo): void {
     for (const s of surfaces) {
       if (s.id === item.id) continue;
       for (const seg of s.components.surface!.segments) {
-        const abs = absoluteSegment(seg, s.components.transform!);
-        if (t.x >= abs.x1 && t.x <= abs.x2 && Math.abs(t.y - abs.y) < 0.5) supporter = s.id;
+        const a = absoluteSegment(seg, abs(s)!);
+        if (t.x >= a.x1 && t.x <= a.x2 && Math.abs(t.y - a.y) < 0.5) supporter = s.id;
       }
     }
     world.setSupport(item.id, supporter);

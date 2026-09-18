@@ -10,10 +10,11 @@ import { InteractionResolver } from '../rules/resolver';
 import { pickDraggable } from '../rules/hit-test';
 import { RuleIndex } from '../rules/rule-index';
 import { clampCameraX } from '../scene/camera-math';
+import { absoluteTransform, childrenOf, unlink } from '../scene/parenting';
 import { buildScene, type SavedSceneState } from '../scene/scene-builder';
 import { sceneBounds, type ActiveSceneInfo } from '../scene/scene-types';
 import { activeZoneFor } from '../scene/zones';
-import { recomputeSupport } from '../systems/surface-system';
+import { placeItem, recomputeSupport } from '../systems/surface-system';
 import { VisualEffects } from '../systems/visual-effects';
 import type { Components } from '../components/registry';
 import { OK, type CommandResult, type GameCommand } from './commands';
@@ -114,6 +115,7 @@ export class GameEngine {
       newId: () => this.newRuntimeId(),
       scene: () => this.activeScene,
     });
+    this.watchCarriers();
     this.layerSelector = new CharacterLayerSelector(
       this.world,
       () => {
@@ -132,6 +134,34 @@ export class GameEngine {
       },
       (e) => this.heldTransform(e.id),
     );
+  }
+
+  /** A carrier that leaves the scene drops what it carries at its absolute position (HU-GAME-030 R7). */
+  private watchCarriers(): void {
+    this.events.subscribe((batch) => {
+      for (const e of batch) {
+        if (e.type !== 'entityMoved' || e.from.kind !== 'scene' || e.to.kind === 'scene') continue;
+        const kids = childrenOf(this.world, e.id);
+        const parent = this.world.get(e.id);
+        const pt = parent?.components.transform;
+        if (!kids.length || !pt || !this.activeScene) continue;
+        const scene = this.activeScene;
+        this.world.transaction(() => {
+          for (const kid of kids) {
+            const t = kid.components.transform!;
+            const at = { x: pt.x + t.x, y: pt.y + t.y };
+            this.world.update(kid.id, { transform: { x: at.x, y: at.y } });
+            if (kid.location.kind === 'scene' && kid.location.sceneId === scene.id) placeItem(this.world, scene, kid.id, at, this.logger);
+          }
+        });
+      }
+    });
+  }
+
+  /** World transform of an entity (HU-GAME-030: items on carriers are relative). */
+  absoluteTransform(id: EntityId): Components['transform'] | undefined {
+    const e = this.world.get(id);
+    return e ? absoluteTransform((x) => this.world.get(x), e) : undefined;
   }
 
   static create(options: GameEngineOptions = {}): GameEngine {
@@ -222,6 +252,8 @@ export class GameEngine {
         return this.dragEnd(command.entityId, command.worldPoint, command.uiTarget, command.minHitWorld);
       case 'dragCancel':
         return this.dragCancel(command.entityId);
+      case 'dragPreview':
+        return this.dragPreview(command.entityId, command.worldPoint, command.uiTarget, command.minHitWorld);
       case 'createCharacter':
         return this.characterCommands.createCharacter(command.appearance, command.outfit ?? {});
       case 'updateAppearance':
@@ -402,6 +434,8 @@ export class GameEngine {
     // Location transitions by location kind (HU-GAME-027 R4). No per-object logic.
     switch (e.location.kind) {
       case 'scene':
+        // Lifting a carried item separates it from its furniture (HU-GAME-030 R5).
+        if (e.components.transform?.parentId) unlink(this.world, entityId);
         break;
       case 'held':
         this.world.transaction(() => {
@@ -416,6 +450,20 @@ export class GameEngine {
     // Characters: standUp implícito, temporary pose cancelled, dangle + surprised (HU-GAME-017 R2).
     if (e.components.character) origin.character = this.characters.onDragStart(entityId);
     this.drag = { entityId, origin };
+    this.lastPreview = undefined;
+    return OK;
+  }
+
+  /** Last preview sent, to emit dropPreview only when the target, zone or UI target changes (HU-GAME-033 R1). */
+  private lastPreview: string | undefined;
+
+  private dragPreview(entityId: EntityId, point: WorldPoint, uiTarget?: 'inventory' | 'trash', minHitWorld?: number): CommandResult {
+    if (this.drag?.entityId !== entityId) return { ok: false, reason: 'notDragging' };
+    const p = this.resolver.preview({ trigger: 'drop', sourceId: entityId, point, uiTarget, minHitWorld });
+    const key = JSON.stringify([p.targetId, p.zone, uiTarget, p.ruleId, p.ok]);
+    if (key === this.lastPreview) return OK;
+    this.lastPreview = key;
+    this.world.emit({ type: 'dropPreview', sourceId: entityId, uiTarget, ...p });
     return OK;
   }
 
@@ -424,10 +472,37 @@ export class GameEngine {
     this.drag = undefined;
     if (!this.world.has(entityId)) return { ok: false, reason: 'entityNotFound' };
     this.resolver.resolve({ trigger: 'drop', sourceId: entityId, point, uiTarget, minHitWorld });
+    this.refreshCarried(entityId);
     // A drop that did not pose the character (sit, sleep…) leaves it standing (HU-GAME-017 R6).
     if (this.world.get(entityId)?.components.character) this.characters.onDragEnd(entityId);
     this.effects.trigger(entityId, 'drop');
     return OK;
+  }
+
+  /**
+   * Items carried by a moved piece of furniture keep their relative position (HU-GAME-030 R4). They are
+   * re-emitted so views re-render them; one that would leave the scene is clamped and unlinked (R8).
+   */
+  private refreshCarried(parentId: EntityId): void {
+    const scene = this.activeScene;
+    const kids = childrenOf(this.world, parentId);
+    if (!scene || !kids.length) return;
+    let unlinked = false;
+    this.world.transaction(() => {
+      for (const kid of kids) {
+        const abs = absoluteTransform((x) => this.world.get(x), kid)!;
+        if (abs.x < 0 || abs.x > scene.size.width) {
+          // Clamped and unlinked; its support is recomputed from geometry below.
+          this.world.update(kid.id, { transform: { ...abs, x: Math.min(Math.max(abs.x, 0), scene.size.width) } });
+          this.world.setSupport(kid.id, undefined);
+          unlinked = true;
+        } else {
+          this.world.update(kid.id, { transform: { ...kid.components.transform! } });
+          this.world.setSupport(kid.id, parentId);
+        }
+      }
+      if (unlinked) recomputeSupport(this.world, scene);
+    });
   }
 
   private dragCancel(entityId: EntityId): CommandResult {

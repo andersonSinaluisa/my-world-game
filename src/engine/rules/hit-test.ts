@@ -2,6 +2,7 @@ import type { Entity } from '../core/entity';
 import type { EntityId, WorldPoint } from '../core/types';
 import type { World } from '../core/world';
 import { containsPoint, expandShape, shapeArea, toWorldShape } from '../scene/geometry';
+import { absoluteTransform } from '../scene/parenting';
 import { sortForRender } from '../scene/render-order';
 
 /** HU-GAME-026 R3: default hitbox padding in world units. */
@@ -35,7 +36,7 @@ function isInteractive(e: Entity, hasDirectRules?: (entity: Entity) => boolean):
 
 /** Transform of an entity for hit testing: its own in the scene, or container + slot when shown inside it. */
 function effectiveTransform(world: World, e: Entity, options: HitTestOptions) {
-  if (e.location.kind === 'scene') return e.components.transform;
+  if (e.location.kind === 'scene') return absoluteTransform((id) => world.get(id), e);
   if (e.location.kind === 'held') return options.heldTransform?.(e);
   if (e.location.kind !== 'container') return undefined;
   const container = world.get(e.location.containerId);
@@ -46,7 +47,9 @@ function effectiveTransform(world: World, e: Entity, options: HitTestOptions) {
   const open = !openable || container.components.states?.current === openable.openState;
   const slot = c.slots?.[e.location.slot];
   if (!open || c.showContentsWhenOpen === false || !slot) return undefined;
-  return { ...(e.components.transform ?? {}), x: ct.x + slot.x, y: ct.y + slot.y };
+  const { parentId: _parent, ...own } = e.components.transform ?? { x: 0, y: 0 };
+  void _parent;
+  return { ...own, x: ct.x + slot.x, y: ct.y + slot.y };
 }
 
 function zoneAt(e: Entity, t: NonNullable<Entity['components']['transform']>, p: WorldPoint): string {
@@ -78,7 +81,8 @@ export function hitTest(world: World, point: WorldPoint, options: HitTestOptions
     const holder = e.location.kind === 'held' ? world.get(e.location.holderId) : undefined;
     return holder?.location.kind === 'scene' && holder.location.sceneId === options.sceneId;
   });
-  const ordered = [...contents, ...held, ...sortForRender(scene, { supportOf: world.index.supportOf }).reverse()];
+  const transformOf = (e: Entity) => absoluteTransform((id) => world.get(id), e);
+  const ordered = [...contents, ...held, ...sortForRender(scene, { supportOf: world.index.supportOf, transformOf }).reverse()];
   const out: HitCandidate[] = [];
   for (const e of ordered) {
     if (options.exclude?.has(e.id)) continue;

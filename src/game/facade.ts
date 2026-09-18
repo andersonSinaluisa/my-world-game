@@ -41,6 +41,10 @@ export interface GameFacade {
   subscribeEntity(id: EntityId, listener: () => void): () => void;
   getSnapshot(): GameSnapshot;
   getEntity(id: EntityId): Entity | undefined;
+  /** World transform (items carried by furniture are stored relative to it, HU-GAME-030). */
+  absoluteTransform(id: EntityId): Transform | undefined;
+  /** Entities carried by a piece of furniture (drawn with its drag proxy, HU-GAME-030 R4). */
+  carriedBy(id: EntityId): Entity[];
   /** First hit test of a gesture (HU-GAME-026 R5b): draggable entity under the point, if any. */
   pickDraggable(point: WorldPoint, minHitWorld?: number): EntityId | undefined;
   /** Translated content text (HU-GAME-068 R10). Falls back to the other locale, then to the key. */
@@ -174,6 +178,8 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
     },
     getSnapshot: () => snapshot,
     getEntity: (id) => engine.world.get(id),
+    absoluteTransform: (id) => engine.absoluteTransform(id),
+    carriedBy: (id) => engine.world.all().filter((e) => e.components.transform?.parentId === id),
     pickDraggable: (point, minHitWorld) => engine.pickDraggable(point, minHitWorld),
     t: (key, locale) => engine.content?.t(key, locale ?? options.locale ?? 'es') ?? key,
     selectors: {
@@ -210,15 +216,16 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
         const cached = visibleCache.byKey.get(key);
         if (cached) return cached;
         let entities = engine.world.all().filter((e) => isRenderable(e, scene.id));
-        if (viewport) entities = cullEntities(entities, cullingRange(viewport.cameraX, viewport.viewportW), assetSize);
-        const data = sortForRender(entities, { supportOf: engine.world.index.supportOf }).map((e, order) => {
+        const transformOf = (e: Entity) => engine.absoluteTransform(e.id);
+        if (viewport) entities = cullEntities(entities, cullingRange(viewport.cameraX, viewport.viewportW), assetSize, transformOf);
+        const data = sortForRender(entities, { supportOf: engine.world.index.supportOf, transformOf }).map((e, order) => {
           const sprite = e.components.sprite!;
           return {
             id: e.id,
             asset: resolveAsset(e),
             layer: sprite.layer,
             order,
-            transform: e.components.transform ?? { x: 0, y: 0 },
+            transform: transformOf(e) ?? { x: 0, y: 0 },
             pivot: sprite.pivot ?? { x: 0.5, y: 1 },
             size: sprite.size,
           };

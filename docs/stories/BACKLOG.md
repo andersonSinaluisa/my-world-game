@@ -88,8 +88,8 @@ flowchart LR
 | [HU-GAME-009](mvp/EPIC-002-rendering.md) | Tweens y animaciones simples | EPIC-002 | Should | 1 | HU-GAME-006 | In Progress (falta verificación manual de presets) |
 | [HU-GAME-012](mvp/EPIC-003-scenes.md) | Zonas (habitaciones) dentro de una escena | EPIC-003 | Should | 1 | HU-GAME-010 | Done (botones de zona llegan con el mapa, HU-GAME-051) |
 | [HU-GAME-015](mvp/EPIC-004-characters.md) | Expresiones faciales | EPIC-004 | Should | 1 | HU-GAME-013 | Done |
-| [HU-GAME-029](mvp/EPIC-007-drag-drop.md) | Auto-scroll de la cámara al arrastrar cerca del borde | EPIC-007 | Must | 1 | HU-GAME-027, HU-GAME-007 | Draft |
-| [HU-GAME-033](mvp/EPIC-008-interaction.md) | Resaltar el destino válido durante el arrastre | EPIC-008 | Should | 1 | HU-GAME-031 | Draft |
+| [HU-GAME-029](mvp/EPIC-007-drag-drop.md) | Auto-scroll de la cámara al arrastrar cerca del borde | EPIC-007 | Must | 1 | HU-GAME-027, HU-GAME-007 | Done (verificación a 60/120 Hz en dispositivo) |
+| [HU-GAME-033](mvp/EPIC-008-interaction.md) | Resaltar el destino válido durante el arrastre | EPIC-008 | Should | 1 | HU-GAME-031 | Done (hint de rechazo visual y resaltado de la mochila llegan con HU-GAME-037) |
 | [HU-GAME-037](mvp/EPIC-010-inventory.md) | Guardar objetos en la mochila | EPIC-010 | Should | 1 | HU-GAME-031, HU-GAME-004 | Draft |
 | [HU-GAME-038](mvp/EPIC-010-inventory.md) | Sacar objetos de la mochila | EPIC-010 | Should | 1 | HU-GAME-037 | Draft |
 | [HU-GAME-040](mvp/EPIC-011-clothing.md) | Quitar prendas del personaje | EPIC-011 | Should | 1 | HU-GAME-039 | Draft |
@@ -116,7 +116,7 @@ flowchart LR
 
 | ID | Título | Epic | MoSCoW | Fase | Depende de | Estado |
 |---|---|---|---|---|---|---|
-| [HU-GAME-030](mvp/EPIC-007-drag-drop.md) | Los objetos apoyados se mueven con su mueble | EPIC-007 | Could | 1 | HU-GAME-028, HU-GAME-048 | Draft |
+| [HU-GAME-030](mvp/EPIC-007-drag-drop.md) | Los objetos apoyados se mueven con su mueble | EPIC-007 | Could | 1 | HU-GAME-028, HU-GAME-048 | Done |
 | [HU-GAME-055](mvp/EPIC-015-save.md) | Reiniciar el mundo | EPIC-015 | Could | 1 | HU-GAME-053, HU-GAME-074 | Draft |
 | [HU-GAME-067](mvp/EPIC-020-economy.md) | Regalo diario y monedas escondidas | EPIC-020 | Could | 2 | HU-GAME-065, HU-GAME-032 | Draft |
 

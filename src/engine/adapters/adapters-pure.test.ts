@@ -1,3 +1,4 @@
+import { autoScrollStep, autoScrollVelocity } from './input/auto-scroll';
 import { breathPhase, tintMatrix } from './render/tint';
 import { dpToWorld, screenToWorld, worldToScreen } from './input/coords';
 import { TextureCache } from './render/texture-cache';
@@ -77,5 +78,35 @@ describe('character tint and breathing (HU-GAME-013 R4, HU-GAME-014 R6)', () => 
     expect(breathPhase('rt_a')).not.toBe(breathPhase('rt_b'));
     expect(breathPhase('rt_a')).toBeGreaterThanOrEqual(0);
     expect(breathPhase('rt_a')).toBeLessThan(2 * Math.PI);
+  });
+});
+
+describe('auto-scroll (HU-GAME-029)', () => {
+  const W = 844; // zone = 101.28 dp
+
+  it('is 0 at the inner border of the zone, ≈985 at 30 dp from the edge, 1400 at the edge', () => {
+    expect(autoScrollVelocity(W - 101.28, W)).toBeCloseTo(0, 6);
+    expect(autoScrollVelocity(W - 30, W)).toBeCloseTo(985.3, 0);
+    expect(autoScrollVelocity(W, W)).toBe(1400);
+    expect(autoScrollVelocity(0, W)).toBe(-1400);
+    expect(autoScrollVelocity(W / 2, W)).toBe(0);
+  });
+
+  it('never passes the camera bounds: 1 s at 1400 u/s from 5300 stops at 5342', () => {
+    const maxX = 7680 - 2338;
+    expect(autoScrollStep(5300, 1400, 1000, 0, maxX)).toBe(5342);
+  });
+
+  it('is frame-rate independent', () => {
+    let a = 0;
+    for (let i = 0; i < 60; i++) a = autoScrollStep(a, 1400, 1000 / 60, 0, 10000);
+    let b = 0;
+    for (let i = 0; i < 120; i++) b = autoScrollStep(b, 1400, 1000 / 120, 0, 10000);
+    expect(a).toBeCloseTo(1400, 6);
+    expect(b).toBeCloseTo(1400, 6);
+  });
+
+  it('the drop point uses the final camera: cameraX 2000, scale 0.3611, finger at 700 dp → x ≈ 3938', () => {
+    expect(screenToWorld(700, 0, 0.3611, 2000).x).toBeCloseTo(3938.5, 0);
   });
 });

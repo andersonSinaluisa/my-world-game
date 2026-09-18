@@ -19,6 +19,19 @@ export interface ResolveInput {
   minHitWorld?: number;
 }
 
+/** Result of a drop preview (INTERACTION_SYSTEM §6, HU-GAME-033). */
+export interface PreviewOutcome {
+  targetId?: EntityId;
+  zone?: string;
+  ruleId?: string;
+  /** true: the rule would run; false: a rule matches but a condition/action would fail. */
+  ok: boolean;
+  reason?: string;
+  /** false when the rule sets feedback.highlight: false. */
+  highlight: boolean;
+  rejectHint?: string;
+}
+
 export type ResolveOutcome =
   | { kind: 'performed'; ruleId: string; targetId?: EntityId }
   | { kind: 'rejected'; ruleId: string; reason: string; targetId?: EntityId }
@@ -97,6 +110,53 @@ export class InteractionResolver {
         specificity(b.rule.source) + specificity(b.rule.target) - (specificity(a.rule.source) + specificity(a.rule.target)) ||
         (a.rule.qualifiedId < b.rule.qualifiedId ? -1 : a.rule.qualifiedId > b.rule.qualifiedId ? 1 : 0),
     );
+  }
+
+  /**
+   * What a drop here would do, without executing anything (R2): same candidates and order as `resolve`,
+   * conditions evaluated and actions only validated. Never changes the World.
+   */
+  preview(input: ResolveInput): PreviewOutcome {
+    const env = this.env();
+    if (!env) return { ok: false, highlight: false };
+    let firstFailure: PreviewOutcome | undefined;
+    for (const c of this.candidates(input)) {
+      const ctx: InteractionContext = {
+        env,
+        trigger: input.trigger,
+        sourceId: input.sourceId,
+        targetId: c.target?.id,
+        zone: c.target?.zone,
+        point: input.point,
+        ruleId: c.rule.qualifiedId,
+      };
+      const base = { targetId: c.target?.id, zone: c.target?.zone, ruleId: c.rule.qualifiedId };
+      const cond = this.checkConditions(ctx, c.rule);
+      const check = cond.ok ? this.validateOnly(ctx, c.rule.actions) : cond;
+      if (check.ok) return { ...base, ok: true, highlight: c.rule.feedback?.highlight !== false };
+      const failure: PreviewOutcome = { ...base, ok: false, reason: check.reason, highlight: false, rejectHint: c.rule.feedback?.rejectHint };
+      // Like `resolve`: a failing condition lets the next candidate try; a failing action ends the search.
+      if (!cond.ok) {
+        firstFailure ??= failure;
+        continue;
+      }
+      return failure;
+    }
+    return firstFailure ?? { ok: false, highlight: false };
+  }
+
+  private validateOnly(ctx: InteractionContext, specs: ActionSpec[]): Check {
+    for (const spec of specs) {
+      const handler = ACTIONS[spec.type];
+      if (!handler) return fail(`unknownAction:${spec.type}`);
+      const { type: _type, ...rest } = spec;
+      void _type;
+      const params = handler.params.safeParse(rest);
+      if (!params.success) return fail(`invalidParams:${spec.type}`);
+      const v = handler.validate(ctx, params.data as never);
+      if (!v.ok) return v;
+    }
+    return PASS;
   }
 
   resolve(input: ResolveInput): ResolveOutcome {
