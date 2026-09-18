@@ -105,6 +105,8 @@ export function buildScene(registry: ContentRegistry, sceneId: SceneId, options:
 
   // Runtime entities (rt_…) of this scene and saved rows for containers of this scene.
   for (const row of saved.values()) {
+    // Characters are global entities, loaded once for every scene (GAME_ENGINE §3).
+    if (row.tags?.includes('character') || (row.components as { character?: unknown }).character) continue;
     const inScene = row.location.kind === 'scene' && row.location.sceneId === sceneId;
     if (!inScene && row.location.kind !== 'container') continue;
     const prefab = row.prefabId && registry.hasPrefab(row.prefabId) ? registry.prefab(row.prefabId) : undefined;

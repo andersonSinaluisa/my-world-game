@@ -113,3 +113,83 @@ export type Switchable = z.infer<typeof SwitchableSchema>;
 export type Container = z.infer<typeof ContainerSchema>;
 export type Animations = z.infer<typeof AnimationsSchema>;
 export type Sounds = z.infer<typeof SoundsSchema>;
+
+// ---------- characters (CHARACTER_SCHEMA §2-§3, HU-GAME-013..017) ----------
+
+/** Fixed draw order of a character, back to front (CHARACTER_SCHEMA §3). */
+export const CHARACTER_LAYERS = [
+  'shadow',
+  'hairBack',
+  'legs',
+  'bottomClothes',
+  'shoes',
+  'torso',
+  'torsoClothes',
+  'armL',
+  'armClothesL',
+  'heldL',
+  'armR',
+  'armClothesR',
+  'heldR',
+  'head',
+  'eyes',
+  'mouth',
+  'hairFront',
+  'accessories',
+] as const;
+export type CharacterLayer = (typeof CHARACTER_LAYERS)[number];
+
+export const POSES = ['idle', 'dangle', 'sit', 'sleep', 'eat', 'drink'] as const;
+export type PoseId = (typeof POSES)[number];
+/** Persistent poses are saved; temporary ones are normalized to returnTo/idle (HU-GAME-014 R2). */
+export const PERSISTENT_POSES: readonly PoseId[] = ['idle', 'sit', 'sleep'];
+
+export const EXPRESSIONS = ['neutral', 'happy', 'surprised', 'sleepy', 'yum', 'curious'] as const;
+export type ExpressionId = (typeof EXPRESSIONS)[number];
+
+const layerAssets = z.partialRecord(z.enum(CHARACTER_LAYERS), z.string().min(1));
+
+// §5.10
+export const WearableSchema = z.strictObject({
+  slot: z.enum(['top', 'bottom', 'shoes']),
+  layers: layerAssets,
+  bodyVariants: z.record(z.string().min(1), layerAssets).optional(),
+});
+
+export const CharacterSchema = z.strictObject({
+  isNpc: z.boolean(),
+  nickname: z.string().max(12).optional(),
+  createdAt: z.string().min(1),
+  colorTag: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+});
+
+/** Part ids are checked against the catalog by the commands that write them (HU-GAME-022). */
+export const AppearanceSchema = z.strictObject({
+  bodyType: z.string().min(1),
+  skinTone: z.string().min(1),
+  eyes: z.string().min(1),
+  mouth: z.string().min(1),
+  hairStyle: z.string().min(1),
+  hairColor: z.string().min(1),
+});
+
+export const HolderSchema = z.strictObject({ hands: z.array(z.enum(['left', 'right'])).min(1) });
+
+export const PoseSchema = z.strictObject({
+  current: z.enum(POSES),
+  seatId: z.string().min(1).optional(),
+  returnTo: z.enum(POSES).optional(),
+});
+
+/** Not persisted (CHARACTER_SCHEMA §2). */
+export const ExpressionSchema = z.strictObject({
+  current: z.enum(EXPRESSIONS),
+  untilMs: z.number().finite().optional(),
+});
+
+export type Wearable = z.infer<typeof WearableSchema>;
+export type Character = z.infer<typeof CharacterSchema>;
+export type Appearance = z.infer<typeof AppearanceSchema>;
+export type Holder = z.infer<typeof HolderSchema>;
+export type Pose = z.infer<typeof PoseSchema>;
+export type Expression = z.infer<typeof ExpressionSchema>;

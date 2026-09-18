@@ -1,0 +1,42 @@
+{
+  "id": "sneakers_red",
+  "category": "clothing",
+  "tags": [
+    "clothing",
+    "shoes"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_clothing_sneakers_red",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -56,
+        "y": -96,
+        "w": 112,
+        "h": 92
+      }
+    },
+    "draggable": {},
+    "wearable": {
+      "slot": "shoes",
+      "layers": {
+        "shoes": "chr_shoes_sneakers_red"
+      },
+      "bodyVariants": {
+        "adult": {
+          "shoes": "chr_shoes_sneakers_red_adult"
+        }
+      }
+    },
+    "animations": {
+      "drop": "squash"
+    }
+  },
+  "metadata": {
+    "name": "object.sneakers_red.name",
+    "placeholder": true
+  }
+}

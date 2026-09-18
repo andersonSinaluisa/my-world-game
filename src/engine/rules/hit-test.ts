@@ -23,6 +23,8 @@ export interface HitTestOptions {
   exclude?: Set<EntityId>;
   /** Has tap/longPress rules (RuleIndex); decoration without them and without draggable is transparent. */
   hasDirectRules?: (entity: Entity) => boolean;
+  /** World transform of an item held by a character of the scene (drawn at its hand anchor, HU-GAME-016). */
+  heldTransform?: (entity: Entity) => Entity['components']['transform'] | undefined;
 }
 
 function isInteractive(e: Entity, hasDirectRules?: (entity: Entity) => boolean): boolean {
@@ -32,8 +34,9 @@ function isInteractive(e: Entity, hasDirectRules?: (entity: Entity) => boolean):
 }
 
 /** Transform of an entity for hit testing: its own in the scene, or container + slot when shown inside it. */
-function effectiveTransform(world: World, e: Entity) {
+function effectiveTransform(world: World, e: Entity, options: HitTestOptions) {
   if (e.location.kind === 'scene') return e.components.transform;
+  if (e.location.kind === 'held') return options.heldTransform?.(e);
   if (e.location.kind !== 'container') return undefined;
   const container = world.get(e.location.containerId);
   const c = container?.components.container;
@@ -70,12 +73,17 @@ export function hitTest(world: World, point: WorldPoint, options: HitTestOptions
       const c = world.get(e.location.containerId);
       return c?.location.kind === 'scene' && c.location.sceneId === options.sceneId;
     });
-  const ordered = [...contents, ...sortForRender(scene, { supportOf: world.index.supportOf }).reverse()];
+  // Items in a hand are drawn inside their holder's group: they come before the holder (front-most first).
+  const held = world.query({ locationKind: 'held' }).filter((e) => {
+    const holder = e.location.kind === 'held' ? world.get(e.location.holderId) : undefined;
+    return holder?.location.kind === 'scene' && holder.location.sceneId === options.sceneId;
+  });
+  const ordered = [...contents, ...held, ...sortForRender(scene, { supportOf: world.index.supportOf }).reverse()];
   const out: HitCandidate[] = [];
   for (const e of ordered) {
     if (options.exclude?.has(e.id)) continue;
     const hitbox = e.components.hitbox;
-    const t = effectiveTransform(world, e);
+    const t = effectiveTransform(world, e, options);
     if (!hitbox || !t) continue;
     if (!isInteractive(e, options.hasDirectRules)) continue;
     const base = toWorldShape(hitbox.shape, t);

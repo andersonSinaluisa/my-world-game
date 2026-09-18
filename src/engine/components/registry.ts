@@ -2,6 +2,12 @@ import type { z } from 'zod';
 
 import {
   AnimationsSchema,
+  AppearanceSchema,
+  CharacterSchema,
+  ExpressionSchema,
+  HolderSchema,
+  PoseSchema,
+  WearableSchema,
   ContainerSchema,
   DraggableSchema,
   HitboxSchema,
@@ -13,6 +19,12 @@ import {
   SwitchableSchema,
   TransformSchema,
   type Animations,
+  type Appearance,
+  type Character,
+  type Expression,
+  type Holder,
+  type Pose,
+  type Wearable,
   type Container,
   type Draggable,
   type Hitbox,
@@ -40,6 +52,12 @@ export interface ComponentMap {
   container: Container;
   animations: Animations;
   sounds: Sounds;
+  wearable: Wearable;
+  character: Character;
+  appearance: Appearance;
+  holder: Holder;
+  pose: Pose;
+  expression: Expression;
 }
 
 export type ComponentName = keyof ComponentMap;
@@ -57,6 +75,12 @@ export const COMPONENT_SCHEMAS: { [K in ComponentName]: z.ZodType<ComponentMap[K
   container: ContainerSchema,
   animations: AnimationsSchema,
   sounds: SoundsSchema,
+  wearable: WearableSchema,
+  character: CharacterSchema,
+  appearance: AppearanceSchema,
+  holder: HolderSchema,
+  pose: PoseSchema,
+  expression: ExpressionSchema,
 };
 
 export function isComponentName(name: string): name is ComponentName {

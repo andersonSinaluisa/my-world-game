@@ -1,0 +1,42 @@
+{
+  "id": "sandals_blue",
+  "category": "clothing",
+  "tags": [
+    "clothing",
+    "shoes"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_clothing_sandals_blue",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -56,
+        "y": -96,
+        "w": 112,
+        "h": 92
+      }
+    },
+    "draggable": {},
+    "wearable": {
+      "slot": "shoes",
+      "layers": {
+        "shoes": "chr_shoes_sandals_blue"
+      },
+      "bodyVariants": {
+        "adult": {
+          "shoes": "chr_shoes_sandals_blue_adult"
+        }
+      }
+    },
+    "animations": {
+      "drop": "squash"
+    }
+  },
+  "metadata": {
+    "name": "object.sandals_blue.name",
+    "placeholder": true
+  }
+}

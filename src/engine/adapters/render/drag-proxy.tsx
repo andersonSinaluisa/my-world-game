@@ -1,8 +1,10 @@
 import { Group, Image } from '@shopify/react-native-skia';
-import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
+import { useAnimatedReaction, useDerivedValue, useSharedValue, withSpring, type SharedValue } from 'react-native-reanimated';
 
 import type { Transform } from '../../components/base';
+import type { CharacterLayerData } from '../../characters/layers';
 import type { AssetKey } from '../../core/types';
+import { CharacterSprite } from './character-sprite';
 import type { TextureStore } from './texture-store';
 import { useTexture } from './use-texture';
 
@@ -52,4 +54,48 @@ export function DragProxy({ asset, transform, pivot, size, grabOffset, liftOffse
       <Image image={image} x={-pivot.x * w} y={-pivot.y * h} width={w} height={h} fit="fill" />
     </Group>
   );
+}
+
+/** HU-GAME-014 R7: max swing of a dangling character, in radians, and how fast it follows the finger. */
+export const MAX_SWING = 0.35;
+const SWING_PER_UNIT = 0.012;
+
+export interface CharacterDragProxyProps {
+  id: string;
+  layers: CharacterLayerData[];
+  transform: Transform;
+  grabOffset: { x: number; y: number };
+  liftOffset?: number;
+  pointerX: SharedValue<number>;
+  pointerY: SharedValue<number>;
+  textures: TextureStore;
+}
+
+/**
+ * Dragged character: the same layer stack, lifted, scaled 1.05 and swinging with the horizontal speed of
+ * the finger. Everything runs on the UI thread (no JS per frame, INPUT_SYSTEM §3).
+ */
+export function CharacterDragProxy({ id, layers, transform, grabOffset, liftOffset, pointerX, pointerY, textures }: CharacterDragProxyProps) {
+  const lift = liftOffset ?? DEFAULT_LIFT_OFFSET;
+  const swing = useSharedValue(0);
+  const lastX = useSharedValue<number | null>(null);
+  useAnimatedReaction(
+    () => pointerX.get(),
+    (x) => {
+      const prev = lastX.get();
+      lastX.set(x);
+      if (prev === null) return;
+      const target = Math.max(-MAX_SWING, Math.min(MAX_SWING, -(x - prev) * SWING_PER_UNIT));
+      swing.set(withSpring(target, { damping: 8, stiffness: 120 }, () => {
+        swing.set(withSpring(0, { damping: 6, stiffness: 80 }));
+      }));
+    },
+  );
+  const motion = useDerivedValue(() => ({
+    dx: pointerX.get() - grabOffset.x - transform.x,
+    dy: pointerY.get() - grabOffset.y - lift - transform.y,
+    rotate: swing.get(),
+    scale: DRAG_PROXY_SCALE,
+  }));
+  return <CharacterSprite id={id} layers={layers} transform={transform} textures={textures} motion={motion} />;
 }

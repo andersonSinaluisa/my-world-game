@@ -4,6 +4,7 @@ import type { GameEngine } from '@/engine/core/engine';
 import type { Entity, EntityInit } from '@/engine/core/entity';
 import { entityIdOf, PRESENTATION_EVENTS, type EventBus, type GameEvent } from '@/engine/core/events';
 import type { AssetKey, EntityId, WorldPoint } from '@/engine/core/types';
+import type { CharacterLayerData } from '@/engine/characters/layers';
 import type { LocaleId } from '@/engine/content/schemas';
 import { cullEntities, cullingRange, type AssetSizeLookup } from '@/engine/scene/culling';
 import { isRenderable, sortForRender } from '@/engine/scene/render-order';
@@ -46,6 +47,8 @@ export interface GameFacade {
     cameraX(): number | undefined;
     /** Active zone (room) of the camera; updated on cameraSettled and scene entry (HU-GAME-012). */
     activeZone(): string | undefined;
+    /** Layers of a character, memoized (same array while its look does not change, HU-GAME-013 R7). */
+    characterLayers(id: EntityId): CharacterLayerData[];
     visibleEntities(viewport?: ViewportQuery): EntityRenderData[];
   };
   /** For adapters (audio, effects). UI reads state through selectors, never through events. */
@@ -162,6 +165,7 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
       activeScene: () => engine.scene,
       cameraX: () => engine.playerState.cameraX,
       activeZone: () => engine.activeZoneId,
+      characterLayers: (id) => engine.characterLayers(id),
       visibleEntities(viewport) {
         const scene = engine.scene;
         if (!scene) return NO_ENTITIES;

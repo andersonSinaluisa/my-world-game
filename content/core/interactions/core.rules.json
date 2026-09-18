@@ -28,5 +28,59 @@
       }
     ],
     "priority": 10
+  },
+  {
+    "id": "hold_item",
+    "trigger": "drop",
+    "source": {
+      "has": [
+        "draggable"
+      ],
+      "notTags": [
+        "furniture",
+        "character"
+      ]
+    },
+    "target": {
+      "has": [
+        "holder"
+      ],
+      "zone": [
+        "handL",
+        "handR",
+        "body",
+        "torso",
+        "legs",
+        "feet"
+      ]
+    },
+    "conditions": [
+      {
+        "type": "handFree"
+      }
+    ],
+    "actions": [
+      {
+        "type": "hold"
+      }
+    ],
+    "priority": 50
+  },
+  {
+    "id": "tap_character",
+    "trigger": "tap",
+    "target": {
+      "has": [
+        "character"
+      ]
+    },
+    "actions": [
+      {
+        "type": "setExpression",
+        "expression": "happy",
+        "durationMs": 1500
+      }
+    ],
+    "priority": 5
   }
 ]

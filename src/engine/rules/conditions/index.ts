@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { chooseHand } from '../../actions/character-actions';
 import { fail, PASS, resolveRole, type ConditionHandler } from '../../actions/types';
 
 const Role = z.enum(['$source', '$target']);
@@ -29,9 +30,22 @@ export const isOpen: ConditionHandler<z.infer<typeof IsOpenParams>> = {
   },
 };
 
+const HandFreeParams = z.strictObject({ type: z.literal('handFree'), of: Role.default('$target') });
+
+/** At least one free hand; with a hand zone, that hand or the other one (HU-GAME-016 R2). */
+export const handFree: ConditionHandler<z.infer<typeof HandFreeParams>> = {
+  type: 'handFree',
+  params: HandFreeParams,
+  evaluate(ctx, p) {
+    const e = resolveRole(ctx, p.of);
+    if (!e?.components.holder) return fail('handFree');
+    return chooseHand(ctx.env.world, e, ctx.zone) ? PASS : fail('handFree');
+  },
+};
+
 /** Closed set of conditions (INTERACTION_SCHEMA §4). No expressions, no scripting. */
 export const CONDITIONS: Record<string, ConditionHandler<never>> = Object.fromEntries(
-  [stateIs, isOpen].map((c) => [c.type, c as unknown as ConditionHandler<never>]),
+  [stateIs, isOpen, handFree].map((c) => [c.type, c as unknown as ConditionHandler<never>]),
 );
 
 export const CONDITION_TYPES = Object.keys(CONDITIONS);

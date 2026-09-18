@@ -1,6 +1,7 @@
 import type { z } from 'zod';
 
 import { ACTION_TYPES } from '../actions';
+import { catalogAssetRefs, CharacterPartsSchema, type CharacterPartsCatalog } from '../characters/catalog';
 import {
   checkComponentDependencies,
   checkComponentShapes,
@@ -60,6 +61,7 @@ export interface ParsedPack {
   prefabs: { file: string; def: PrefabDefinition }[];
   scenes: { file: string; def: SceneDefinition }[];
   rules: { file: string; rules: InteractionRule[] }[];
+  characters?: { file: string; catalog: CharacterPartsCatalog };
   locales: Partial<Record<(typeof LOCALES)[number], LocaleTable>>;
 }
 
@@ -282,6 +284,11 @@ function parsePackFiles(pack: RawPack, manifest: PackManifest, rep: Reporter): P
     validateSceneStructure(r.data, f.file, rep);
     out.scenes.push({ file: f.file, def: r.data });
   }
+  if (pack.characters) {
+    const c = CharacterPartsSchema.safeParse(pack.characters.data);
+    if (c.success) out.characters = { file: pack.characters.file, catalog: c.data };
+    else rep.zod(pack.characters.file, [], c.error);
+  }
   const ruleIds = new Set<string>();
   for (const f of pack.rules) {
     if (!Array.isArray(f.data)) {
@@ -462,6 +469,12 @@ function crossReferences(p: ParsedPack, byId: Map<string, ParsedPack>, options: 
       }
     });
   }
+  if (p.characters) checkCharacterCatalog(p.characters, { rep, packId, checkAsset, checkPrefabRef, resolvePrefab, i18n });
+  for (const { file, def } of p.prefabs) {
+    const wearable = (def.components as Record<string, unknown>).wearable as WearableData | undefined;
+    for (const [layer, k] of wearableAssets(wearable)) checkAsset(file, ['components', 'wearable', ...layer], k);
+  }
+
   for (const [i, s] of (p.manifest.provides.scenes ?? []).entries()) {
     if (!sceneIds.has(s)) rep.add('manifest.json', ['provides', 'scenes', i], 'unknownScene', `scene "${s}" has no file`);
   }
@@ -528,4 +541,83 @@ function deepMerge(base: unknown, over: unknown): unknown {
 
 function structuredCloneJson<T>(v: T): T {
   return v === undefined ? v : (JSON.parse(JSON.stringify(v)) as T);
+}
+
+// ---------- character parts catalog (CHARACTER_SCHEMA §1, CHARACTER_SYSTEM §7) ----------
+
+interface WearableData {
+  slot: string;
+  layers?: Record<string, string>;
+  bodyVariants?: Record<string, Record<string, string>>;
+}
+
+function wearableAssets(w: WearableData | undefined): [(string | number)[], string][] {
+  if (!w) return [];
+  const out: [(string | number)[], string][] = Object.entries(w.layers ?? {}).map(([l, k]) => [['layers', l], k]);
+  for (const [bt, layers] of Object.entries(w.bodyVariants ?? {})) {
+    for (const [l, k] of Object.entries(layers)) out.push([['bodyVariants', bt, l], k]);
+  }
+  return out;
+}
+
+interface CatalogCheckEnv {
+  rep: Reporter;
+  packId: string;
+  checkAsset: (file: string, path: (string | number)[], key: string) => void;
+  checkPrefabRef: (file: string, path: (string | number)[], ref: string) => void;
+  resolvePrefab: (ref: string) => PrefabDefinition | undefined;
+  i18n: (file: string, path: (string | number)[], key: string) => void;
+}
+
+function checkCharacterCatalog({ file, catalog: c }: { file: string; catalog: CharacterPartsCatalog }, env: CatalogCheckEnv) {
+  const { rep } = env;
+  for (const ref of catalogAssetRefs(c)) env.checkAsset(file, ref.path, ref.key);
+  const lists = { bodyTypes: c.bodyTypes, skinTones: c.skinTones, eyes: c.eyes, mouths: c.mouths, hairStyles: c.hairStyles, hairColors: c.hairColors };
+  for (const [list, items] of Object.entries(lists)) {
+    const seen = new Set<string>();
+    items.forEach((item: { id: string; name?: string }, i: number) => {
+      if (seen.has(item.id)) rep.add(file, [list, i, 'id'], 'duplicatePartId', `"${item.id}" is duplicated in ${list}`);
+      seen.add(item.id);
+      if (item.name) env.i18n(file, [list, i, 'name'], item.name);
+    });
+  }
+  const defaults: [keyof typeof lists, string][] = [
+    ['bodyTypes', c.defaults.bodyType],
+    ['skinTones', c.defaults.skinTone],
+    ['eyes', c.defaults.eyes],
+    ['mouths', c.defaults.mouth],
+    ['hairStyles', c.defaults.hairStyle],
+    ['hairColors', c.defaults.hairColor],
+  ];
+  const defaultField = { bodyTypes: 'bodyType', skinTones: 'skinTone', eyes: 'eyes', mouths: 'mouth', hairStyles: 'hairStyle', hairColors: 'hairColor' };
+  for (const [list, id] of defaults) {
+    if (!lists[list].some((item) => item.id === id)) rep.add(file, ['defaults', defaultField[list]], 'unknownPart', `"${id}" is not in ${list}`);
+  }
+  const bodyIds = c.bodyTypes.map((b) => b.id);
+  c.hairStyles.forEach((h, i) => {
+    for (const bt of Object.keys(h.byBodyType ?? {})) {
+      if (!bodyIds.includes(bt)) rep.add(file, ['hairStyles', i, 'byBodyType', bt], 'unknownPart', `body type "${bt}" does not exist`);
+    }
+  });
+  // Every starter wearable must draw on every body type (error); the outfit defaults must be starter-compatible.
+  const checkWearable = (path: (string | number)[], ref: string, slot: string | undefined, severity: IssueSeverity) => {
+    env.checkPrefabRef(file, path, ref);
+    const prefab = env.resolvePrefab(ref);
+    if (!prefab) return;
+    const w = (prefab.components as Record<string, unknown>).wearable as WearableData | undefined;
+    if (!w) {
+      rep.add(file, path, 'notWearable', `"${ref}" has no wearable component`);
+      return;
+    }
+    if (slot && w.slot !== slot) rep.add(file, path, 'invalidWearable', `"${ref}" is worn in "${w.slot}", not "${slot}"`);
+    for (const bt of bodyIds) {
+      const layers = w.bodyVariants?.[bt] ?? w.layers ?? {};
+      if (!Object.keys(layers).length) {
+        rep.add(file, path, 'missingBodyVariant', `"${ref}" has no sprites for body type "${bt}"`, severity);
+      }
+    }
+  };
+  c.starterClothes.forEach((ref, i) => checkWearable(['starterClothes', i], ref, undefined, 'error'));
+  for (const [slot, ref] of Object.entries(c.defaults.outfit)) checkWearable(['defaults', 'outfit', slot], ref!, slot, 'error');
+  c.bodyTypes.forEach((b, i) => env.i18n(file, ['bodyTypes', i, 'name'], b.name));
 }

@@ -1,0 +1,46 @@
+{
+  "id": "hoodie_purple",
+  "category": "clothing",
+  "tags": [
+    "clothing",
+    "top"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_clothing_hoodie_purple",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -56,
+        "y": -96,
+        "w": 112,
+        "h": 92
+      }
+    },
+    "draggable": {},
+    "wearable": {
+      "slot": "top",
+      "layers": {
+        "torsoClothes": "chr_top_hoodie_purple",
+        "armClothesL": "chr_top_hoodie_purple_arm_l",
+        "armClothesR": "chr_top_hoodie_purple_arm_r"
+      },
+      "bodyVariants": {
+        "adult": {
+          "torsoClothes": "chr_top_hoodie_purple_adult",
+          "armClothesL": "chr_top_hoodie_purple_arm_l_adult",
+          "armClothesR": "chr_top_hoodie_purple_arm_r_adult"
+        }
+      }
+    },
+    "animations": {
+      "drop": "squash"
+    }
+  },
+  "metadata": {
+    "name": "object.hoodie_purple.name",
+    "placeholder": true
+  }
+}

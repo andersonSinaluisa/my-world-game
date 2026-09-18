@@ -1,0 +1,42 @@
+{
+  "id": "pants_green",
+  "category": "clothing",
+  "tags": [
+    "clothing",
+    "bottom"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_clothing_pants_green",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -56,
+        "y": -96,
+        "w": 112,
+        "h": 92
+      }
+    },
+    "draggable": {},
+    "wearable": {
+      "slot": "bottom",
+      "layers": {
+        "bottomClothes": "chr_bottom_pants_green"
+      },
+      "bodyVariants": {
+        "adult": {
+          "bottomClothes": "chr_bottom_pants_green_adult"
+        }
+      }
+    },
+    "animations": {
+      "drop": "squash"
+    }
+  },
+  "metadata": {
+    "name": "object.pants_green.name",
+    "placeholder": true
+  }
+}

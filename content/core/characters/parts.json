@@ -1,0 +1,369 @@
+{
+  "bodyTypes": [
+    {
+      "id": "child",
+      "name": "body.child.name",
+      "icon": "ui_creator_body_child",
+      "height": 300,
+      "layers": {
+        "idle": {
+          "legs": "chr_body_child_idle_legs",
+          "torso": "chr_body_child_idle_torso",
+          "armL": "chr_body_child_idle_arml",
+          "armR": "chr_body_child_idle_armr",
+          "head": "chr_body_child_idle_head"
+        }
+      },
+      "handAnchors": {
+        "idle": {
+          "left": {
+            "x": 49,
+            "y": -148
+          },
+          "right": {
+            "x": -49,
+            "y": -148
+          }
+        }
+      },
+      "mouthAnchor": {
+        "idle": {
+          "x": 0,
+          "y": -221
+        }
+      }
+    },
+    {
+      "id": "adult",
+      "name": "body.adult.name",
+      "icon": "ui_creator_body_adult",
+      "height": 420,
+      "layers": {
+        "idle": {
+          "legs": "chr_body_adult_idle_legs",
+          "torso": "chr_body_adult_idle_torso",
+          "armL": "chr_body_adult_idle_arml",
+          "armR": "chr_body_adult_idle_armr",
+          "head": "chr_body_adult_idle_head"
+        }
+      },
+      "handAnchors": {
+        "idle": {
+          "left": {
+            "x": 58,
+            "y": -198
+          },
+          "right": {
+            "x": -58,
+            "y": -198
+          }
+        }
+      },
+      "mouthAnchor": {
+        "idle": {
+          "x": 0,
+          "y": -341
+        }
+      },
+      "faceOffset": {
+        "x": 0,
+        "y": -120
+      }
+    }
+  ],
+  "skinTones": [
+    {
+      "id": "skin_01",
+      "color": "#FCE3D0",
+      "name": "skin.skin_01.name"
+    },
+    {
+      "id": "skin_02",
+      "color": "#F5CBA7",
+      "name": "skin.skin_02.name"
+    },
+    {
+      "id": "skin_03",
+      "color": "#E8B48A",
+      "name": "skin.skin_03.name"
+    },
+    {
+      "id": "skin_04",
+      "color": "#C68642",
+      "name": "skin.skin_04.name"
+    },
+    {
+      "id": "skin_05",
+      "color": "#A5673F",
+      "name": "skin.skin_05.name"
+    },
+    {
+      "id": "skin_06",
+      "color": "#8D5524",
+      "name": "skin.skin_06.name"
+    },
+    {
+      "id": "skin_07",
+      "color": "#6B3E26",
+      "name": "skin.skin_07.name"
+    },
+    {
+      "id": "skin_08",
+      "color": "#4A2A1A",
+      "name": "skin.skin_08.name"
+    }
+  ],
+  "eyes": [
+    {
+      "id": "eyes_round",
+      "icon": "ui_creator_eyes_round",
+      "asset": "chr_eyes_round",
+      "closedAsset": "chr_eyes_round_closed",
+      "name": "part.eyes_round.name"
+    },
+    {
+      "id": "eyes_dot",
+      "icon": "ui_creator_eyes_dot",
+      "asset": "chr_eyes_dot",
+      "closedAsset": "chr_eyes_dot_closed",
+      "name": "part.eyes_dot.name"
+    },
+    {
+      "id": "eyes_big",
+      "icon": "ui_creator_eyes_big",
+      "asset": "chr_eyes_big",
+      "closedAsset": "chr_eyes_big_closed",
+      "name": "part.eyes_big.name"
+    },
+    {
+      "id": "eyes_sleepy",
+      "icon": "ui_creator_eyes_sleepy",
+      "asset": "chr_eyes_sleepy",
+      "closedAsset": "chr_eyes_sleepy_closed",
+      "name": "part.eyes_sleepy.name"
+    },
+    {
+      "id": "eyes_lashes",
+      "icon": "ui_creator_eyes_lashes",
+      "asset": "chr_eyes_lashes",
+      "closedAsset": "chr_eyes_lashes_closed",
+      "name": "part.eyes_lashes.name"
+    },
+    {
+      "id": "eyes_star",
+      "icon": "ui_creator_eyes_star",
+      "asset": "chr_eyes_star",
+      "closedAsset": "chr_eyes_star_closed",
+      "name": "part.eyes_star.name"
+    }
+  ],
+  "mouths": [
+    {
+      "id": "mouth_smile",
+      "icon": "ui_creator_mouth_smile",
+      "asset": "chr_mouth_smile",
+      "byExpression": {
+        "happy": "chr_mouth_expr_happy",
+        "surprised": "chr_mouth_expr_surprised",
+        "yum": "chr_mouth_expr_yum"
+      },
+      "name": "part.mouth_smile.name"
+    },
+    {
+      "id": "mouth_grin",
+      "icon": "ui_creator_mouth_grin",
+      "asset": "chr_mouth_grin",
+      "byExpression": {
+        "happy": "chr_mouth_expr_happy",
+        "surprised": "chr_mouth_expr_surprised",
+        "yum": "chr_mouth_expr_yum"
+      },
+      "name": "part.mouth_grin.name"
+    },
+    {
+      "id": "mouth_flat",
+      "icon": "ui_creator_mouth_flat",
+      "asset": "chr_mouth_flat",
+      "byExpression": {
+        "happy": "chr_mouth_expr_happy",
+        "surprised": "chr_mouth_expr_surprised",
+        "yum": "chr_mouth_expr_yum"
+      },
+      "name": "part.mouth_flat.name"
+    },
+    {
+      "id": "mouth_o",
+      "icon": "ui_creator_mouth_o",
+      "asset": "chr_mouth_o",
+      "byExpression": {
+        "happy": "chr_mouth_expr_happy",
+        "surprised": "chr_mouth_expr_surprised",
+        "yum": "chr_mouth_expr_yum"
+      },
+      "name": "part.mouth_o.name"
+    },
+    {
+      "id": "mouth_cat",
+      "icon": "ui_creator_mouth_cat",
+      "asset": "chr_mouth_cat",
+      "byExpression": {
+        "happy": "chr_mouth_expr_happy",
+        "surprised": "chr_mouth_expr_surprised",
+        "yum": "chr_mouth_expr_yum"
+      },
+      "name": "part.mouth_cat.name"
+    },
+    {
+      "id": "mouth_tongue",
+      "icon": "ui_creator_mouth_tongue",
+      "asset": "chr_mouth_tongue",
+      "byExpression": {
+        "happy": "chr_mouth_expr_happy",
+        "surprised": "chr_mouth_expr_surprised",
+        "yum": "chr_mouth_expr_yum"
+      },
+      "name": "part.mouth_tongue.name"
+    }
+  ],
+  "hairStyles": [
+    {
+      "id": "hair_short",
+      "icon": "ui_creator_hair_short",
+      "front": "chr_hair_short_front",
+      "name": "part.hair_short.name"
+    },
+    {
+      "id": "hair_buns",
+      "icon": "ui_creator_hair_buns",
+      "front": "chr_hair_buns_front",
+      "name": "part.hair_buns.name"
+    },
+    {
+      "id": "hair_long",
+      "icon": "ui_creator_hair_long",
+      "front": "chr_hair_long_front",
+      "back": "chr_hair_long_back",
+      "name": "part.hair_long.name"
+    },
+    {
+      "id": "hair_curly",
+      "icon": "ui_creator_hair_curly",
+      "front": "chr_hair_curly_front",
+      "back": "chr_hair_curly_back",
+      "name": "part.hair_curly.name"
+    },
+    {
+      "id": "hair_ponytail",
+      "icon": "ui_creator_hair_ponytail",
+      "front": "chr_hair_ponytail_front",
+      "back": "chr_hair_ponytail_back",
+      "name": "part.hair_ponytail.name"
+    },
+    {
+      "id": "hair_bob",
+      "icon": "ui_creator_hair_bob",
+      "front": "chr_hair_bob_front",
+      "back": "chr_hair_bob_back",
+      "name": "part.hair_bob.name"
+    },
+    {
+      "id": "hair_spiky",
+      "icon": "ui_creator_hair_spiky",
+      "front": "chr_hair_spiky_front",
+      "name": "part.hair_spiky.name"
+    },
+    {
+      "id": "hair_braids",
+      "icon": "ui_creator_hair_braids",
+      "front": "chr_hair_braids_front",
+      "back": "chr_hair_braids_back",
+      "name": "part.hair_braids.name"
+    }
+  ],
+  "hairColors": [
+    {
+      "id": "hair_black",
+      "color": "#2B2B2B",
+      "name": "haircolor.hair_black.name"
+    },
+    {
+      "id": "hair_brown",
+      "color": "#6B4226",
+      "name": "haircolor.hair_brown.name"
+    },
+    {
+      "id": "hair_blonde",
+      "color": "#E8C872",
+      "name": "haircolor.hair_blonde.name"
+    },
+    {
+      "id": "hair_red",
+      "color": "#C1440E",
+      "name": "haircolor.hair_red.name"
+    },
+    {
+      "id": "hair_berry",
+      "color": "#B0306A",
+      "name": "haircolor.hair_berry.name"
+    },
+    {
+      "id": "hair_blue",
+      "color": "#3F7FD9",
+      "name": "haircolor.hair_blue.name"
+    },
+    {
+      "id": "hair_white",
+      "color": "#F2F2F2",
+      "name": "haircolor.hair_white.name"
+    },
+    {
+      "id": "hair_green",
+      "color": "#4CAF50",
+      "name": "haircolor.hair_green.name"
+    }
+  ],
+  "starterClothes": [
+    "shirt_star_yellow",
+    "shirt_stripe_blue",
+    "shirt_heart_pink",
+    "shirt_plain_green",
+    "shirt_dino_orange",
+    "hoodie_purple",
+    "jeans_blue",
+    "shorts_red",
+    "skirt_pink",
+    "pants_green",
+    "leggings_yellow",
+    "sneakers_red",
+    "boots_brown",
+    "sandals_blue",
+    "shoes_black"
+  ],
+  "colorTags": [
+    "#FFB5C2",
+    "#9ED8FF",
+    "#B8F2A0",
+    "#FFE08A",
+    "#D7B8FF",
+    "#FFC89E",
+    "#A0F0E0",
+    "#F7A8A8",
+    "#C8E6FF",
+    "#E6F59A",
+    "#FFD1F0",
+    "#CFCFCF"
+  ],
+  "defaults": {
+    "bodyType": "child",
+    "skinTone": "skin_01",
+    "eyes": "eyes_round",
+    "mouth": "mouth_smile",
+    "hairStyle": "hair_buns",
+    "hairColor": "hair_brown",
+    "outfit": {
+      "top": "shirt_star_yellow",
+      "bottom": "jeans_blue",
+      "shoes": "sneakers_red"
+    }
+  }
+}

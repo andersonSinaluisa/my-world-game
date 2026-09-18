@@ -1,3 +1,4 @@
+import { breathPhase, tintMatrix } from './render/tint';
 import { dpToWorld, screenToWorld, worldToScreen } from './input/coords';
 import { TextureCache } from './render/texture-cache';
 import { computeViewport } from './render/viewport';
@@ -59,5 +60,22 @@ describe('TextureCache (HU-GAME-008 R5)', () => {
     cache.set('a', 'a', info, 'A');
     cache.set('b', 'b', info, 'A');
     expect(cache.size).toBe(2);
+  });
+});
+
+describe('character tint and breathing (HU-GAME-013 R4, HU-GAME-014 R6)', () => {
+  it('multiplies RGB by the tone and keeps alpha', () => {
+    const m = tintMatrix('#FF8000');
+    expect(m[0]).toBe(1);
+    expect(m[6]).toBeCloseTo(128 / 255, 5);
+    expect(m[12]).toBe(0);
+    expect(m[18]).toBe(1);
+  });
+
+  it('gives each character a stable, different breathing phase', () => {
+    expect(breathPhase('rt_a')).toBe(breathPhase('rt_a'));
+    expect(breathPhase('rt_a')).not.toBe(breathPhase('rt_b'));
+    expect(breathPhase('rt_a')).toBeGreaterThanOrEqual(0);
+    expect(breathPhase('rt_a')).toBeLessThan(2 * Math.PI);
   });
 });

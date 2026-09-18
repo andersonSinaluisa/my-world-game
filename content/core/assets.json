@@ -1,15 +1,791 @@
 {
   "images": {
-    "env_home_bg_living_01": {
-      "file": "assets/images/env_home_bg_living_01.webp",
-      "w": 1920,
-      "h": 1080,
+    "chr_body_adult_idle_arml": {
+      "file": "assets/images/chr_body_adult_idle_arml.webp",
+      "w": 240,
+      "h": 460,
       "placeholder": true,
-      "license": "CC0",
-      "source": "https://kenney.nl/assets/background-elements-remastered"
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
     },
-    "env_home_bg_kitchen_01": {
-      "file": "assets/images/env_home_bg_kitchen_01.webp",
+    "chr_body_adult_idle_armr": {
+      "file": "assets/images/chr_body_adult_idle_armr.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_body_adult_idle_head": {
+      "file": "assets/images/chr_body_adult_idle_head.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_body_adult_idle_legs": {
+      "file": "assets/images/chr_body_adult_idle_legs.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_body_adult_idle_torso": {
+      "file": "assets/images/chr_body_adult_idle_torso.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_body_child_idle_arml": {
+      "file": "assets/images/chr_body_child_idle_arml.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_body_child_idle_armr": {
+      "file": "assets/images/chr_body_child_idle_armr.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_body_child_idle_head": {
+      "file": "assets/images/chr_body_child_idle_head.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_body_child_idle_legs": {
+      "file": "assets/images/chr_body_child_idle_legs.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_body_child_idle_torso": {
+      "file": "assets/images/chr_body_child_idle_torso.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_bottom_jeans_blue": {
+      "file": "assets/images/chr_bottom_jeans_blue.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_bottom_jeans_blue_adult": {
+      "file": "assets/images/chr_bottom_jeans_blue_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_bottom_leggings_yellow": {
+      "file": "assets/images/chr_bottom_leggings_yellow.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_bottom_leggings_yellow_adult": {
+      "file": "assets/images/chr_bottom_leggings_yellow_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_bottom_pants_green": {
+      "file": "assets/images/chr_bottom_pants_green.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_bottom_pants_green_adult": {
+      "file": "assets/images/chr_bottom_pants_green_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_bottom_shorts_red": {
+      "file": "assets/images/chr_bottom_shorts_red.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_bottom_shorts_red_adult": {
+      "file": "assets/images/chr_bottom_shorts_red_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_bottom_skirt_pink": {
+      "file": "assets/images/chr_bottom_skirt_pink.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_bottom_skirt_pink_adult": {
+      "file": "assets/images/chr_bottom_skirt_pink_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_eyes_big": {
+      "file": "assets/images/chr_eyes_big.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_eyes_big_closed": {
+      "file": "assets/images/chr_eyes_big_closed.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_eyes_dot": {
+      "file": "assets/images/chr_eyes_dot.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_eyes_dot_closed": {
+      "file": "assets/images/chr_eyes_dot_closed.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_eyes_lashes": {
+      "file": "assets/images/chr_eyes_lashes.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_eyes_lashes_closed": {
+      "file": "assets/images/chr_eyes_lashes_closed.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_eyes_round": {
+      "file": "assets/images/chr_eyes_round.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_eyes_round_closed": {
+      "file": "assets/images/chr_eyes_round_closed.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_eyes_sleepy": {
+      "file": "assets/images/chr_eyes_sleepy.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_eyes_sleepy_closed": {
+      "file": "assets/images/chr_eyes_sleepy_closed.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_eyes_star": {
+      "file": "assets/images/chr_eyes_star.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_eyes_star_closed": {
+      "file": "assets/images/chr_eyes_star_closed.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_hair_bob_back": {
+      "file": "assets/images/chr_hair_bob_back.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_hair_bob_front": {
+      "file": "assets/images/chr_hair_bob_front.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_hair_braids_back": {
+      "file": "assets/images/chr_hair_braids_back.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_hair_braids_front": {
+      "file": "assets/images/chr_hair_braids_front.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_hair_buns_front": {
+      "file": "assets/images/chr_hair_buns_front.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_hair_curly_back": {
+      "file": "assets/images/chr_hair_curly_back.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_hair_curly_front": {
+      "file": "assets/images/chr_hair_curly_front.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_hair_long_back": {
+      "file": "assets/images/chr_hair_long_back.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_hair_long_front": {
+      "file": "assets/images/chr_hair_long_front.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_hair_ponytail_back": {
+      "file": "assets/images/chr_hair_ponytail_back.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_hair_ponytail_front": {
+      "file": "assets/images/chr_hair_ponytail_front.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_hair_short_front": {
+      "file": "assets/images/chr_hair_short_front.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_hair_spiky_front": {
+      "file": "assets/images/chr_hair_spiky_front.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_mouth_cat": {
+      "file": "assets/images/chr_mouth_cat.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_mouth_expr_happy": {
+      "file": "assets/images/chr_mouth_expr_happy.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_mouth_expr_surprised": {
+      "file": "assets/images/chr_mouth_expr_surprised.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_mouth_expr_yum": {
+      "file": "assets/images/chr_mouth_expr_yum.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_mouth_flat": {
+      "file": "assets/images/chr_mouth_flat.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_mouth_grin": {
+      "file": "assets/images/chr_mouth_grin.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_mouth_o": {
+      "file": "assets/images/chr_mouth_o.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_mouth_smile": {
+      "file": "assets/images/chr_mouth_smile.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_mouth_tongue": {
+      "file": "assets/images/chr_mouth_tongue.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_shoes_boots_brown": {
+      "file": "assets/images/chr_shoes_boots_brown.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_shoes_boots_brown_adult": {
+      "file": "assets/images/chr_shoes_boots_brown_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_shoes_sandals_blue": {
+      "file": "assets/images/chr_shoes_sandals_blue.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_shoes_sandals_blue_adult": {
+      "file": "assets/images/chr_shoes_sandals_blue_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_shoes_shoes_black": {
+      "file": "assets/images/chr_shoes_shoes_black.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_shoes_shoes_black_adult": {
+      "file": "assets/images/chr_shoes_shoes_black_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_shoes_sneakers_red": {
+      "file": "assets/images/chr_shoes_sneakers_red.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_shoes_sneakers_red_adult": {
+      "file": "assets/images/chr_shoes_sneakers_red_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_hoodie_purple": {
+      "file": "assets/images/chr_top_hoodie_purple.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_hoodie_purple_adult": {
+      "file": "assets/images/chr_top_hoodie_purple_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_hoodie_purple_arm_l": {
+      "file": "assets/images/chr_top_hoodie_purple_arm_l.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_hoodie_purple_arm_l_adult": {
+      "file": "assets/images/chr_top_hoodie_purple_arm_l_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_hoodie_purple_arm_r": {
+      "file": "assets/images/chr_top_hoodie_purple_arm_r.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_hoodie_purple_arm_r_adult": {
+      "file": "assets/images/chr_top_hoodie_purple_arm_r_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_dino_orange": {
+      "file": "assets/images/chr_top_shirt_dino_orange.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_dino_orange_adult": {
+      "file": "assets/images/chr_top_shirt_dino_orange_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_dino_orange_arm_l": {
+      "file": "assets/images/chr_top_shirt_dino_orange_arm_l.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_dino_orange_arm_l_adult": {
+      "file": "assets/images/chr_top_shirt_dino_orange_arm_l_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_dino_orange_arm_r": {
+      "file": "assets/images/chr_top_shirt_dino_orange_arm_r.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_dino_orange_arm_r_adult": {
+      "file": "assets/images/chr_top_shirt_dino_orange_arm_r_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_heart_pink": {
+      "file": "assets/images/chr_top_shirt_heart_pink.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_heart_pink_adult": {
+      "file": "assets/images/chr_top_shirt_heart_pink_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_heart_pink_arm_l": {
+      "file": "assets/images/chr_top_shirt_heart_pink_arm_l.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_heart_pink_arm_l_adult": {
+      "file": "assets/images/chr_top_shirt_heart_pink_arm_l_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_heart_pink_arm_r": {
+      "file": "assets/images/chr_top_shirt_heart_pink_arm_r.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_heart_pink_arm_r_adult": {
+      "file": "assets/images/chr_top_shirt_heart_pink_arm_r_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_plain_green": {
+      "file": "assets/images/chr_top_shirt_plain_green.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_plain_green_adult": {
+      "file": "assets/images/chr_top_shirt_plain_green_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_plain_green_arm_l": {
+      "file": "assets/images/chr_top_shirt_plain_green_arm_l.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_plain_green_arm_l_adult": {
+      "file": "assets/images/chr_top_shirt_plain_green_arm_l_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_plain_green_arm_r": {
+      "file": "assets/images/chr_top_shirt_plain_green_arm_r.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_plain_green_arm_r_adult": {
+      "file": "assets/images/chr_top_shirt_plain_green_arm_r_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_star_yellow": {
+      "file": "assets/images/chr_top_shirt_star_yellow.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_star_yellow_adult": {
+      "file": "assets/images/chr_top_shirt_star_yellow_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_star_yellow_arm_l": {
+      "file": "assets/images/chr_top_shirt_star_yellow_arm_l.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_star_yellow_arm_l_adult": {
+      "file": "assets/images/chr_top_shirt_star_yellow_arm_l_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_star_yellow_arm_r": {
+      "file": "assets/images/chr_top_shirt_star_yellow_arm_r.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_star_yellow_arm_r_adult": {
+      "file": "assets/images/chr_top_shirt_star_yellow_arm_r_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_stripe_blue": {
+      "file": "assets/images/chr_top_shirt_stripe_blue.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_stripe_blue_adult": {
+      "file": "assets/images/chr_top_shirt_stripe_blue_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_stripe_blue_arm_l": {
+      "file": "assets/images/chr_top_shirt_stripe_blue_arm_l.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_stripe_blue_arm_l_adult": {
+      "file": "assets/images/chr_top_shirt_stripe_blue_arm_l_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_stripe_blue_arm_r": {
+      "file": "assets/images/chr_top_shirt_stripe_blue_arm_r.webp",
+      "w": 240,
+      "h": 340,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "chr_top_shirt_stripe_blue_arm_r_adult": {
+      "file": "assets/images/chr_top_shirt_stripe_blue_arm_r_adult.webp",
+      "w": 240,
+      "h": 460,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "env_home_bg_bathroom_01": {
+      "file": "assets/images/env_home_bg_bathroom_01.webp",
       "w": 1920,
       "h": 1080,
       "placeholder": true,
@@ -24,13 +800,37 @@
       "license": "CC0",
       "source": "https://kenney.nl/assets/background-elements-remastered"
     },
-    "env_home_bg_bathroom_01": {
-      "file": "assets/images/env_home_bg_bathroom_01.webp",
+    "env_home_bg_kitchen_01": {
+      "file": "assets/images/env_home_bg_kitchen_01.webp",
       "w": 1920,
       "h": 1080,
       "placeholder": true,
       "license": "CC0",
       "source": "https://kenney.nl/assets/background-elements-remastered"
+    },
+    "env_home_bg_living_01": {
+      "file": "assets/images/env_home_bg_living_01.webp",
+      "w": 1920,
+      "h": 1080,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/background-elements-remastered"
+    },
+    "env_home_lamp_floor_off": {
+      "file": "assets/images/env_home_lamp_floor_off.webp",
+      "w": 170,
+      "h": 280,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_home_lamp_floor_on": {
+      "file": "assets/images/env_home_lamp_floor_on.webp",
+      "w": 170,
+      "h": 280,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
     },
     "env_home_table_round": {
       "file": "assets/images/env_home_table_round.webp",
@@ -56,21 +856,125 @@
       "license": "CC0",
       "source": "https://opengameart.org/content/glitch-furniture-svg"
     },
-    "env_home_lamp_floor_off": {
-      "file": "assets/images/env_home_lamp_floor_off.webp",
-      "w": 170,
-      "h": 280,
+    "obj_clothing_boots_brown": {
+      "file": "assets/images/obj_clothing_boots_brown.webp",
+      "w": 120,
+      "h": 100,
       "placeholder": true,
-      "license": "CC0",
-      "source": "https://opengameart.org/content/glitch-furniture-svg"
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
     },
-    "env_home_lamp_floor_on": {
-      "file": "assets/images/env_home_lamp_floor_on.webp",
-      "w": 170,
-      "h": 280,
+    "obj_clothing_hoodie_purple": {
+      "file": "assets/images/obj_clothing_hoodie_purple.webp",
+      "w": 120,
+      "h": 100,
       "placeholder": true,
-      "license": "CC0",
-      "source": "https://opengameart.org/content/glitch-furniture-svg"
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "obj_clothing_jeans_blue": {
+      "file": "assets/images/obj_clothing_jeans_blue.webp",
+      "w": 120,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "obj_clothing_leggings_yellow": {
+      "file": "assets/images/obj_clothing_leggings_yellow.webp",
+      "w": 120,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "obj_clothing_pants_green": {
+      "file": "assets/images/obj_clothing_pants_green.webp",
+      "w": 120,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "obj_clothing_sandals_blue": {
+      "file": "assets/images/obj_clothing_sandals_blue.webp",
+      "w": 120,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "obj_clothing_shirt_dino_orange": {
+      "file": "assets/images/obj_clothing_shirt_dino_orange.webp",
+      "w": 120,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "obj_clothing_shirt_heart_pink": {
+      "file": "assets/images/obj_clothing_shirt_heart_pink.webp",
+      "w": 120,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "obj_clothing_shirt_plain_green": {
+      "file": "assets/images/obj_clothing_shirt_plain_green.webp",
+      "w": 120,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "obj_clothing_shirt_star_yellow": {
+      "file": "assets/images/obj_clothing_shirt_star_yellow.webp",
+      "w": 120,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "obj_clothing_shirt_stripe_blue": {
+      "file": "assets/images/obj_clothing_shirt_stripe_blue.webp",
+      "w": 120,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "obj_clothing_shoes_black": {
+      "file": "assets/images/obj_clothing_shoes_black.webp",
+      "w": 120,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "obj_clothing_shorts_red": {
+      "file": "assets/images/obj_clothing_shorts_red.webp",
+      "w": 120,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "obj_clothing_skirt_pink": {
+      "file": "assets/images/obj_clothing_skirt_pink.webp",
+      "w": 120,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "obj_clothing_sneakers_red": {
+      "file": "assets/images/obj_clothing_sneakers_red.webp",
+      "w": 120,
+      "h": 100,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
     },
     "obj_food_apple_red": {
       "file": "assets/images/obj_food_apple_red.webp",
@@ -87,6 +991,182 @@
       "placeholder": true,
       "license": "own",
       "source": "MyWorld placeholder (own drawing)"
+    },
+    "ui_creator_body_adult": {
+      "file": "assets/images/ui_creator_body_adult.webp",
+      "w": 128,
+      "h": 205,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_body_child": {
+      "file": "assets/images/ui_creator_body_child.webp",
+      "w": 128,
+      "h": 154,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_eyes_big": {
+      "file": "assets/images/ui_creator_eyes_big.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_eyes_dot": {
+      "file": "assets/images/ui_creator_eyes_dot.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_eyes_lashes": {
+      "file": "assets/images/ui_creator_eyes_lashes.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_eyes_round": {
+      "file": "assets/images/ui_creator_eyes_round.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_eyes_sleepy": {
+      "file": "assets/images/ui_creator_eyes_sleepy.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_eyes_star": {
+      "file": "assets/images/ui_creator_eyes_star.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_hair_bob": {
+      "file": "assets/images/ui_creator_hair_bob.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_hair_braids": {
+      "file": "assets/images/ui_creator_hair_braids.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_hair_buns": {
+      "file": "assets/images/ui_creator_hair_buns.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_hair_curly": {
+      "file": "assets/images/ui_creator_hair_curly.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_hair_long": {
+      "file": "assets/images/ui_creator_hair_long.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_hair_ponytail": {
+      "file": "assets/images/ui_creator_hair_ponytail.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_hair_short": {
+      "file": "assets/images/ui_creator_hair_short.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_hair_spiky": {
+      "file": "assets/images/ui_creator_hair_spiky.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_mouth_cat": {
+      "file": "assets/images/ui_creator_mouth_cat.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_mouth_flat": {
+      "file": "assets/images/ui_creator_mouth_flat.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_mouth_grin": {
+      "file": "assets/images/ui_creator_mouth_grin.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_mouth_o": {
+      "file": "assets/images/ui_creator_mouth_o.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_mouth_smile": {
+      "file": "assets/images/ui_creator_mouth_smile.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_creator_mouth_tongue": {
+      "file": "assets/images/ui_creator_mouth_tongue.webp",
+      "w": 128,
+      "h": 128,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
     }
   },
   "audio": {}

@@ -53,6 +53,7 @@ export class InteractionResolver {
     private readonly env: () => ActionEnv | undefined,
     private readonly index: RuleIndex,
     private readonly prefabDisabledRules: (e: Entity | undefined) => string[],
+    private readonly heldTransform?: (e: Entity) => Entity['components']['transform'] | undefined,
   ) {}
 
   candidates(input: ResolveInput): Candidate[] {
@@ -65,6 +66,7 @@ export class InteractionResolver {
       exclude: carriedSet(env, input.sourceId),
       // Input transparency (INPUT_SYSTEM §5.3) applies to taps; any entity with a hitbox can receive a drop.
       hasDirectRules: input.trigger === 'drop' ? () => true : (e) => this.index.hasDirectRules(e),
+      heldTransform: this.heldTransform,
     });
     const out: Candidate[] = [];
     const rules = this.index.rules(input.trigger);
@@ -139,6 +141,7 @@ export class InteractionResolver {
         sceneId: env.scene.id,
         minHitWorld: input.minHitWorld,
         hasDirectRules: (e) => this.index.hasDirectRules(e),
+        heldTransform: this.heldTransform,
       })[0];
       if (front) env.effects.trigger(front.id, 'tap');
       return { kind: 'none', targetId: front?.id };

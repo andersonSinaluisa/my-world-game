@@ -13,6 +13,7 @@
 | [ADR-007](ADR-007-VIRTUAL-COORDINATES.md) | Altura virtual de 1080, ancho variable, landscape | Accepted |
 | [ADR-008](ADR-008-CONTENT-PACKS.md) | Content Packs con namespace desde el MVP | Accepted |
 | [ADR-009](ADR-009-STATE-AND-THREADING.md) | World en el JS thread; drag, cámara y tweens en el UI thread | Accepted (spike en la Fase 0) |
+| [ADR-010](ADR-010-CHARACTER-TINT.md) | Tinte de piel y pelo con ColorMatrix | Proposed |
 
 ## Cómo crear un ADR
 
