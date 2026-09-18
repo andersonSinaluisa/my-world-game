@@ -20,6 +20,11 @@ export type GameEvent =
   | { type: 'zoneChanged'; sceneId: SceneId; zoneId?: string }
   /** Camera should center this world x (focusEntity, HU-GAME-023 R4). Presentation only. */
   | { type: 'focusRequested'; entityId: EntityId; x: number }
+  /** Presentation: an entity was lifted (drag start) or put down with place (AUDIO_SYSTEM §2). */
+  | { type: 'pickedUp'; entityId: EntityId }
+  | { type: 'dropped'; entityId: EntityId; placed: boolean }
+  /** Coins changed (EPIC-020); the player row itself changes with playerChanged. */
+  | { type: 'walletChanged'; coins: number; delta: number }
   /** What a drop at the finger would do (HU-GAME-033). Only when the target or zone changes. */
   | {
       type: 'dropPreview';
@@ -42,6 +47,9 @@ export const PRESENTATION_EVENTS: ReadonlySet<GameEvent['type']> = new Set([
   'sceneWillChange',
   'focusRequested',
   'dropPreview',
+  'pickedUp',
+  'dropped',
+  'walletChanged',
 ]);
 
 export type GameEventType = GameEvent['type'];

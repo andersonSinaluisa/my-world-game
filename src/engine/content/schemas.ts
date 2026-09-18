@@ -81,6 +81,7 @@ export const AssetManifestSchema = z.strictObject({
 });
 export type AssetManifest = z.infer<typeof AssetManifestSchema>;
 export type AssetImage = z.infer<typeof AssetImageSchema>;
+export type AssetAudio = z.infer<typeof AssetAudioSchema>;
 
 // ---------- interaction rules (INTERACTION_SCHEMA §2) ----------
 

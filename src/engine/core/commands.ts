@@ -21,7 +21,8 @@ export type GameCommand =
   | { type: 'updateAppearance'; characterId: EntityId; patch: Partial<Appearance> }
   | { type: 'setOutfitSlot'; characterId: EntityId; slot: WearSlot; prefabId: PrefabId | null }
   | { type: 'focusEntity'; entityId: EntityId }
-  | { type: 'takeFromInventory'; slot: number; worldPoint: WorldPoint };
+  | { type: 'takeFromInventory'; slot: number; worldPoint: WorldPoint }
+  | { type: 'setSetting'; key: 'musicVolume' | 'sfxVolume' | 'muted'; value: number | boolean };
 
 export type CommandFailure =
   | 'unknownCommand'

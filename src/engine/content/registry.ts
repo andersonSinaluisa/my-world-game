@@ -2,7 +2,7 @@ import type { CharacterPartsCatalog } from '../characters/catalog';
 import type { Logger } from '../core/runtime';
 import type { PrefabId, SceneId } from '../core/types';
 import type { ContentIssue, RawPack } from './raw-pack';
-import type { AssetImage, InteractionRule, LocaleId, PackManifest, PrefabDefinition, SceneDefinition } from './schemas';
+import type { AssetAudio, AssetImage, InteractionRule, LocaleId, PackManifest, PrefabDefinition, SceneDefinition } from './schemas';
 import { qualify, validatePacks, type ParsedPack } from './validate-pack';
 
 export class ContentLoadError extends Error {
@@ -43,6 +43,7 @@ export class ContentRegistry {
   private sceneMap = new Map<string, SceneDefinition & { qualifiedId: SceneId; pack: string }>();
   private ruleList: RegisteredRule[] = [];
   private images = new Map<string, AssetImage & { pack: string }>();
+  private sounds = new Map<string, AssetAudio & { pack: string }>();
   private locales: Record<LocaleId, Map<string, string>> = { es: new Map(), en: new Map() };
   private aliases = new Map<string, string>();
   private removed = new Set<string>();
@@ -93,6 +94,7 @@ export class ContentRegistry {
     for (const { def } of p.scenes) this.sceneMap.set(`${id}:${def.id}`, { ...def, qualifiedId: `${id}:${def.id}`, pack: id });
     for (const { rules } of p.rules) for (const r of rules) this.ruleList.push({ ...r, qualifiedId: `${id}:${r.id}`, pack: id });
     for (const [key, img] of Object.entries(p.assets.images)) this.images.set(key, { ...img, pack: id });
+    for (const [key, a] of Object.entries(p.assets.audio)) this.sounds.set(key, { ...a, pack: id });
     for (const loc of ['es', 'en'] as const) {
       for (const [k, v] of Object.entries(p.locales[loc] ?? {})) this.locales[loc].set(k, v);
     }
@@ -167,6 +169,15 @@ export class ContentRegistry {
 
   asset(key: string): (AssetImage & { pack: string }) | undefined {
     return this.images.get(key);
+  }
+
+  /** Audio asset (AUDIO_SYSTEM §2): kind, loop, base volume. */
+  audio(key: string): (AssetAudio & { pack: string }) | undefined {
+    return this.sounds.get(key);
+  }
+
+  audioKeys(): string[] {
+    return [...this.sounds.keys()];
   }
 
   assetSize(key: string): { w: number; h: number } | undefined {

@@ -97,9 +97,9 @@ flowchart LR
 | [HU-GAME-044](mvp/EPIC-012-food.md) | Dispensadores de objetos | EPIC-012 | Should | 1 | HU-GAME-032, HU-GAME-024 | Done (frutero con EPIC-017) |
 | [HU-GAME-047](mvp/EPIC-013-furniture.md) | Objetos encendibles (lámpara, TV, grifo) | EPIC-013 | Should | 1 | HU-GAME-032, HU-GAME-025 | Done (sonido toggle con EPIC-016) |
 | [HU-GAME-048](mvp/EPIC-013-furniture.md) | Mover muebles | EPIC-013 | Should | 1 | HU-GAME-027, HU-GAME-028 | Done (propuesta R6, dibujar al ocupante con el proxy: pendiente) |
-| [HU-GAME-056](mvp/EPIC-016-audio.md) | Sonidos de interacción | EPIC-016 | Should | 1 | HU-GAME-031 | Draft |
-| [HU-GAME-057](mvp/EPIC-016-audio.md) | Música y ambiente por ubicación | EPIC-016 | Should | 1 | HU-GAME-012 | Draft |
-| [HU-GAME-058](mvp/EPIC-016-audio.md) | Control de volumen y silencio | EPIC-016 | Must | 1 | HU-GAME-056, HU-GAME-075 | Draft |
+| [HU-GAME-056](mvp/EPIC-016-audio.md) | Sonidos de interacción | EPIC-016 | Should | 1 | HU-GAME-031 | Done (efectos placeholder CC0; verificación de polifonía en dispositivo) |
+| [HU-GAME-057](mvp/EPIC-016-audio.md) | Música y ambiente por ubicación | EPIC-016 | Should | 1 | HU-GAME-012 | In Progress (motor y adaptador listos; faltan pistas de música/ambiente CC0) |
+| [HU-GAME-058](mvp/EPIC-016-audio.md) | Control de volumen y silencio | EPIC-016 | Must | 1 | HU-GAME-056, HU-GAME-075 | In Progress (setSetting y persistencia listos; controles en la pantalla de Ajustes, HU-GAME-075) |
 | [HU-GAME-062](mvp/EPIC-017-home.md) | Baño jugable | EPIC-017 | Should | 1 | HU-GAME-035, HU-GAME-045, HU-GAME-047 | Draft |
 | [HU-GAME-070](mvp/EPIC-022-accessibility.md) | Objetivos táctiles grandes y UI sin texto | EPIC-022 | Must | 1 | HU-GAME-004 | Draft |
 | [HU-GAME-071](mvp/EPIC-023-performance.md) | Overlay de rendimiento y verificación de presupuestos | EPIC-023 | Must | 1 | HU-GAME-006 | Draft |

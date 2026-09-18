@@ -212,7 +212,10 @@ describe('InteractionResolver (HU-GAME-031/032)', () => {
     const r = drop(g, BALL, { x: 1500, y: 500 });
     expect(r).toEqual({ ok: true });
     expect(pos(g, BALL)).toEqual({ x: 1500, y: 960 });
-    expect(g.events.at(-1)).toEqual({ type: 'visualEffect', entityId: BALL, preset: 'squash' });
+    expect(g.events.slice(-2)).toEqual([
+      { type: 'visualEffect', entityId: BALL, preset: 'squash' },
+      { type: 'dropped', entityId: BALL, placed: true },
+    ]);
   });
 
   it('paint_open_box: on a closed box the condition fails and the next rule (tag_box) runs', () => {

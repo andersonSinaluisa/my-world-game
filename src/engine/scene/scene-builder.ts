@@ -38,6 +38,7 @@ export function toSceneInfo(id: SceneId, def: SceneDefinition): ActiveSceneInfo 
     spawnPoints: def.spawnPoints,
     zones: def.zones,
     camera: def.camera,
+    audio: def.audio,
   };
 }
 

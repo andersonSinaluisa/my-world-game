@@ -68,6 +68,8 @@ export interface GameFacade {
     activeZone(): string | undefined;
     /** Layers of a character, memoized (same array while its look does not change, HU-GAME-013 R7). */
     characterLayers(id: EntityId): CharacterLayerData[];
+    /** Audio settings (HU-GAME-058). */
+    settings(): { musicVolume: number; sfxVolume: number; muted: boolean };
     /** Backpack slots 0..capacity-1 (HU-GAME-038). Same array while nothing changes. */
     inventorySlots(): InventorySlotView[];
     /** Player characters, oldest first (HU-GAME-022 R4). Same array while nothing changes. */
@@ -126,6 +128,7 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
   // array for useSyncExternalStore. Entries of an older snapshot version are dropped.
   let charactersCache: { version: number; data: CharacterSummary[] } | undefined;
   let inventoryCache: { version: number; data: InventorySlotView[] } | undefined;
+  let settingsCache: { version: number; data: { musicVolume: number; sfxVolume: number; muted: boolean } } | undefined;
   const previewCache = new Map<string, CharacterLayerData[]>();
   let clothingCache: ClothingOption[] | undefined;
   let visibleCache: { version: number; byKey: Map<string, EntityRenderData[]> } = { version: -1, byKey: new Map() };
@@ -199,6 +202,10 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
       cameraX: () => engine.playerState.cameraX,
       activeZone: () => engine.activeZoneId,
       characterLayers: (id) => engine.characterLayers(id),
+      settings() {
+        if (settingsCache?.version !== snapshot.version) settingsCache = { version: snapshot.version, data: engine.settings };
+        return settingsCache.data;
+      },
       inventorySlots() {
         if (inventoryCache?.version !== snapshot.version) {
           const data = engine.inventorySlots().map((id, slot) => {
