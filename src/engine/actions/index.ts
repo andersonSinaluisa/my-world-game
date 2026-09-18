@@ -2,6 +2,7 @@ import { holdAction, releaseAction, setExpressionAction } from './character-acti
 import { addToInventoryAction } from './inventory-actions';
 import { drinkAction, eatAction, spawnAction } from './consume-actions';
 import { unwearAction, wearAction } from './outfit-actions';
+import { sitAction, sleepAction, standUpAction } from './seat-actions';
 import { closeAction, openAction, storeAction, toggleOpenAction, toggleSwitchAction } from './container-actions';
 import { placeAction } from './place';
 import { cycleStateAction, setStateAction } from './state-actions';
@@ -30,6 +31,9 @@ export const ACTIONS: Record<string, ActionHandler<never>> = Object.fromEntries(
     eatAction,
     drinkAction,
     spawnAction,
+    sitAction,
+    sleepAction,
+    standUpAction,
   ].map((a) => [a.type, a as unknown as ActionHandler<never>]),
 );
 

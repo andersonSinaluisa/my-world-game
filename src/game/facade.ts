@@ -25,6 +25,8 @@ export interface EntityRenderData {
   transform: Transform;
   pivot: { x: number; y: number };
   size?: { w: number; h: number };
+  /** A bed blanket drawn right after the character sleeping in it (HU-GAME-046 R3); not an entity. */
+  cover?: boolean;
 }
 
 /** A backpack slot for the tray (HU-GAME-038 R1). */
@@ -240,7 +242,7 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
         let entities = [...engine.world.all().filter((e) => isRenderable(e, scene.id)), ...engine.visibleContents()];
         const transformOf = (e: Entity) => engine.absoluteTransform(e.id);
         if (viewport) entities = cullEntities(entities, cullingRange(viewport.cameraX, viewport.viewportW), assetSize, transformOf);
-        const data = sortForRender(entities, { supportOf: engine.world.index.supportOf, transformOf }).map((e, order) => {
+        const data: EntityRenderData[] = sortForRender(entities, { supportOf: engine.world.index.supportOf, transformOf }).map((e, order) => {
           const sprite = e.components.sprite!;
           return {
             id: e.id,
@@ -253,6 +255,24 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
           };
         });
         if (visibleCache.byKey.size >= MAX_VISIBLE_KEYS) visibleCache.byKey.delete(visibleCache.byKey.keys().next().value!);
+        // Blankets: right after each sleeping character, covering it but not what is in front of the bed.
+        for (let i = data.length - 1; i >= 0; i--) {
+          const e = engine.world.get(data[i].id);
+          const bedId = e?.components.pose?.current === 'sleep' ? e.components.pose.seatId : undefined;
+          const bed = bedId ? engine.world.get(bedId) : undefined;
+          const cover = bed?.components.bed?.coverAsset;
+          const bt = bed && engine.absoluteTransform(bed.id);
+          if (!cover || !bt) continue;
+          data.splice(i + 1, 0, {
+            id: `${bed!.id}#cover`,
+            asset: cover,
+            layer: 'characters',
+            order: data[i].order + 0.5,
+            transform: bt,
+            pivot: bed!.components.sprite?.pivot ?? { x: 0.5, y: 1 },
+            cover: true,
+          });
+        }
         visibleCache.byKey.set(key, data);
         return data;
       },

@@ -12,6 +12,8 @@ import {
   DrinkableSchema,
   SpawnerSchema,
   SpawnedFromSchema,
+  SeatSchema,
+  BedSchema,
   WearableSchema,
   ContainerSchema,
   DraggableSchema,
@@ -34,6 +36,8 @@ import {
   type Drinkable,
   type Spawner,
   type SpawnedFrom,
+  type Seat,
+  type Bed,
   type Wearable,
   type Container,
   type Draggable,
@@ -73,6 +77,8 @@ export interface ComponentMap {
   drinkable: Drinkable;
   spawner: Spawner;
   spawnedFrom: SpawnedFrom;
+  seat: Seat;
+  bed: Bed;
 }
 
 export type ComponentName = keyof ComponentMap;
@@ -101,6 +107,8 @@ export const COMPONENT_SCHEMAS: { [K in ComponentName]: z.ZodType<ComponentMap[K
   drinkable: DrinkableSchema,
   spawner: SpawnerSchema,
   spawnedFrom: SpawnedFromSchema,
+  seat: SeatSchema,
+  bed: BedSchema,
 };
 
 export function isComponentName(name: string): name is ComponentName {

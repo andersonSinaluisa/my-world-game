@@ -302,5 +302,55 @@
       }
     ],
     "priority": 20
+  },
+  {
+    "id": "sit_on_seat",
+    "trigger": "drop",
+    "source": {
+      "has": [
+        "character"
+      ]
+    },
+    "target": {
+      "has": [
+        "seat"
+      ]
+    },
+    "conditions": [
+      {
+        "type": "seatFree"
+      }
+    ],
+    "actions": [
+      {
+        "type": "sit"
+      }
+    ],
+    "priority": 80
+  },
+  {
+    "id": "sleep_on_bed",
+    "trigger": "drop",
+    "source": {
+      "has": [
+        "character"
+      ]
+    },
+    "target": {
+      "has": [
+        "bed"
+      ]
+    },
+    "conditions": [
+      {
+        "type": "seatFree"
+      }
+    ],
+    "actions": [
+      {
+        "type": "sleep"
+      }
+    ],
+    "priority": 85
   }
 ]

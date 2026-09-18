@@ -4,6 +4,7 @@ import { chooseHand } from '../../actions/character-actions';
 import { storeCheck } from '../../actions/container-actions';
 import { inventoryCheck } from '../../actions/inventory-actions';
 import { canWearCheck, ZONE_SLOT } from '../../actions/outfit-actions';
+import { seatIsFree, seatSpec } from '../../actions/seat-actions';
 import { aliveFrom, DEFAULT_MAX_ALIVE } from '../../actions/consume-actions';
 import { POSES } from '../../components/base';
 import { fail, PASS, resolveRole, type ConditionHandler } from '../../actions/types';
@@ -150,9 +151,22 @@ export const belowMax: ConditionHandler<z.infer<typeof BelowMaxParams>> = {
   },
 };
 
+const SeatFreeParams = z.strictObject({ type: z.literal('seatFree'), of: Role.default('$target') });
+
+/** Nobody occupies the seat or bed (HU-GAME-045/046). The dragged character itself does not count. */
+export const seatFree: ConditionHandler<z.infer<typeof SeatFreeParams>> = {
+  type: 'seatFree',
+  params: SeatFreeParams,
+  evaluate(ctx, p) {
+    const s = resolveRole(ctx, p.of);
+    if (!s || !seatSpec(s)) return fail('seatFree');
+    return seatIsFree(ctx.env.world, s.id, ctx.sourceId) ? PASS : fail('seatFree');
+  },
+};
+
 /** Closed set of conditions (INTERACTION_SCHEMA §4). No expressions, no scripting. */
 export const CONDITIONS: Record<string, ConditionHandler<never>> = Object.fromEntries(
-  [stateIs, isOpen, handFree, containerHasSpace, inventoryHasSpace, isPurchased, canWear, slotWorn, poseIsNot, belowMax].map((c) => [c.type, c as unknown as ConditionHandler<never>]),
+  [stateIs, isOpen, handFree, containerHasSpace, inventoryHasSpace, isPurchased, canWear, slotWorn, poseIsNot, belowMax, seatFree].map((c) => [c.type, c as unknown as ConditionHandler<never>]),
 );
 
 export const CONDITION_TYPES = Object.keys(CONDITIONS);

@@ -413,6 +413,12 @@ function crossReferences(p: ParsedPack, byId: Map<string, ParsedPack>, options: 
     const sprite = c.sprite as { asset?: string; byState?: Record<string, string> } | undefined;
     if (sprite?.asset) checkAsset(file, ['components', 'sprite', 'asset'], sprite.asset);
     for (const [state, key] of Object.entries(sprite?.byState ?? {})) checkAsset(file, ['components', 'sprite', 'byState', state], key);
+    const cover = (c.bed as { coverAsset?: string } | undefined)?.coverAsset;
+    if (cover) checkAsset(file, ['components', 'bed', 'coverAsset'], cover);
+    for (const kind of ['edible', 'drinkable'] as const) {
+      const by = (c[kind] as { spriteByBitesLeft?: Record<string, string>; spriteBySipsLeft?: Record<string, string> } | undefined);
+      for (const [n, key] of Object.entries(by?.spriteByBitesLeft ?? by?.spriteBySipsLeft ?? {})) checkAsset(file, ['components', kind, n], key);
+    }
     for (const [role, key] of Object.entries((c.sounds as Record<string, string>) ?? {})) {
       if (!hasAudio(key)) rep.add(file, ['components', 'sounds', role], 'unknownAudio', `audio "${key}" is not in the asset manifest`);
     }

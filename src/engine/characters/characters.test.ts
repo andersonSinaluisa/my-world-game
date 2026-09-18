@@ -355,14 +355,14 @@ describe('holding (HU-GAME-016)', () => {
     const c = addCharacter(g, 'rt_kid', 1500);
     spawnBall(g, 'rt_ball', 600);
     drop(g, 'rt_ball', HAND_L.x, HAND_L.y);
-    g.world.update(c, { pose: { current: 'sit', seatId: 'test:room/table' } });
+    g.engine.characters.playTemporaryPose(c, 'eat'); // temporary poses are saved as their persistent pose
     await save.flush();
 
     const g2 = createTestGame({ packs: [holdRule()], saveStore: store });
     const save2 = new SaveService(g2.engine, store, { scheduler: g2.clock }).attach();
     expect(await save2.load()).toEqual({ status: 'loaded' });
     expect(g2.world.get('rt_ball')?.location).toEqual({ kind: 'held', holderId: c, hand: 'left' });
-    expect(g2.world.get(c)?.components.pose).toEqual({ current: 'sit', seatId: 'test:room/table' });
+    expect(g2.world.get(c)?.components.pose).toEqual({ current: 'idle' });
     expect(g2.world.get(c)?.components.expression?.current).toBe('neutral');
     expect(g2.world.get(c)?.components.hitbox).toBeDefined();
   });
