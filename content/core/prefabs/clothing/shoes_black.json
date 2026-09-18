@@ -1,0 +1,42 @@
+{
+  "id": "shoes_black",
+  "category": "clothing",
+  "tags": [
+    "clothing",
+    "shoes"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_clothing_shoes_black",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -56,
+        "y": -96,
+        "w": 112,
+        "h": 92
+      }
+    },
+    "draggable": {},
+    "wearable": {
+      "slot": "shoes",
+      "layers": {
+        "shoes": "chr_shoes_shoes_black"
+      },
+      "bodyVariants": {
+        "adult": {
+          "shoes": "chr_shoes_shoes_black_adult"
+        }
+      }
+    },
+    "animations": {
+      "drop": "squash"
+    }
+  },
+  "metadata": {
+    "name": "object.shoes_black.name",
+    "placeholder": true
+  }
+}

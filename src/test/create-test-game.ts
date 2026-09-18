@@ -57,7 +57,7 @@ export function createTestGame(options: TestGameOptions = {}) {
   const logger = options.logger ?? createTestLogger();
   const dev = options.dev ?? true;
   const content = options.packs ? loadTestContent(options.packs, logger, dev) : undefined;
-  const engine = GameEngine.create({ clock, random, logger, saveStore, content, dev });
+  const engine = GameEngine.create({ clock, scheduler: clock, random, logger, saveStore, content, dev });
   const events: GameEvent[] = [];
   engine.events.subscribe((batch) => events.push(...batch));
   if (options.viewportW) engine.dispatch({ type: 'viewportChanged', viewportW: options.viewportW });

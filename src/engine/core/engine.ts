@@ -1,4 +1,7 @@
 import type { ActionEnv } from '../actions/types';
+import { handAnchor } from '../characters/catalog';
+import { CharacterSystem, type DragOrigin } from '../characters/character-system';
+import { CharacterLayerSelector, HELD_SCALE, type CharacterLayerData } from '../characters/layers';
 import type { ContentRegistry } from '../content/registry';
 import { qualify } from '../content/validate-pack';
 import type { PlayerState, SaveStore } from '../persistence/save-store';
@@ -17,13 +20,24 @@ import type { EntityInit } from './entity';
 import { EventBus } from './events';
 import type { Location } from './location';
 import { LocationService } from './location-service';
-import { mathRandom, silentLogger, systemClock, type Clock, type Logger, type Random } from './runtime';
+import {
+  mathRandom,
+  silentLogger,
+  systemClock,
+  systemScheduler,
+  type Clock,
+  type Logger,
+  type Random,
+  type Scheduler,
+} from './runtime';
 import type { EntityId, SceneId, WorldPoint } from './types';
 import { runtimeEntityId } from './ulid';
 import { World } from './world';
 
 export interface GameEngineOptions {
   clock?: Clock;
+  /** Timers (pose and expression durations). FakeClock implements it in tests. */
+  scheduler?: Scheduler;
   random?: Random;
   logger?: Logger;
   saveStore?: SaveStore;
@@ -42,7 +56,7 @@ export const TRAVELER_SPACING = 120;
 
 interface DragState {
   entityId: EntityId;
-  origin: { location: Location; transform?: Components['transform'] };
+  origin: { location: Location; transform?: Components['transform']; character?: DragOrigin };
 }
 
 /**
@@ -50,6 +64,7 @@ interface DragState {
  */
 export class GameEngine {
   readonly clock: Clock;
+  readonly scheduler: Scheduler;
   readonly random: Random;
   readonly logger: Logger;
   readonly saveStore?: SaveStore;
@@ -61,6 +76,8 @@ export class GameEngine {
   readonly effects: VisualEffects;
   readonly rules: RuleIndex;
   readonly resolver: InteractionResolver;
+  readonly characters: CharacterSystem;
+  private readonly layerSelector: CharacterLayerSelector;
 
   private activeScene: ActiveSceneInfo | undefined;
   private player: PlayerState = {};
@@ -74,6 +91,7 @@ export class GameEngine {
 
   private constructor(options: GameEngineOptions) {
     this.clock = options.clock ?? systemClock;
+    this.scheduler = options.scheduler ?? systemScheduler;
     this.random = options.random ?? mathRandom;
     this.logger = options.logger ?? silentLogger;
     this.saveStore = options.saveStore;
@@ -82,6 +100,16 @@ export class GameEngine {
     this.world = new World({ bus: this.events, logger: this.logger, dev: this.dev });
     this.locations = new LocationService(this.world, this.logger, this.dev);
     this.effects = new VisualEffects(this.world);
+    const catalog = () => this.content?.characterCatalog();
+    this.characters = new CharacterSystem(this.world, this.events, this.clock, this.scheduler, this.logger, catalog);
+    this.layerSelector = new CharacterLayerSelector(
+      this.world,
+      () => {
+        const c = catalog();
+        return c ? { catalog: c, hasAsset: (key: string) => !!this.content?.asset(key) } : undefined;
+      },
+      this.logger,
+    );
     this.rules = new RuleIndex(this.content?.rules() ?? []);
     this.resolver = new InteractionResolver(
       () => this.env(),
@@ -90,6 +118,7 @@ export class GameEngine {
         const prefab = e?.prefabId && this.content?.hasPrefab(e.prefabId) ? this.content.prefab(e.prefabId) : undefined;
         return (prefab?.interactions?.disabledRules ?? []).map((r) => qualify(r, prefab!.pack));
       },
+      (e) => this.heldTransform(e.id),
     );
   }
 
@@ -125,7 +154,14 @@ export class GameEngine {
 
   private env(): ActionEnv | undefined {
     if (!this.activeScene) return undefined;
-    return { world: this.world, locations: this.locations, effects: this.effects, logger: this.logger, scene: this.activeScene };
+    return {
+      world: this.world,
+      locations: this.locations,
+      effects: this.effects,
+      logger: this.logger,
+      scene: this.activeScene,
+      characters: this.characters,
+    };
   }
 
   /**
@@ -293,7 +329,28 @@ export class GameEngine {
       sceneId: this.activeScene.id,
       minHitWorld,
       hasDirectRules: (e) => this.rules.hasDirectRules(e),
+      heldTransform: (e) => this.heldTransform(e.id),
     });
+  }
+
+  /** Layers of a character for the renderer (HU-GAME-013). Memoized: same array while nothing changed. */
+  characterLayers(id: EntityId): CharacterLayerData[] {
+    return this.layerSelector.select(id);
+  }
+
+  /** World transform of an item in a character's hand: holder + anchor, mirrored and scaled (HU-GAME-016 R5). */
+  heldTransform(itemId: EntityId): Components['transform'] | undefined {
+    const item = this.world.get(itemId);
+    if (item?.location.kind !== 'held') return undefined;
+    const holder = this.world.get(item.location.holderId);
+    const t = holder?.components.transform;
+    const appearance = holder?.components.appearance;
+    const body = appearance && this.characters.body(appearance.bodyType);
+    if (!holder || !t || !body) return undefined;
+    const scale = t.scale ?? 1;
+    const flip = t.flipX ? -1 : 1;
+    const anchor = handAnchor(body, holder.components.pose?.current ?? 'idle', item.location.hand);
+    return { x: t.x + flip * anchor.x * scale, y: t.y + anchor.y * scale, scale: HELD_SCALE * scale, flipX: t.flipX };
   }
 
   private pointerTap(point: WorldPoint, minHitWorld?: number): CommandResult {
@@ -308,7 +365,7 @@ export class GameEngine {
     if (!e.components.draggable || e.components.draggable.enabled === false) return { ok: false, reason: 'notDraggable' };
     if (!this.activeScene) return { ok: false, reason: 'noActiveScene' };
     if (this.drag) return { ok: false, reason: 'alreadyDragging' };
-    const origin = { location: e.location, transform: e.components.transform };
+    const origin: DragState['origin'] = { location: e.location, transform: e.components.transform };
     // Location transitions by location kind (HU-GAME-027 R4). No per-object logic.
     switch (e.location.kind) {
       case 'scene':
@@ -323,6 +380,8 @@ export class GameEngine {
         // container (HU-GAME-036), worn (HU-GAME-040), inventory (HU-GAME-038): not draggable yet.
         return { ok: false, reason: 'notDraggable' };
     }
+    // Characters: standUp implícito, temporary pose cancelled, dangle + surprised (HU-GAME-017 R2).
+    if (e.components.character) origin.character = this.characters.onDragStart(entityId);
     this.drag = { entityId, origin };
     return OK;
   }
@@ -332,6 +391,8 @@ export class GameEngine {
     this.drag = undefined;
     if (!this.world.has(entityId)) return { ok: false, reason: 'entityNotFound' };
     this.resolver.resolve({ trigger: 'drop', sourceId: entityId, point, uiTarget, minHitWorld });
+    // A drop that did not pose the character (sit, sleep…) leaves it standing (HU-GAME-017 R6).
+    if (this.world.get(entityId)?.components.character) this.characters.onDragEnd(entityId);
     this.effects.trigger(entityId, 'drop');
     return OK;
   }
@@ -348,6 +409,7 @@ export class GameEngine {
       if (drag.origin.transform && e.components.transform !== drag.origin.transform) {
         this.world.update(entityId, { transform: drag.origin.transform });
       }
+      if (drag.origin.character) this.characters.onDragCancel(entityId, drag.origin.character);
     });
     return OK;
   }

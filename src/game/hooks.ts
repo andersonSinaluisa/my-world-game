@@ -4,6 +4,8 @@ import type { Entity } from '@/engine/core/entity';
 import type { EntityId } from '@/engine/core/types';
 import type { ActiveSceneInfo } from '@/engine/scene/scene-types';
 
+import type { CharacterLayerData } from '@/engine/characters/layers';
+
 import type { EntityRenderData, GameFacade, ViewportQuery } from './facade';
 import { useGame } from './game-context';
 
@@ -47,5 +49,11 @@ export function useActiveScene(): ActiveSceneInfo | undefined {
 export function useActiveZone(): string | undefined {
   const game = useGame();
   const get = useCallback(() => game.selectors.activeZone(), [game]);
+  return useSyncExternalStore(game.subscribe, get, get);
+}
+
+/** Character layers (HU-GAME-013). Explicit facade: used inside the Skia Canvas, where context is unavailable. */
+export function useCharacterLayersOf(game: GameFacade, id: EntityId): CharacterLayerData[] {
+  const get = useCallback(() => game.selectors.characterLayers(id), [game, id]);
   return useSyncExternalStore(game.subscribe, get, get);
 }

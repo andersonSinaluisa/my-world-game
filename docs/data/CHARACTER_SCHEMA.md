@@ -34,6 +34,21 @@ interface CharacterPartsCatalog {
 type PoseLayerSet = Record<PoseId, Partial<Record<CharacterLayer, AssetKey>>>;
 ```
 
+**Extensiones v1 (implementadas en HU-GAME-013/022):**
+
+```ts
+// en bodyTypes[]:
+faceOffset?: { x: number; y: number };   // las partes de cara (ojos, boca y pelo sin byBodyType) se dibujan sobre el
+                                         // lienzo del PRIMER tipo de cuerpo; el resto de cuerpos las desplaza este offset.
+                                         // Así ojos y bocas no necesitan una variante por cuerpo (propuesta aceptada).
+// en skinTones[], eyes[], mouths[], hairStyles[], hairColors[]:
+name?: I18nKey;                          // etiqueta de accesibilidad del creador
+// en el catálogo:
+colorTags?: string[];                    // paleta de colores de marco de personaje (HU-GAME-022 R3)
+```
+
+El validador de contenido comprueba: assets referenciados, ids únicos por lista (`duplicatePartId`), `defaults` existentes (`unknownPart`), `byBodyType` con cuerpos existentes, y que cada prenda de `starterClothes` y de `defaults.outfit` tenga `wearable` (`notWearable`), el slot correcto (`invalidWearable`) y sprites para **todos** los tipos de cuerpo (`missingBodyVariant`, error).
+
 **Cantidades objetivo del MVP** (ver [MVP_SCOPE](../product/MVP_SCOPE.md)):
 - 2 tipos de cuerpo: `child` y `adult`.
 - 8 tonos de piel.
@@ -139,6 +154,10 @@ La genera el motor a partir de `bodyTypes[].height`. No se define por personaje.
 | `handL`, `handR` | sostener |
 | `body` | vestir, sostener (fallback), arrastrar |
 | `torso`, `legs`, `feet` | bandas verticales dentro de `body`: vestir por slot y **quitar ropa** con pulsación larga (`unwear_clothes`): `torso`→`top`, `legs`→`bottom`, `feet`→`shoes`. Propuesta: `torso` desde los hombros hasta la cintura, `legs` desde la cintura hasta los tobillos, `feet` el 12 % inferior. |
+
+Proporciones implementadas (`characterHitbox`, con `h = height`): `body` = rect de ancho `0,44 h` y alto `h`; `head` = 38 % superior (ancho `0,34 h`); `mouth` = `0,14 h × 0,08 h` a `0,71 h`; `handL`/`handR` = círculos de radio `0,09 h` en `handAnchors.idle`; `torso` = 62 %→36 %, `legs` = 36 %→12 %, `feet` = 12 %→0. Padding 0.
+
+Además del hitbox, el motor da al personaje un **`sprite` derivado** (capa `characters`, asset de su torso idle) que nunca se dibuja tal cual: sirve para el orden de render (`z = transform.y`), el culling y la pertenencia a la escena. El renderer dibuja la pila de capas. Ni el `sprite` ni el `hitbox` ni la `expression` se guardan.
 
 ## 5. Ejemplo de personaje guardado
 

@@ -13,6 +13,8 @@ export interface RawPack {
   prefabs: RawFile[];
   scenes: RawFile[];
   rules: RawFile[];
+  /** `characters/parts.json`, only in packs that provide character parts (CHARACTER_SCHEMA §1). */
+  characters?: RawFile;
   locales: Partial<Record<LocaleId, RawFile>>;
 }
 

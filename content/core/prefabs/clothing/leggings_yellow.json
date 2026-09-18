@@ -1,0 +1,42 @@
+{
+  "id": "leggings_yellow",
+  "category": "clothing",
+  "tags": [
+    "clothing",
+    "bottom"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_clothing_leggings_yellow",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -56,
+        "y": -96,
+        "w": 112,
+        "h": 92
+      }
+    },
+    "draggable": {},
+    "wearable": {
+      "slot": "bottom",
+      "layers": {
+        "bottomClothes": "chr_bottom_leggings_yellow"
+      },
+      "bodyVariants": {
+        "adult": {
+          "bottomClothes": "chr_bottom_leggings_yellow_adult"
+        }
+      }
+    },
+    "animations": {
+      "drop": "squash"
+    }
+  },
+  "metadata": {
+    "name": "object.leggings_yellow.name",
+    "placeholder": true
+  }
+}

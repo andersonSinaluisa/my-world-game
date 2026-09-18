@@ -1,3 +1,4 @@
+import type { CharacterPartsCatalog } from '../characters/catalog';
 import type { Logger } from '../core/runtime';
 import type { PrefabId, SceneId } from '../core/types';
 import type { ContentIssue, RawPack } from './raw-pack';
@@ -45,6 +46,7 @@ export class ContentRegistry {
   private locales: Record<LocaleId, Map<string, string>> = { es: new Map(), en: new Map() };
   private aliases = new Map<string, string>();
   private removed = new Set<string>();
+  private catalog: CharacterPartsCatalog | undefined;
   readonly issues: ContentIssue[];
   readonly loadMs: number;
 
@@ -94,6 +96,35 @@ export class ContentRegistry {
     for (const loc of ['es', 'en'] as const) {
       for (const [k, v] of Object.entries(p.locales[loc] ?? {})) this.locales[loc].set(k, v);
     }
+    if (p.characters) this.registerCatalog(p.characters.catalog, id);
+  }
+
+  /** The first pack provides the catalog; later packs append options (their defaults are ignored). */
+  private registerCatalog(c: CharacterPartsCatalog, packId: string): void {
+    const q = (ref: string) => qualify(ref, packId);
+    const outfit = Object.fromEntries(Object.entries(c.defaults.outfit).map(([slot, ref]) => [slot, q(ref!)]));
+    const incoming: CharacterPartsCatalog = { ...c, starterClothes: c.starterClothes.map(q), defaults: { ...c.defaults, outfit } };
+    if (!this.catalog) {
+      this.catalog = incoming;
+      return;
+    }
+    const base = this.catalog;
+    this.catalog = {
+      ...base,
+      bodyTypes: [...base.bodyTypes, ...incoming.bodyTypes],
+      skinTones: [...base.skinTones, ...incoming.skinTones],
+      eyes: [...base.eyes, ...incoming.eyes],
+      mouths: [...base.mouths, ...incoming.mouths],
+      hairStyles: [...base.hairStyles, ...incoming.hairStyles],
+      hairColors: [...base.hairColors, ...incoming.hairColors],
+      starterClothes: [...base.starterClothes, ...incoming.starterClothes],
+      colorTags: [...(base.colorTags ?? []), ...(incoming.colorTags ?? [])],
+    };
+  }
+
+  /** Character parts catalog (CHARACTER_SCHEMA §1); undefined when no pack provides one. */
+  characterCatalog(): CharacterPartsCatalog | undefined {
+    return this.catalog;
   }
 
   packs(): PackManifest[] {

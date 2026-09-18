@@ -1,0 +1,42 @@
+{
+  "id": "shorts_red",
+  "category": "clothing",
+  "tags": [
+    "clothing",
+    "bottom"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_clothing_shorts_red",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -56,
+        "y": -96,
+        "w": 112,
+        "h": 92
+      }
+    },
+    "draggable": {},
+    "wearable": {
+      "slot": "bottom",
+      "layers": {
+        "bottomClothes": "chr_bottom_shorts_red"
+      },
+      "bodyVariants": {
+        "adult": {
+          "bottomClothes": "chr_bottom_shorts_red_adult"
+        }
+      }
+    },
+    "animations": {
+      "drop": "squash"
+    }
+  },
+  "metadata": {
+    "name": "object.shorts_red.name",
+    "placeholder": true
+  }
+}

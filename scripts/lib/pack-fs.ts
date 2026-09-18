@@ -44,12 +44,14 @@ export function readPackDir(dir: string): RawPack {
     if (fs.existsSync(f)) locales[loc] = readJson(dir, f);
   }
   const assets = path.join(dir, 'assets.json');
+  const characters = path.join(dir, 'characters', 'parts.json');
   return {
     manifest: readJson(dir, path.join(dir, 'manifest.json')),
     assets: fs.existsSync(assets) ? readJson(dir, assets) : undefined,
     prefabs: walk(path.join(dir, 'prefabs'), (f) => f.endsWith('.json')).map((f) => readJson(dir, f)),
     scenes: walk(path.join(dir, 'scenes'), (f) => f.endsWith('.json')).map((f) => readJson(dir, f)),
     rules: walk(path.join(dir, 'interactions'), (f) => f.endsWith('.rules.json')).map((f) => readJson(dir, f)),
+    characters: fs.existsSync(characters) ? readJson(dir, characters) : undefined,
     locales,
   };
 }

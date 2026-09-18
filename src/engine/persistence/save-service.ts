@@ -6,7 +6,8 @@ import { parseVersion } from '../content/semver';
 import { mergeComponents } from '../content/validate-pack';
 import { CURRENT_SAVE_VERSION, MIGRATIONS, migrateSave, type GameSave, type Migration } from './migrations';
 import type { PlayerState, SaveSlotData, SaveStore, SavedEntity } from './save-store';
-import { isRuntimeId, toSavedEntity } from './serializer';
+import { isCharacterRow, isRuntimeId, NON_PERSISTED_COMPONENTS, toSavedEntity } from './serializer';
+import { isTemporaryPose } from '../characters/character-system';
 
 /** HU-GAME-052 RN-2: debounce of 1000 ms, flushed at most 5 s after the first pending change. */
 export const SAVE_DEBOUNCE_MS = 1000;
@@ -105,6 +106,10 @@ export class SaveService {
           changed = true;
           break;
         case 'entityChanged':
+          if (!this.persistentChange(e.id, e.components)) continue;
+          this.dirty.add(e.id);
+          changed = true;
+          break;
         case 'entityMoved':
           this.dirty.add(e.id);
           changed = true;
@@ -125,6 +130,17 @@ export class SaveService {
       }
     }
     if (changed) this.schedule();
+  }
+
+  /** Expression changes and temporary poses are never saved (HU-GAME-014 R9, HU-GAME-015 R6). */
+  private persistentChange(id: EntityId, components: readonly string[]): boolean {
+    const relevant = components.filter((c) => !NON_PERSISTED_COMPONENTS.has(c));
+    if (!relevant.length) return false;
+    if (relevant.length === 1 && relevant[0] === 'pose') {
+      const pose = this.engine.world.get(id)?.components.pose;
+      if (pose && isTemporaryPose(pose.current)) return false;
+    }
+    return true;
   }
 
   private schedule(): void {
@@ -315,12 +331,16 @@ export class SaveService {
   }
 
   /**
-   * Global entities (inventory, held, worn) are loaded for every scene (SAVE_SYSTEM §4 step 5).
-   * Characters arrive with EPIC-004; this loads whatever global rows exist, repairing invariants in prod.
+   * Global entities are loaded for every scene (SAVE_SYSTEM §4 step 5, GAME_ENGINE §3): all characters
+   * (whatever scene they are in), then what they hold and wear, and the backpack. Invariants are repaired in prod.
    */
   private loadGlobals(): void {
     const content = this.engine.content;
-    const globals = [...this.rows.values()].filter((r) => ['inventory', 'held', 'worn'].includes(r.location.kind));
+    for (const row of [...this.rows.values()].filter(isCharacterRow)) {
+      if (this.engine.world.has(row.id)) continue;
+      this.engine.world.create(this.engine.characters.hydrate({ id: row.id, tags: row.tags ?? ['character'], location: row.location, components: { ...row.components } }));
+    }
+    const globals = [...this.rows.values()].filter((r) => !isCharacterRow(r) && ['inventory', 'held', 'worn'].includes(r.location.kind));
     for (const row of globals) {
       const prefab = row.prefabId && content?.hasPrefab(row.prefabId) ? content.prefab(row.prefabId) : undefined;
       if (row.prefabId && !prefab) {

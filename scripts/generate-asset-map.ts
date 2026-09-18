@@ -63,6 +63,7 @@ export function generate(contentDir = CONTENT): { files: Generated[]; errors: st
     prefabs: ${list(raw.prefabs)},
     scenes: ${list(raw.scenes)},
     rules: ${list(raw.rules)},
+    characters: ${raw.characters ? rawFile(id, raw.characters.file) : 'undefined'},
     locales: { ${locales} },
   },`;
   });

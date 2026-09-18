@@ -1,14 +1,16 @@
 import { memo, useCallback, useEffect, useImperativeHandle, useMemo, useState, type Ref } from 'react';
-import { useAnimatedReaction, useSharedValue, withTiming } from 'react-native-reanimated';
+import { Easing, useAnimatedReaction, useSharedValue, withRepeat, withTiming, type SharedValue } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
 import type { WorldInputHandlers } from '@/engine/adapters/input/use-world-gesture';
-import { DragProxy } from '@/engine/adapters/render/drag-proxy';
+import { CharacterSprite } from '@/engine/adapters/render/character-sprite';
+import { CharacterDragProxy, DragProxy } from '@/engine/adapters/render/drag-proxy';
 import { SceneCanvas } from '@/engine/adapters/render/scene-canvas';
 import { SpriteNode } from '@/engine/adapters/render/sprite-node';
 import type { TextureStore } from '@/engine/adapters/render/texture-store';
 import type { Viewport } from '@/engine/adapters/render/viewport';
 import type { Transform } from '@/engine/components/base';
+import type { CharacterLayerData } from '@/engine/characters/layers';
 import type { AssetKey, EntityId } from '@/engine/core/types';
 import { MIN_HIT_DP } from '@/engine/rules/hit-test';
 import { CAMERA_JUMP_MS, cameraTargetFor, clampCameraX } from '@/engine/scene/camera-math';
@@ -18,7 +20,7 @@ import { zoneSnapX } from '@/engine/scene/zones';
 
 import { resolveAsset, type GameFacade } from './facade';
 import { useGame } from './game-context';
-import { useActiveScene, useEntityOf, useVisibleEntities } from './hooks';
+import { useActiveScene, useCharacterLayersOf, useEntityOf, useVisibleEntities } from './hooks';
 
 export interface CameraController {
   /** Centers the camera on world x with a 450 ms animation (RENDERING §5), then reports cameraSettled. */
@@ -39,8 +41,13 @@ export interface SceneViewProps {
   onViewport?: (viewport: Viewport) => void;
 }
 
+/** RENDERING §9: one shared breathing clock for every character (one cycle ≈ 3.2 s). */
+const BREATH_PERIOD_MS = 3200;
+
 interface DragVisual {
   id: EntityId;
+  /** Characters are dragged as their layer stack (HU-GAME-017). */
+  layers?: CharacterLayerData[];
   asset: AssetKey;
   transform: Transform;
   pivot: { x: number; y: number };
@@ -55,14 +62,33 @@ interface EntityNodeProps {
   id: EntityId;
   textures: TextureStore;
   hidden: boolean;
+  breath: SharedValue<number>;
 }
 
+/** A character: its memoized layer stack in one Group, breathing while idle (HU-GAME-013, HU-GAME-014 R6). */
+const CharacterNode = memo(function CharacterNode({ game, id, textures, breath }: Omit<EntityNodeProps, 'hidden'>) {
+  const entity = useEntityOf(game, id);
+  const layers = useCharacterLayersOf(game, id);
+  if (!entity) return null;
+  const idle = entity.components.pose?.current === 'idle';
+  return (
+    <CharacterSprite
+      id={id}
+      layers={layers}
+      transform={entity.components.transform ?? { x: 0, y: 0 }}
+      textures={textures}
+      breath={idle ? breath : undefined}
+    />
+  );
+});
+
 /** Subscribes to a single entity so only it re-renders when it changes (PERFORMANCE §4 rule 2). */
-const EntityNode = memo(function EntityNode({ game, id, textures, hidden }: EntityNodeProps) {
+const EntityNode = memo(function EntityNode({ game, id, textures, hidden, breath }: EntityNodeProps) {
   const entity = useEntityOf(game, id);
   const sprite = entity?.components.sprite;
   // The original is hidden while its DragProxy is on screen (HU-GAME-027 R5).
   if (hidden || !entity || !sprite || entity.location.kind !== 'scene') return null;
+  if (entity.components.character) return <CharacterNode game={game} id={id} textures={textures} breath={breath} />;
   return (
     <SpriteNode
       id={id}
@@ -93,6 +119,11 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
   const [viewport, setViewport] = useState<Viewport | null>(null);
   const [cullX, setCullX] = useState(() => game.selectors.cameraX() ?? 0);
   const [drag, setDrag] = useState<DragVisual | null>(null);
+  const breath = useSharedValue(0);
+
+  useEffect(() => {
+    breath.set(withRepeat(withTiming(Math.PI * 2, { duration: BREATH_PERIOD_MS, easing: Easing.linear }), -1, false));
+  }, [breath]);
 
   const bounds = useMemo(() => (scene ? sceneBounds(scene) : { minX: 0, maxX: 0 }), [scene]);
 
@@ -162,6 +193,7 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
         const t = e.components.transform ?? { x, y };
         setDrag({
           id,
+          layers: e.components.character ? game.selectors.characterLayers(id) : undefined,
           asset: resolveAsset(e),
           transform: t,
           pivot: sprite.pivot ?? { x: 0.5, y: 1 },
@@ -249,7 +281,18 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
       pointerY={pointerY}
       showGrid={showGrid}
       overlay={
-        drag && (
+        drag?.layers ? (
+          <CharacterDragProxy
+            id={drag.id}
+            layers={drag.layers}
+            transform={drag.transform}
+            grabOffset={drag.grabOffset}
+            liftOffset={drag.liftOffset}
+            pointerX={pointerX}
+            pointerY={pointerY}
+            textures={textures}
+          />
+        ) : drag ? (
           <DragProxy
             asset={drag.asset}
             transform={drag.transform}
@@ -261,10 +304,10 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
             pointerY={pointerY}
             textures={textures}
           />
-        )
+        ) : null
       }>
       {visible.map((d) => (
-        <EntityNode key={d.id} game={game} id={d.id} textures={textures} hidden={drag?.id === d.id} />
+        <EntityNode key={d.id} game={game} id={d.id} textures={textures} hidden={drag?.id === d.id} breath={breath} />
       ))}
     </SceneCanvas>
   );

@@ -1,5 +1,6 @@
 import type { z } from 'zod';
 
+import type { CharacterSystem } from '../characters/character-system';
 import type { Entity } from '../core/entity';
 import type { LocationService } from '../core/location-service';
 import type { Logger } from '../core/runtime';
@@ -15,6 +16,7 @@ export interface ActionEnv {
   effects: VisualEffects;
   logger: Logger;
   scene: ActiveSceneInfo;
+  characters: CharacterSystem;
 }
 
 /** Context of one interaction: who is `$source`, who is `$target`, where the finger was. */

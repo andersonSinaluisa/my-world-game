@@ -6,7 +6,8 @@
   "provides": {
     "scenes": [
       "home"
-    ]
+    ],
+    "characterParts": true
   },
   "newGame": {
     "sceneId": "core:home",

@@ -1,0 +1,46 @@
+{
+  "id": "shirt_dino_orange",
+  "category": "clothing",
+  "tags": [
+    "clothing",
+    "top"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_clothing_shirt_dino_orange",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -56,
+        "y": -96,
+        "w": 112,
+        "h": 92
+      }
+    },
+    "draggable": {},
+    "wearable": {
+      "slot": "top",
+      "layers": {
+        "torsoClothes": "chr_top_shirt_dino_orange",
+        "armClothesL": "chr_top_shirt_dino_orange_arm_l",
+        "armClothesR": "chr_top_shirt_dino_orange_arm_r"
+      },
+      "bodyVariants": {
+        "adult": {
+          "torsoClothes": "chr_top_shirt_dino_orange_adult",
+          "armClothesL": "chr_top_shirt_dino_orange_arm_l_adult",
+          "armClothesR": "chr_top_shirt_dino_orange_arm_r_adult"
+        }
+      }
+    },
+    "animations": {
+      "drop": "squash"
+    }
+  },
+  "metadata": {
+    "name": "object.shirt_dino_orange.name",
+    "placeholder": true
+  }
+}
