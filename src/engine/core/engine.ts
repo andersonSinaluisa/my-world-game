@@ -1,5 +1,6 @@
 import { isOpenEntity } from '../actions/container-actions';
 import { DEFAULT_INVENTORY_CAPACITY } from '../actions/inventory-actions';
+import { seatedTransform, seatSpec } from '../actions/seat-actions';
 import type { ActionEnv } from '../actions/types';
 import { handAnchor } from '../characters/catalog';
 import { CharacterCommands } from '../characters/character-commands';
@@ -372,6 +373,7 @@ export class GameEngine {
         this.world.update(id, { transform: { ...(t.components.transform ?? {}), x: spawn!.x + i * TRAVELER_SPACING, y: spawn!.y } });
       });
       this.activeScene = built.info;
+      this.repairSeats(sceneId, spawnDefault);
       const cameraX = resuming ? this.player.cameraX! : this.initialCameraX(built.info, spawn!.x);
       this.player = { ...this.player, currentSceneId: sceneId, cameraX };
       recomputeSupport(this.world, built.info);
@@ -381,6 +383,31 @@ export class GameEngine {
       this.updateZone(built.info, cameraX);
     });
     return OK;
+  }
+
+  /**
+   * Seated characters whose seat no longer exists (pack update) stand at the floor, and a second
+   * occupant of the same seat goes to the default spawn (HU-GAME-014/045 edge cases, SAVE_SYSTEM §5).
+   */
+  private repairSeats(sceneId: SceneId, spawn: { x: number; y: number }): void {
+    const seen = new Set<EntityId>();
+    for (const c of this.world.query({ sceneId, has: ['character'] })) {
+      const seatId = c.components.pose?.seatId;
+      if (!seatId) continue;
+      const seat = this.world.get(seatId);
+      if (!seat || !seatSpec(seat)) {
+        this.logger.warn(`Seat ${seatId} of ${c.id} no longer exists; standing up`);
+        this.world.update(c.id, { pose: { current: 'idle' }, transform: { ...(c.components.transform ?? { x: spawn.x, y: spawn.y }), y: spawn.y } });
+        continue;
+      }
+      if (seen.has(seatId)) {
+        this.logger.warn(`Invariant repaired: two characters on ${seatId}; ${c.id} moved to the default spawn`);
+        this.world.update(c.id, { pose: { current: 'idle' }, transform: { ...(c.components.transform ?? {}), x: spawn.x, y: spawn.y } });
+        continue;
+      }
+      seen.add(seatId);
+      this.world.update(c.id, { transform: seatedTransform(this.world, seat, c) });
+    }
   }
 
   /** SCENE_SYSTEM §2 step 6: camera.startX, else centered on camera.startSpawnId, else on the arrival spawn. */
@@ -606,6 +633,16 @@ export class GameEngine {
    */
   private refreshCarried(parentId: EntityId): void {
     const scene = this.activeScene;
+    // Characters sitting or sleeping on it follow its anchor (HU-GAME-048 R3).
+    const moved = this.world.get(parentId);
+    if (moved && seatSpec(moved)) {
+      const occupants = this.world.all().filter((e) => e.components.pose?.seatId === parentId);
+      if (occupants.length) {
+        this.world.transaction(() => {
+          for (const o of occupants) this.world.update(o.id, { transform: seatedTransform(this.world, moved, o) });
+        });
+      }
+    }
     // Items shown inside a moved container follow it too: re-emit them so views redraw (HU-GAME-034 R5).
     const contents = this.world.index.inContainer(parentId).filter((x): x is EntityId => !!x);
     if (contents.length) {

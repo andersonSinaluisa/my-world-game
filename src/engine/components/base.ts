@@ -132,6 +132,24 @@ export const DrinkableSchema = z.strictObject({
   onFinish: FinishSchema.optional(),
 });
 
+// §5.11
+const anchor = z.strictObject({ x: finite, y: finite });
+export const SeatSchema = z.strictObject({
+  anchor,
+  pose: z.literal('sit').optional(),
+  capacity: z.literal(1).optional(),
+  facing: z.enum(['left', 'right', 'front']).optional(),
+});
+export const BedSchema = z.strictObject({
+  anchor,
+  pose: z.literal('sleep').optional(),
+  capacity: z.literal(1).optional(),
+  /** Blanket drawn in front of the sleeping character (CHARACTER_SYSTEM §8, HU-GAME-046 R3). */
+  coverAsset: z.string().min(1).optional(),
+});
+export type Seat = z.infer<typeof SeatSchema>;
+export type Bed = z.infer<typeof BedSchema>;
+
 // §5.13 / §5.13b
 export const SpawnerSchema = z.strictObject({
   prefabId: z.string().min(1),

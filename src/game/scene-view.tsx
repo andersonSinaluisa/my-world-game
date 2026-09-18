@@ -418,7 +418,10 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
           />
         ) : null
       }>
-      {visible.map((d) => (
+      {visible.map((d) =>
+        d.cover ? (
+          <SpriteNode key={d.id} id={d.id} asset={d.asset} transform={d.transform} pivot={d.pivot} size={d.size} textures={textures} events={game.events} />
+        ) : (
         <EntityNode
           key={d.id}
           game={game}
@@ -429,7 +432,8 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
           highlighted={highlightId === d.id}
           breath={breath}
         />
-      ))}
+        ),
+      )}
     </SceneCanvas>
   );
 }
