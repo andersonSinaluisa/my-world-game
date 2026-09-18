@@ -15,7 +15,9 @@ export type GameEvent =
   | { type: 'interactionPerformed'; ruleId: string; sourceId?: EntityId; targetId?: EntityId; actions: string[] }
   | { type: 'interactionRejected'; ruleId?: string; reason: string; sourceId?: EntityId; targetId?: EntityId }
   | { type: 'sceneWillChange'; from?: SceneId; to: SceneId }
-  | { type: 'sceneLoaded'; from?: SceneId; to: SceneId; cameraX?: number };
+  | { type: 'sceneLoaded'; from?: SceneId; to: SceneId; cameraX?: number }
+  /** Active zone of the camera changed (HU-GAME-012). Derived state: never saved. */
+  | { type: 'zoneChanged'; sceneId: SceneId; zoneId?: string };
 
 /** Events that never change game state (presentation / notifications only). */
 export const PRESENTATION_EVENTS: ReadonlySet<GameEvent['type']> = new Set([

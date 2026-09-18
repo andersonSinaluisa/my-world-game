@@ -14,6 +14,7 @@ import { MIN_HIT_DP } from '@/engine/rules/hit-test';
 import { CAMERA_JUMP_MS, cameraTargetFor, clampCameraX } from '@/engine/scene/camera-math';
 import { CULLING_RECOMPUTE_RATIO } from '@/engine/scene/culling';
 import { sceneBounds } from '@/engine/scene/scene-types';
+import { zoneSnapX } from '@/engine/scene/zones';
 
 import { resolveAsset, type GameFacade } from './facade';
 import { useGame } from './game-context';
@@ -22,6 +23,8 @@ import { useActiveScene, useEntityOf, useVisibleEntities } from './hooks';
 export interface CameraController {
   /** Centers the camera on world x with a 450 ms animation (RENDERING §5), then reports cameraSettled. */
   jumpTo(x: number): void;
+  /** Jumps to a zone of the active scene: snapCameraX or its middle (HU-GAME-012 R4). False if unknown. */
+  jumpToZone(zoneId: string): boolean;
   /** Places the camera immediately (scene entry, HU-GAME-010). */
   setCameraX(x: number): void;
   viewport(): Viewport | null;
@@ -194,18 +197,29 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
     },
   );
 
+  const jumpTo = useCallback(
+    (x: number) => {
+      const w = viewportW.get();
+      if (!(w > 0)) return;
+      const target = cameraTargetFor(x, bounds, w);
+      cameraX.set(
+        withTiming(target, { duration: CAMERA_JUMP_MS }, (finished) => {
+          if (finished) scheduleOnRN(settle, target);
+        }),
+      );
+    },
+    [bounds, cameraX, settle, viewportW],
+  );
+
   useImperativeHandle(
     cameraRef,
     () => ({
-      jumpTo(x: number) {
-        const w = viewportW.get();
-        if (!(w > 0)) return;
-        const target = cameraTargetFor(x, bounds, w);
-        cameraX.set(
-          withTiming(target, { duration: CAMERA_JUMP_MS }, (finished) => {
-            if (finished) scheduleOnRN(settle, target);
-          }),
-        );
+      jumpTo,
+      jumpToZone(zoneId: string) {
+        const zone = scene?.zones?.find((z) => z.id === zoneId);
+        if (!zone) return false;
+        jumpTo(zoneSnapX(zone));
+        return true;
       },
       setCameraX(x: number) {
         const w = viewportW.get();
@@ -216,7 +230,7 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
       },
       viewport: () => viewport,
     }),
-    [bounds, cameraX, lastCullX, settle, viewport, viewportW],
+    [bounds, cameraX, lastCullX, jumpTo, scene, viewport, viewportW],
   );
 
   const visible = useVisibleEntities(viewport ? { cameraX: cullX, viewportW: viewport.viewportW } : undefined);

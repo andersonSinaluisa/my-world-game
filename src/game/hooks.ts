@@ -42,3 +42,10 @@ export function useActiveScene(): ActiveSceneInfo | undefined {
   const get = useCallback(() => game.selectors.activeScene(), [game]);
   return useSyncExternalStore(game.subscribe, get, get);
 }
+
+/** Active zone (room) of the camera (HU-GAME-012). */
+export function useActiveZone(): string | undefined {
+  const game = useGame();
+  const get = useCallback(() => game.selectors.activeZone(), [game]);
+  return useSyncExternalStore(game.subscribe, get, get);
+}

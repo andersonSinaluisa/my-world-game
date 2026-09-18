@@ -86,7 +86,7 @@ flowchart LR
 |---|---|---|---|---|---|---|
 | [HU-GAME-008](mvp/EPIC-002-rendering.md) | Culling y carga de fondos por chunks | EPIC-002 | Should | 1 | HU-GAME-006, HU-GAME-007 | In Progress (falta medición de estrés en release) |
 | [HU-GAME-009](mvp/EPIC-002-rendering.md) | Tweens y animaciones simples | EPIC-002 | Should | 1 | HU-GAME-006 | In Progress (falta verificación manual de presets) |
-| [HU-GAME-012](mvp/EPIC-003-scenes.md) | Zonas (habitaciones) dentro de una escena | EPIC-003 | Should | 1 | HU-GAME-010 | Draft |
+| [HU-GAME-012](mvp/EPIC-003-scenes.md) | Zonas (habitaciones) dentro de una escena | EPIC-003 | Should | 1 | HU-GAME-010 | Done (botones de zona llegan con el mapa, HU-GAME-051) |
 | [HU-GAME-015](mvp/EPIC-004-characters.md) | Expresiones faciales | EPIC-004 | Should | 1 | HU-GAME-013 | Draft |
 | [HU-GAME-029](mvp/EPIC-007-drag-drop.md) | Auto-scroll de la cámara al arrastrar cerca del borde | EPIC-007 | Must | 1 | HU-GAME-027, HU-GAME-007 | Draft |
 | [HU-GAME-033](mvp/EPIC-008-interaction.md) | Resaltar el destino válido durante el arrastre | EPIC-008 | Should | 1 | HU-GAME-031 | Draft |
