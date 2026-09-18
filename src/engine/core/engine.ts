@@ -1,3 +1,5 @@
+import { isOpenEntity } from '../actions/container-actions';
+import { DEFAULT_INVENTORY_CAPACITY } from '../actions/inventory-actions';
 import type { ActionEnv } from '../actions/types';
 import { handAnchor } from '../characters/catalog';
 import { CharacterCommands } from '../characters/character-commands';
@@ -18,7 +20,7 @@ import { placeItem, recomputeSupport } from '../systems/surface-system';
 import { VisualEffects } from '../systems/visual-effects';
 import type { Components } from '../components/registry';
 import { OK, type CommandResult, type GameCommand } from './commands';
-import type { EntityInit } from './entity';
+import type { Entity, EntityInit } from './entity';
 import { EventBus } from './events';
 import type { Location } from './location';
 import { LocationService } from './location-service';
@@ -158,10 +160,46 @@ export class GameEngine {
     });
   }
 
-  /** World transform of an entity (HU-GAME-030: items on carriers are relative). */
+  /**
+   * World transform of an entity: items on carriers are relative (HU-GAME-030); items shown inside an open
+   * container sit at its slot (HU-GAME-034 R5). Undefined when the entity is not drawn in the world.
+   */
   absoluteTransform(id: EntityId): Components['transform'] | undefined {
     const e = this.world.get(id);
-    return e ? absoluteTransform((x) => this.world.get(x), e) : undefined;
+    if (!e) return undefined;
+    switch (e.location.kind) {
+      case 'scene':
+        return absoluteTransform((x) => this.world.get(x), e);
+      case 'container':
+        return this.slotTransform(e);
+      case 'held':
+        return this.heldTransform(id);
+      default:
+        return undefined; // backpack, worn, limbo: not in the world
+    }
+  }
+
+  private slotTransform(e: Entity): Components['transform'] | undefined {
+    if (e.location.kind !== 'container') return undefined;
+    const container = this.world.get(e.location.containerId);
+    const c = container?.components.container;
+    const ct = container && absoluteTransform((x) => this.world.get(x), container);
+    const slot = c?.slots?.[e.location.slot];
+    if (!container || !c || !ct || !slot || container.location.kind !== 'scene') return undefined;
+    if (!isOpenEntity(container) || c.showContentsWhenOpen === false) return undefined;
+    const { parentId: _p, ...own } = e.components.transform ?? { x: 0, y: 0 };
+    void _p;
+    return { ...own, x: ct.x + slot.x, y: ct.y + slot.y };
+  }
+
+  /** Entities drawn inside open containers of the active scene (HU-GAME-034 R5). */
+  visibleContents(): Entity[] {
+    const scene = this.activeScene;
+    if (!scene) return [];
+    return this.world.query({ locationKind: 'container' }).filter((e) => {
+      const c = e.location.kind === 'container' ? this.world.get(e.location.containerId) : undefined;
+      return c?.location.kind === 'scene' && c.location.sceneId === scene.id && e.components.sprite && this.slotTransform(e) !== undefined;
+    });
   }
 
   static create(options: GameEngineOptions = {}): GameEngine {
@@ -203,6 +241,7 @@ export class GameEngine {
       logger: this.logger,
       scene: this.activeScene,
       characters: this.characters,
+      inventoryCapacity: () => this.inventoryCapacity,
     };
   }
 
@@ -262,6 +301,8 @@ export class GameEngine {
         return this.characterCommands.setOutfitSlot(command.characterId, command.slot, command.prefabId ?? null);
       case 'focusEntity':
         return this.focusEntity(command.entityId);
+      case 'takeFromInventory':
+        return this.takeFromInventory(command.slot, command.worldPoint);
       default:
         return { ok: false, reason: 'unknownCommand' };
     }
@@ -372,6 +413,36 @@ export class GameEngine {
     this.world.emit({ type: 'zoneChanged', sceneId: scene.id, zoneId: next });
   }
 
+  get inventoryCapacity(): number {
+    return this.player.inventory?.capacity ?? DEFAULT_INVENTORY_CAPACITY;
+  }
+
+  /** Backpack slots, 0..capacity-1, with the entity in each (HU-GAME-038 R1). */
+  inventorySlots(): (EntityId | null)[] {
+    const occupied = this.world.index.inventory();
+    return Array.from({ length: this.inventoryCapacity }, (_, i) => occupied[i] ?? null);
+  }
+
+  /**
+   * Takes an item out of the backpack at the finger and starts its drag (HU-GAME-038 R2). dragCancel puts
+   * it back in the same slot (R8) because the drag origin is the inventory location.
+   */
+  private takeFromInventory(slot: number, point: WorldPoint): CommandResult {
+    if (!this.activeScene) return { ok: false, reason: 'noActiveScene' };
+    if (this.drag) return { ok: false, reason: 'alreadyDragging' };
+    const id = this.world.index.inventory()[slot];
+    const e = id ? this.world.get(id) : undefined;
+    if (!e) return { ok: false, reason: 'entityNotFound' };
+    const origin: DragState['origin'] = { location: e.location, transform: e.components.transform };
+    this.world.transaction(() => {
+      this.locations.move(e.id, { kind: 'scene', sceneId: this.activeScene!.id });
+      this.world.update(e.id, { transform: { ...(e.components.transform ?? {}), x: point.x, y: point.y } });
+    });
+    this.drag = { entityId: e.id, origin };
+    this.lastPreview = undefined;
+    return { ok: true, startDrag: e.id, entityId: e.id };
+  }
+
   /** Moves the camera to an entity; enters its scene first when it is elsewhere (GAME_ENGINE §4). */
   private focusEntity(entityId: EntityId): CommandResult {
     const e = this.world.get(entityId);
@@ -443,8 +514,18 @@ export class GameEngine {
           this.world.update(entityId, { transform: { ...(e.components.transform ?? {}), x: point.x, y: point.y } });
         });
         break;
+      case 'container': {
+        // takeOut implícito (HU-GAME-036 R3): only from an open container of the active scene.
+        const at = this.slotTransform(e);
+        if (!at) return { ok: false, reason: 'notDraggable' };
+        this.world.transaction(() => {
+          this.locations.move(entityId, { kind: 'scene', sceneId: this.activeScene!.id });
+          this.world.update(entityId, { transform: { ...at, x: point.x, y: point.y } });
+        });
+        break;
+      }
       default:
-        // container (HU-GAME-036), worn (HU-GAME-040), inventory (HU-GAME-038): not draggable yet.
+        // worn (HU-GAME-040), inventory (HU-GAME-038): not draggable yet.
         return { ok: false, reason: 'notDraggable' };
     }
     // Characters: standUp implícito, temporary pose cancelled, dangle + surprised (HU-GAME-017 R2).
@@ -485,6 +566,16 @@ export class GameEngine {
    */
   private refreshCarried(parentId: EntityId): void {
     const scene = this.activeScene;
+    // Items shown inside a moved container follow it too: re-emit them so views redraw (HU-GAME-034 R5).
+    const contents = this.world.index.inContainer(parentId).filter((x): x is EntityId => !!x);
+    if (contents.length) {
+      this.world.transaction(() => {
+        for (const id of contents) {
+          const t = this.world.get(id)?.components.transform;
+          if (t) this.world.update(id, { transform: { ...t } });
+        }
+      });
+    }
     const kids = childrenOf(this.world, parentId);
     if (!scene || !kids.length) return;
     let unlinked = false;

@@ -75,5 +75,8 @@
   "ui.creator.tab.face": "Cara",
   "ui.creator.tab.hair": "Pelo",
   "ui.creator.tab.clothes": "Ropa",
-  "ui.creator.confirm": "Listo"
+  "ui.creator.confirm": "Listo",
+  "ui.backpack.label": "Mochila",
+  "ui.backpack.tray": "Cosas de la mochila",
+  "ui.backpack.empty": "Hueco vacío"
 }

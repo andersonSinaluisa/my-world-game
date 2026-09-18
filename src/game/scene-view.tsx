@@ -25,6 +25,15 @@ import { useActiveScene, useCharacterLayersOf, useEntityOf, useVisibleEntities }
 export interface CameraController {
   /** Centers the camera on world x with a 450 ms animation (RENDERING §5), then reports cameraSettled. */
   jumpTo(x: number): void;
+  /**
+   * Drags that start outside the canvas (the backpack tray, HU-GAME-038): screen coordinates in dp.
+   * `begin` takes the item out of the slot at the finger; `end` drops it (or cancels, putting it back).
+   */
+  externalDrag: {
+    begin(slot: number, xDp: number, yDp: number): boolean;
+    move(xDp: number, yDp: number): void;
+    end(xDp: number, yDp: number, success: boolean): void;
+  };
   /** Jumps to a zone of the active scene: snapCameraX or its middle (HU-GAME-012 R4). False if unknown. */
   jumpToZone(zoneId: string): boolean;
   /** Places the camera immediately (scene entry, HU-GAME-010). */
@@ -39,6 +48,8 @@ export interface SceneViewProps {
   interactive?: boolean;
   cameraRef?: Ref<CameraController>;
   onViewport?: (viewport: Viewport) => void;
+  /** HUD drop target under a screen point in dp (the backpack button), if any (HU-GAME-037 R3). */
+  uiTargetAt?: (xDp: number, yDp: number) => 'inventory' | undefined;
 }
 
 /** RENDERING §9: one shared breathing clock for every character (one cycle ≈ 3.2 s). */
@@ -93,13 +104,16 @@ const EntityNode = memo(function EntityNode({ game, id, textures, hidden, hidden
   const sprite = entity?.components.sprite;
   // The original is hidden while its DragProxy is on screen (HU-GAME-027 R5), and so is what it carries.
   const parentId = entity?.components.transform?.parentId;
-  if (hidden || (parentId && hiddenParent === parentId) || !entity || !sprite || entity.location.kind !== 'scene') return null;
+  if (hidden || (parentId && hiddenParent === parentId) || !entity || !sprite) return null;
+  const transform = game.absoluteTransform(id);
+  // Scene entities, and items shown inside an open container (drawn at their slot, HU-GAME-034 R5).
+  if (!transform || (entity.location.kind !== 'scene' && entity.location.kind !== 'container')) return null;
   if (entity.components.character) return <CharacterNode game={game} id={id} textures={textures} breath={breath} />;
   return (
     <SpriteNode
       id={id}
       asset={resolveAsset(entity)}
-      transform={game.absoluteTransform(id) ?? { x: 0, y: 0 }}
+      transform={transform}
       pivot={sprite.pivot ?? { x: 0.5, y: 1 }}
       size={sprite.size}
       textures={textures}
@@ -115,7 +129,7 @@ const EntityNode = memo(function EntityNode({ game, id, textures, hidden, hidden
  * moves past its threshold (10 % of the viewport, RENDERING §7), when entities change, or when a drag
  * starts/ends.
  */
-export function SceneView({ textures, showGrid, interactive = true, cameraRef, onViewport }: SceneViewProps) {
+export function SceneView({ textures, showGrid, interactive = true, cameraRef, onViewport, uiTargetAt }: SceneViewProps) {
   const game = useGame();
   const scene = useActiveScene();
   const cameraX = useSharedValue(game.selectors.cameraX() ?? 0);
@@ -130,6 +144,8 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
   const breath = useSharedValue(0);
   // focusEntity (HU-GAME-023 R4) animates like a zone jump; the latest jumpTo is kept in a ref.
   const focusRef = useRef<(x: number) => void>(() => {});
+  const externalId = useRef<EntityId | undefined>(undefined);
+  const lastExternalPreview = useRef(0);
 
   useEffect(() => {
     breath.set(withRepeat(withTiming(Math.PI * 2, { duration: BREATH_PERIOD_MS, easing: Easing.linear }), -1, false));
@@ -226,8 +242,8 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
         });
         return true;
       },
-      dragEnd(id, x, y) {
-        game.dispatch({ type: 'dragEnd', entityId: id, worldPoint: { x, y }, minHitWorld });
+      dragEnd(id, x, y, sx, sy) {
+        game.dispatch({ type: 'dragEnd', entityId: id, worldPoint: { x, y }, uiTarget: uiTargetAt?.(sx, sy), minHitWorld });
         setDrag(null);
         setHighlightId(undefined);
       },
@@ -236,14 +252,14 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
         setDrag(null);
         setHighlightId(undefined);
       },
-      dragMove(id, x, y) {
-        game.dispatch({ type: 'dragPreview', entityId: id, worldPoint: { x, y }, minHitWorld });
+      dragMove(id, x, y, sx, sy) {
+        game.dispatch({ type: 'dragPreview', entityId: id, worldPoint: { x, y }, uiTarget: uiTargetAt?.(sx, sy), minHitWorld });
       },
       tap(x, y) {
         game.dispatch({ type: 'pointerTap', worldPoint: { x, y }, minHitWorld });
       },
     };
-  }, [game, interactive, viewport]);
+  }, [game, interactive, viewport, uiTargetAt]);
 
   // Culling window follows the camera only past the threshold; never a React render per frame.
   useAnimatedReaction(
@@ -278,6 +294,52 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
   useImperativeHandle(
     cameraRef,
     () => ({
+      externalDrag: {
+        begin(slot, xDp, yDp) {
+          if (!viewport) return false;
+          const p = { x: xDp / viewport.scale + cameraX.get(), y: yDp / viewport.scale };
+          const r = game.dispatch({ type: 'takeFromInventory', slot, worldPoint: p });
+          const e = r.ok && r.entityId ? game.getEntity(r.entityId) : undefined;
+          const sprite = e?.components.sprite;
+          if (!e || !sprite) return false;
+          pointerX.set(p.x);
+          pointerY.set(p.y);
+          setDrag({
+            id: e.id,
+            asset: resolveAsset(e),
+            transform: { ...(e.components.transform ?? p), x: p.x, y: p.y },
+            pivot: sprite.pivot ?? { x: 0.5, y: 1 },
+            size: sprite.size,
+            liftOffset: e.components.draggable?.liftOffset,
+            grabOffset: { x: 0, y: 0 },
+          });
+          externalId.current = e.id;
+          return true;
+        },
+        move(xDp, yDp) {
+          const id = externalId.current;
+          if (!id || !viewport) return;
+          const x = xDp / viewport.scale + cameraX.get();
+          const y = yDp / viewport.scale;
+          pointerX.set(x);
+          pointerY.set(y);
+          // Same ≤ 10 Hz preview sampling as canvas drags (HU-GAME-033 R1).
+          const now = Date.now();
+          if (now - lastExternalPreview.current >= 100) {
+            lastExternalPreview.current = now;
+            input?.dragMove?.(id, x, y, xDp, yDp);
+          }
+        },
+        end(xDp, yDp, success) {
+          const id = externalId.current;
+          externalId.current = undefined;
+          if (!id || !viewport) return;
+          const x = xDp / viewport.scale + cameraX.get();
+          const y = yDp / viewport.scale;
+          if (success) input?.dragEnd(id, x, y, xDp, yDp);
+          else input?.dragCancel(id);
+        },
+      },
       jumpTo,
       jumpToZone(zoneId: string) {
         const zone = scene?.zones?.find((z) => z.id === zoneId);
@@ -294,7 +356,7 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
       },
       viewport: () => viewport,
     }),
-    [bounds, cameraX, lastCullX, jumpTo, scene, viewport, viewportW],
+    [bounds, cameraX, lastCullX, jumpTo, scene, viewport, viewportW, game, input, pointerX, pointerY],
   );
 
   const visible = useVisibleEntities(viewport ? { cameraX: cullX, viewportW: viewport.viewportW } : undefined);

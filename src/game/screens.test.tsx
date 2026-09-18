@@ -118,3 +118,21 @@ describe('characters screen (HU-GAME-022 R2)', () => {
     expect(mockRouter.push).not.toHaveBeenCalled();
   });
 });
+
+describe('backpack HUD (HU-GAME-037/038)', () => {
+  it('the tray shows the 12 slots with the stored item', async () => {
+    const { Backpack } = jest.requireActual('@/game/backpack') as typeof import('@/game/backpack');
+    const { facade, game } = setup();
+    game.engine.setPlayerState({ inventory: { capacity: 12 } });
+    const p = game.content!.prefab('test:ball')!;
+    game.world.create({ id: 'rt_ball', prefabId: p.qualifiedId, tags: ['toy'], location: { kind: 'inventory', slot: 0 }, components: { ...p.components, transform: { x: 0, y: 0 } } });
+    await render(
+      <GameProvider facade={facade}>
+        <Backpack cameraRef={{ current: null }} onBounds={() => {}} />
+      </GameProvider>,
+    );
+    await act(async () => fireEvent.press(screen.getByRole('button', { name: 'ui.backpack.label' })));
+    expect(screen.getAllByLabelText('ui.backpack.empty')).toHaveLength(11);
+    expect(screen.getByLabelText('Pelota')).toBeTruthy();
+  });
+});

@@ -19,7 +19,8 @@ export type GameCommand =
   | { type: 'createCharacter'; appearance: Appearance; outfit: Partial<Record<WearSlot, PrefabId>> }
   | { type: 'updateAppearance'; characterId: EntityId; patch: Partial<Appearance> }
   | { type: 'setOutfitSlot'; characterId: EntityId; slot: WearSlot; prefabId: PrefabId | null }
-  | { type: 'focusEntity'; entityId: EntityId };
+  | { type: 'focusEntity'; entityId: EntityId }
+  | { type: 'takeFromInventory'; slot: number; worldPoint: WorldPoint };
 
 export type CommandFailure =
   | 'unknownCommand'

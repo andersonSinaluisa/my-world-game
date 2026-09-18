@@ -1,4 +1,6 @@
 import { holdAction, releaseAction, setExpressionAction } from './character-actions';
+import { addToInventoryAction } from './inventory-actions';
+import { closeAction, openAction, storeAction, toggleOpenAction, toggleSwitchAction } from './container-actions';
 import { placeAction } from './place';
 import { cycleStateAction, setStateAction } from './state-actions';
 import type { ActionHandler } from './types';
@@ -8,7 +10,20 @@ import type { ActionHandler } from './types';
  * INTERACTION_SCHEMA + tests. Content can combine these but never invent new ones.
  */
 export const ACTIONS: Record<string, ActionHandler<never>> = Object.fromEntries(
-  [placeAction, setStateAction, cycleStateAction, holdAction, releaseAction, setExpressionAction].map((a) => [a.type, a as unknown as ActionHandler<never>]),
+  [
+    placeAction,
+    setStateAction,
+    cycleStateAction,
+    holdAction,
+    releaseAction,
+    setExpressionAction,
+    toggleOpenAction,
+    openAction,
+    closeAction,
+    toggleSwitchAction,
+    storeAction,
+    addToInventoryAction,
+  ].map((a) => [a.type, a as unknown as ActionHandler<never>]),
 );
 
 export const ACTION_TYPES = Object.keys(ACTIONS);

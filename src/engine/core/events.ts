@@ -12,8 +12,8 @@ export type GameEvent =
   | { type: 'entityMoved'; id: EntityId; from: Location; to: Location }
   | { type: 'visualEffect'; entityId: EntityId; preset: TweenPresetId }
   | { type: 'playerChanged'; keys: string[] }
-  | { type: 'interactionPerformed'; ruleId: string; sourceId?: EntityId; targetId?: EntityId; actions: string[] }
-  | { type: 'interactionRejected'; ruleId?: string; reason: string; sourceId?: EntityId; targetId?: EntityId }
+  | { type: 'interactionPerformed'; ruleId: string; sourceId?: EntityId; targetId?: EntityId; uiTarget?: 'inventory' | 'trash'; actions: string[] }
+  | { type: 'interactionRejected'; ruleId?: string; reason: string; sourceId?: EntityId; targetId?: EntityId; uiTarget?: 'inventory' | 'trash' }
   | { type: 'sceneWillChange'; from?: SceneId; to: SceneId }
   | { type: 'sceneLoaded'; from?: SceneId; to: SceneId; cameraX?: number }
   /** Active zone of the camera changed (HU-GAME-012). Derived state: never saved. */
