@@ -1,0 +1,110 @@
+{
+  "slot": {
+    "slotId": "main",
+    "saveVersion": 1,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z",
+    "contentVersions": {
+      "core": "1.0.0"
+    },
+    "player": {
+      "currentSceneId": "core:home",
+      "wallet": {
+        "coins": 50
+      },
+      "unlocks": [],
+      "inventory": {
+        "capacity": 12
+      },
+      "flags": {},
+      "cameraX": 0
+    }
+  },
+  "entities": [
+    {
+      "id": "rt_01KDVDNA0064832ATXTAJ62N4F",
+      "location": {
+        "kind": "scene",
+        "sceneId": "core:home"
+      },
+      "components": {
+        "transform": {
+          "x": 700,
+          "y": 960
+        },
+        "character": {
+          "isNpc": false,
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "colorTag": "#FFB5C2"
+        },
+        "appearance": {
+          "bodyType": "child",
+          "skinTone": "skin_04",
+          "eyes": "eyes_round",
+          "mouth": "mouth_smile",
+          "hairStyle": "hair_buns",
+          "hairColor": "hair_berry"
+        },
+        "holder": {
+          "hands": [
+            "left",
+            "right"
+          ]
+        },
+        "pose": {
+          "current": "idle"
+        },
+        "draggable": {}
+      },
+      "tags": [
+        "character"
+      ]
+    },
+    {
+      "id": "rt_01J8Z8RETIREDTOY000000000",
+      "prefabId": "core:retired_toy",
+      "location": {
+        "kind": "scene",
+        "sceneId": "core:home"
+      },
+      "components": {
+        "transform": {
+          "x": 900,
+          "y": 960
+        }
+      }
+    },
+    {
+      "id": "rt_01J8Z8RENAMEDBALL00000000",
+      "prefabId": "core:old_ball",
+      "location": {
+        "kind": "scene",
+        "sceneId": "core:home"
+      },
+      "components": {
+        "transform": {
+          "x": 950,
+          "y": 960
+        }
+      }
+    },
+    {
+      "id": "core:home/lamp",
+      "prefabId": "core:lamp_floor",
+      "location": {
+        "kind": "scene",
+        "sceneId": "core:home"
+      },
+      "components": {
+        "transform": {
+          "x": 1560,
+          "y": 960
+        },
+        "states": {
+          "current": "broken"
+        }
+      }
+    }
+  ],
+  "removed": []
+}

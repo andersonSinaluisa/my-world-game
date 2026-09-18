@@ -61,6 +61,8 @@ export class SaveService {
   private rows = new Map<EntityId, SavedEntity>();
   private removed = new Set<EntityId>();
   private slot: SaveSlotData | undefined;
+  /** Duration of the last successful write (HU-GAME-071 flush budget). */
+  lastFlushMs: number | undefined;
 
   constructor(
     private readonly engine: GameEngine,
@@ -200,6 +202,7 @@ export class SaveService {
     const now = new Date(this.engine.clock.now()).toISOString();
     const slot: SaveSlotData | undefined = batch.player || !this.slot ? this.slotRow(now) : undefined;
     if (slot) this.slot = slot;
+    const started = Date.now();
     this.writing = this.writing
       .then(() =>
         this.store.writeBatch({
@@ -210,6 +213,9 @@ export class SaveService {
           slot,
         }),
       )
+      .then(() => {
+        this.lastFlushMs = Date.now() - started;
+      })
       .catch((error) => {
         this.engine.logger.error('Autosave failed; will retry', { error: String(error) });
         // Merge back so the next trigger retries (newer snapshots win).

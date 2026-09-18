@@ -1,0 +1,270 @@
+{
+  "slot": {
+    "slotId": "main",
+    "saveVersion": 1,
+    "createdAt": "2026-01-01T00:00:01.000Z",
+    "updatedAt": "2026-01-01T00:00:01.000Z",
+    "contentVersions": {
+      "core": "1.0.0"
+    },
+    "player": {
+      "currentSceneId": "core:home",
+      "wallet": {
+        "coins": 50
+      },
+      "unlocks": [],
+      "inventory": {
+        "capacity": 12
+      },
+      "flags": {},
+      "cameraX": 0
+    }
+  },
+  "entities": [
+    {
+      "id": "rt_01KDVDNA0064832ATXTAJ62N4F",
+      "location": {
+        "kind": "scene",
+        "sceneId": "core:home"
+      },
+      "components": {
+        "transform": {
+          "x": 3400,
+          "y": 960
+        },
+        "character": {
+          "isNpc": false,
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "colorTag": "#FFB5C2"
+        },
+        "appearance": {
+          "bodyType": "child",
+          "skinTone": "skin_04",
+          "eyes": "eyes_round",
+          "mouth": "mouth_smile",
+          "hairStyle": "hair_buns",
+          "hairColor": "hair_berry"
+        },
+        "holder": {
+          "hands": [
+            "left",
+            "right"
+          ]
+        },
+        "pose": {
+          "current": "idle"
+        },
+        "draggable": {}
+      },
+      "tags": [
+        "character"
+      ]
+    },
+    {
+      "id": "rt_01KDVDNA00FQMD5K6M066SVYA4",
+      "location": {
+        "kind": "worn",
+        "characterId": "rt_01KDVDNA0064832ATXTAJ62N4F",
+        "slot": "top"
+      },
+      "components": {},
+      "prefabId": "core:shirt_star_yellow"
+    },
+    {
+      "id": "rt_01KDVDNA00H0C9Y0RRNYMMWBYN",
+      "location": {
+        "kind": "worn",
+        "characterId": "rt_01KDVDNA0064832ATXTAJ62N4F",
+        "slot": "bottom"
+      },
+      "components": {},
+      "prefabId": "core:jeans_blue"
+    },
+    {
+      "id": "rt_01KDVDNA00QQMTMJMR8V1AXAXZ",
+      "location": {
+        "kind": "worn",
+        "characterId": "rt_01KDVDNA0064832ATXTAJ62N4F",
+        "slot": "shoes"
+      },
+      "components": {},
+      "prefabId": "core:sneakers_red"
+    },
+    {
+      "id": "rt_01KDVDNA0046C33PYW2XMRCP4Q",
+      "location": {
+        "kind": "scene",
+        "sceneId": "core:home"
+      },
+      "components": {
+        "transform": {
+          "x": 420,
+          "y": 865
+        },
+        "character": {
+          "isNpc": false,
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "colorTag": "#9ED8FF"
+        },
+        "appearance": {
+          "bodyType": "adult",
+          "skinTone": "skin_04",
+          "eyes": "eyes_round",
+          "mouth": "mouth_smile",
+          "hairStyle": "hair_buns",
+          "hairColor": "hair_berry"
+        },
+        "holder": {
+          "hands": [
+            "left",
+            "right"
+          ]
+        },
+        "pose": {
+          "current": "sit",
+          "seatId": "core:home/sofa"
+        },
+        "draggable": {}
+      },
+      "tags": [
+        "character"
+      ]
+    },
+    {
+      "id": "rt_01KDVDNA00Z28W85KCCHT9MKNS",
+      "location": {
+        "kind": "worn",
+        "characterId": "rt_01KDVDNA0046C33PYW2XMRCP4Q",
+        "slot": "top"
+      },
+      "components": {},
+      "prefabId": "core:hoodie_purple"
+    },
+    {
+      "id": "core:home/toy_blocks",
+      "location": {
+        "kind": "scene",
+        "sceneId": "core:home"
+      },
+      "components": {
+        "transform": {
+          "x": 4350,
+          "y": 866.5
+        }
+      },
+      "prefabId": "core:toy_blocks"
+    },
+    {
+      "id": "core:home/tv",
+      "location": {
+        "kind": "scene",
+        "sceneId": "core:home"
+      },
+      "components": {
+        "transform": {
+          "x": 1250,
+          "y": 960
+        },
+        "states": {
+          "current": "on"
+        }
+      },
+      "prefabId": "core:tv"
+    },
+    {
+      "id": "core:home/fridge",
+      "location": {
+        "kind": "scene",
+        "sceneId": "core:home"
+      },
+      "components": {
+        "transform": {
+          "x": 2080,
+          "y": 960
+        },
+        "states": {
+          "current": "open"
+        }
+      },
+      "prefabId": "core:fridge"
+    },
+    {
+      "id": "core:home/banana",
+      "location": {
+        "kind": "container",
+        "containerId": "core:home/fridge",
+        "slot": 3
+      },
+      "components": {
+        "transform": {
+          "x": 3060,
+          "y": 845
+        }
+      },
+      "prefabId": "core:banana"
+    },
+    {
+      "id": "core:home/book",
+      "location": {
+        "kind": "scene",
+        "sceneId": "core:home"
+      },
+      "components": {
+        "transform": {
+          "x": 3000,
+          "y": 845
+        }
+      },
+      "prefabId": "core:book"
+    },
+    {
+      "id": "core:home/teddy",
+      "location": {
+        "kind": "inventory",
+        "slot": 0
+      },
+      "components": {
+        "transform": {
+          "x": 1050,
+          "y": 960
+        }
+      },
+      "prefabId": "core:teddy"
+    },
+    {
+      "id": "core:home/apple_2",
+      "location": {
+        "kind": "held",
+        "holderId": "rt_01KDVDNA0064832ATXTAJ62N4F",
+        "hand": "right"
+      },
+      "components": {
+        "transform": {
+          "x": 3200,
+          "y": 845
+        }
+      },
+      "prefabId": "core:apple_red"
+    },
+    {
+      "id": "rt_01KDVDNBYGET0W5VQVMYEQW4E2",
+      "location": {
+        "kind": "scene",
+        "sceneId": "core:home"
+      },
+      "components": {
+        "transform": {
+          "x": 3200,
+          "y": 845
+        },
+        "spawnedFrom": {
+          "spawnerId": "core:home/fruit_bowl"
+        }
+      },
+      "prefabId": "core:apple_red"
+    }
+  ],
+  "removed": [
+    "core:home/cupboard_cookie_2"
+  ]
+}

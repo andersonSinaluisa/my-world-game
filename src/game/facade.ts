@@ -69,6 +69,8 @@ export interface GameFacade {
     activeZone(): string | undefined;
     /** Layers of a character, memoized (same array while its look does not change, HU-GAME-013 R7). */
     characterLayers(id: EntityId): CharacterLayerData[];
+    /** Numbers for the dev performance overlay (HU-GAME-071). */
+    perf(): { loadedEntities: number; lastTransitionMs?: number };
     /** Version of an installed pack (settings info, HU-GAME-075). */
     packVersion(packId: string): string | undefined;
     /** Audio settings (HU-GAME-058). */
@@ -207,6 +209,7 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
       activeZone: () => engine.activeZoneId,
       characterLayers: (id) => engine.characterLayers(id),
       packVersion: (packId) => engine.content?.manifest(packId)?.version,
+      perf: () => ({ loadedEntities: engine.world.size, lastTransitionMs: engine.lastTransitionMs }),
       settings() {
         if (settingsCache?.version !== snapshot.version) settingsCache = { version: snapshot.version, data: engine.settings };
         return settingsCache.data;

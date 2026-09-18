@@ -1,0 +1,38 @@
+{
+  "toyBlocks": {
+    "x": 4350,
+    "y": 866.5,
+    "supportOf": "core:home/bed"
+  },
+  "tv": "on",
+  "fridge": "open",
+  "banana": {
+    "kind": "container",
+    "containerId": "core:home/fridge",
+    "slot": 3
+  },
+  "teddy": {
+    "kind": "inventory",
+    "slot": 0
+  },
+  "apple2": {
+    "kind": "held",
+    "holderId": "rt_01KDVDNA0064832ATXTAJ62N4F",
+    "hand": "right"
+  },
+  "spawned": {
+    "id": "rt_01KDVDNBYGET0W5VQVMYEQW4E2",
+    "spawnerId": "core:home/fruit_bowl"
+  },
+  "seated": {
+    "id": "rt_01KDVDNA0046C33PYW2XMRCP4Q",
+    "seatId": "core:home/sofa"
+  },
+  "removed": [
+    "core:home/cupboard_cookie_2"
+  ],
+  "characters": [
+    "rt_01KDVDNA0046C33PYW2XMRCP4Q",
+    "rt_01KDVDNA0064832ATXTAJ62N4F"
+  ]
+}

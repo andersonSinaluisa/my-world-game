@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Backpack } from '@/game/backpack';
 import { GateGear } from '@/game/gate-gear';
+import { PerfOverlay } from '@/game/perf-overlay';
 import { useGame, useGameSession } from '@/game/game-context';
 import { useActiveScene } from '@/game/hooks';
 import { SceneView, type CameraController } from '@/game/scene-view';
@@ -81,6 +82,7 @@ export default function PlayScreen() {
           {scene && <Backpack cameraRef={camera} onBounds={(r) => (backpack.current = r)} />}
         </View>
       </SafeAreaView>
+      {__DEV__ && scene && <PerfOverlay />}
     </View>
   );
 }

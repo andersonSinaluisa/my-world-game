@@ -101,9 +101,9 @@ flowchart LR
 | [HU-GAME-057](mvp/EPIC-016-audio.md) | Música y ambiente por ubicación | EPIC-016 | Should | 1 | HU-GAME-012 | In Progress (motor y adaptador listos; faltan pistas de música/ambiente CC0) |
 | [HU-GAME-058](mvp/EPIC-016-audio.md) | Control de volumen y silencio | EPIC-016 | Must | 1 | HU-GAME-056, HU-GAME-075 | Done |
 | [HU-GAME-062](mvp/EPIC-017-home.md) | Baño jugable | EPIC-017 | Should | 1 | HU-GAME-035, HU-GAME-045, HU-GAME-047 | Done (arte placeholder; frente de la bañera delante del personaje: pendiente) |
-| [HU-GAME-070](mvp/EPIC-022-accessibility.md) | Objetivos táctiles grandes y UI sin texto | EPIC-022 | Must | 1 | HU-GAME-004 | Draft |
-| [HU-GAME-071](mvp/EPIC-023-performance.md) | Overlay de rendimiento y verificación de presupuestos | EPIC-023 | Must | 1 | HU-GAME-006 | Draft |
-| [HU-GAME-072](mvp/EPIC-024-testing.md) | Pruebas de regresión de guardado con fixtures | EPIC-024 | Should | 1 | HU-GAME-054 | Draft |
+| [HU-GAME-070](mvp/EPIC-022-accessibility.md) | Objetivos táctiles grandes y UI sin texto | EPIC-022 | Must | 1 | HU-GAME-004 | Done (prueba manual con niños pendiente, @a11y @manual) |
+| [HU-GAME-071](mvp/EPIC-023-performance.md) | Overlay de rendimiento y verificación de presupuestos | EPIC-023 | Must | 1 | HU-GAME-006 | Done (medición de presupuestos en el Android de referencia pendiente) |
+| [HU-GAME-072](mvp/EPIC-024-testing.md) | Pruebas de regresión de guardado con fixtures | EPIC-024 | Should | 1 | HU-GAME-054 | Done |
 | [HU-GAME-074](mvp/EPIC-026-app-shell.md) | Puerta parental | EPIC-026 | Must | 1 | HU-GAME-073 | Done |
 | [HU-GAME-075](mvp/EPIC-026-app-shell.md) | Pantalla de ajustes | EPIC-026 | Must | 1 | HU-GAME-074 | Done |
 | [HU-GAME-051](mvp/EPIC-014-navigation.md) | Mapa de ubicaciones | EPIC-014 | Should | 2 | HU-GAME-050 | Draft |

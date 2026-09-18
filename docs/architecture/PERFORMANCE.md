@@ -45,7 +45,7 @@ Niveles:
 
 ## 3. Cómo se mide (HU-GAME-071)
 
-- **Overlay de desarrollo** (solo en `__DEV__` o con una flag): FPS del UI y del JS, entidades montadas y cargadas, memoria estimada de texturas y el tiempo de la última transición y del último flush.
+- **Overlay de desarrollo** (solo en `__DEV__` o con una flag): FPS del UI y del JS, entidades montadas y cargadas, memoria estimada de texturas y el tiempo de la última transición y del último flush. Implementado en `src/game/perf-overlay.tsx` (refresco a 2 Hz); los umbrales viven en `src/engine/perf/budgets.ts` (`grade`) y colorean cada métrica en verde, amarillo o rojo.
 - **FPS del UI thread:** `useFrameCallback` de Reanimated, promediando los deltas.
 - **FPS del JS thread:** `requestAnimationFrame` en JS.
 - **Memoria:** una estimación propia de las texturas (suma de `w×h×4` en caché) y el perfilador nativo (Android Studio Profiler / Xcode Instruments) en las mediciones de hito.
