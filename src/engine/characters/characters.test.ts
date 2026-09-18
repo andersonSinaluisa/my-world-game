@@ -274,7 +274,7 @@ describe('holding (HU-GAME-016)', () => {
       id: 'hold_item',
       trigger: 'drop',
       source: { has: ['draggable'], notTags: ['furniture', 'character'] },
-      target: { has: ['holder'], zone: ['handL', 'handR', 'body', 'torso', 'legs', 'feet'] },
+      target: { has: ['holder'], zone: ['handL', 'handR', 'body'] },
       conditions: [{ type: 'handFree' }],
       actions: [{ type: 'hold' }],
       priority: 50,
@@ -308,7 +308,7 @@ describe('holding (HU-GAME-016)', () => {
     spawnBall(g, 'rt_b1', 600);
     spawnBall(g, 'rt_b2', 800);
     drop(g, 'rt_b1', HAND_L.x, HAND_L.y);
-    drop(g, 'rt_b2', HAND_L.x, HAND_L.y + 60); // lands on the ball in the hand? No: the held ball is excluded as target
+    drop(g, 'rt_b2', HAND_L.x, HAND_L.y); // the left hand is busy: the other one takes it
     const where = ['rt_b1', 'rt_b2'].map((id) => g.world.get(id)?.location);
     expect(where).toEqual([
       { kind: 'held', holderId: c, hand: 'left' },
@@ -319,9 +319,9 @@ describe('holding (HU-GAME-016)', () => {
   it('both hands busy: handFree fails, rejection shake and place under the point', () => {
     const { g, c } = setup();
     for (const [i, id] of ['rt_b1', 'rt_b2', 'rt_b3'].entries()) spawnBall(g, id, 400 + i * 150);
-    drop(g, 'rt_b1', 1500, 850);
-    drop(g, 'rt_b2', 1500, 850);
-    drop(g, 'rt_b3', 1500, 850);
+    drop(g, 'rt_b1', HAND_R.x, HAND_R.y);
+    drop(g, 'rt_b2', HAND_R.x, HAND_R.y);
+    drop(g, 'rt_b3', HAND_R.x, HAND_R.y);
     expect(g.world.get('rt_b3')?.location).toEqual({ kind: 'scene', sceneId: ROOM });
     expect(g.events.some((e) => e.type === 'interactionRejected' && e.reason === 'handFree' && e.targetId === c)).toBe(true);
     expect(g.events.some((e) => e.type === 'visualEffect' && e.entityId === c && e.preset === 'shake')).toBe(true);

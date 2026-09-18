@@ -9,6 +9,10 @@ import type { SceneBounds } from '../../scene/scene-types';
 import { autoScrollStep, autoScrollVelocity } from './auto-scroll';
 import { screenToWorld } from './coords';
 
+/** INPUT_SYSTEM §2: long press = 450 ms without moving more than 10 dp (HU-GAME-040 R1). */
+export const LONG_PRESS_MS = 450;
+export const LONG_PRESS_MAX_DP = 10;
+
 /** INPUT_SYSTEM §2: pan and drag start after ≥ 6 dp of movement; a tap moves less. */
 export const PAN_MIN_DISTANCE_DP = 6;
 /** INPUT_SYSTEM §6 / HU-GAME-027 R9: no drag starts within 16 dp of a screen edge (system gestures). */
@@ -35,6 +39,8 @@ export interface WorldInputHandlers {
   /** Finger position while dragging, sampled at ≤ 10 Hz, for the drop preview (HU-GAME-033 R1 fallback). */
   dragMove?(id: EntityId, worldX: number, worldY: number, screenX: number, screenY: number): void;
   tap(worldX: number, worldY: number): void;
+  /** pointerLongPress; returns the entity whose drag starts now (unwear → startDrag), if any. */
+  longPress?(worldX: number, worldY: number): EntityId | undefined;
 }
 
 export interface WorldGestureOptions {
@@ -64,6 +70,7 @@ export function useWorldGesture(o: WorldGestureOptions) {
   const fingerX = useSharedValue(-1);
   const fingerY = useSharedValue(0);
   const scrolling = useSharedValue(false);
+  const panActive = useSharedValue(false);
   const limits = useSharedValue({ minX: 0, maxX: 0, scale: 1, widthDp: 0 });
   const lastPreview = useSharedValue({ t: 0, x: NaN, y: NaN });
   const dragMove = handlers?.dragMove;
@@ -141,6 +148,15 @@ export function useWorldGesture(o: WorldGestureOptions) {
       const p = screenToWorld(x, y, scale, camera);
       handlers?.tap(p.x, p.y);
     };
+    // Long press: the rule may hand back a drag (a garment taken off keeps following the finger).
+    const longPress = (x: number, y: number, camera: number) => {
+      if (mode.get() !== IDLE) return;
+      const p = screenToWorld(x, y, scale, camera);
+      const id = handlers?.longPress?.(p.x, p.y);
+      if (!id) return;
+      dragId.set(id);
+      mode.set(DRAG);
+    };
 
     const pan = Gesture.Pan()
       .maxPointers(1) // HU-GAME-027 R10: a single pointer
@@ -149,6 +165,11 @@ export function useWorldGesture(o: WorldGestureOptions) {
         cancelAnimation(cameraX);
       })
       .onStart((e) => {
+        panActive.set(true);
+        fingerX.set(e.x);
+        fingerY.set(e.y);
+        // A long press already started a drag (HU-GAME-040): keep it.
+        if (mode.get() === DRAG) return;
         // Initial touch point = current position minus the translation so far.
         const x0 = e.x - e.translationX;
         const y0 = e.y - e.translationY;
@@ -186,16 +207,31 @@ export function useWorldGesture(o: WorldGestureOptions) {
           return;
         }
         fingerX.set(-1);
+        panActive.set(false);
         // R8: the drop uses the camera after any auto-scroll.
         scheduleOnRN(finish, success, e.x, e.y, cameraX.get());
       });
 
     const tapGesture = Gesture.Tap()
+      .maxDuration(LONG_PRESS_MS)
       .maxDistance(PAN_MIN_DISTANCE_DP)
       .onEnd((e, success) => {
         if (success) scheduleOnRN(tap, e.x, e.y, cameraX.get());
       });
 
-    return Gesture.Race(pan, tapGesture);
-  }, [bounds, viewportW, scale, canvasWidthDp, canvasHeightDp, cameraX, pointerX, pointerY, mode, dragId, fingerX, fingerY, onSettled, handlers]);
+    const longPressGesture = Gesture.LongPress()
+      .minDuration(LONG_PRESS_MS)
+      .maxDistance(LONG_PRESS_MAX_DP)
+      .onStart((e) => {
+        pointerX.set(screenToWorld(e.x, e.y, scale, cameraX.get()).x);
+        pointerY.set(screenToWorld(e.x, e.y, scale, cameraX.get()).y);
+        scheduleOnRN(longPress, e.x, e.y, cameraX.get());
+      })
+      .onEnd((e) => {
+        // Released without moving after a long press that started a drag: drop it right there.
+        if (!panActive.get()) scheduleOnRN(finish, true, e.x, e.y, cameraX.get());
+      });
+
+    return Gesture.Simultaneous(Gesture.Race(pan, tapGesture), longPressGesture);
+  }, [bounds, viewportW, scale, canvasWidthDp, canvasHeightDp, cameraX, pointerX, pointerY, mode, dragId, fingerX, fingerY, panActive, onSettled, handlers]);
 }

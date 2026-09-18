@@ -12,6 +12,7 @@ export type GameCommand =
   | { type: 'viewportChanged'; viewportW: number }
   | { type: 'enterScene'; sceneId: SceneId; spawnId: string; travelers?: EntityId[] }
   | { type: 'pointerTap'; worldPoint: WorldPoint; minHitWorld?: number }
+  | { type: 'pointerLongPress'; worldPoint: WorldPoint; minHitWorld?: number }
   | { type: 'dragStart'; entityId: EntityId; worldPoint: WorldPoint }
   | { type: 'dragEnd'; entityId: EntityId; worldPoint: WorldPoint; uiTarget?: 'inventory' | 'trash'; minHitWorld?: number }
   | { type: 'dragCancel'; entityId: EntityId }

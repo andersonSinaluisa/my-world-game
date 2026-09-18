@@ -33,7 +33,7 @@ export interface PreviewOutcome {
 }
 
 export type ResolveOutcome =
-  | { kind: 'performed'; ruleId: string; targetId?: EntityId }
+  | { kind: 'performed'; ruleId: string; targetId?: EntityId; startDrag?: EntityId }
   | { kind: 'rejected'; ruleId: string; reason: string; targetId?: EntityId }
   | { kind: 'none'; targetId?: EntityId };
 
@@ -131,6 +131,7 @@ export class InteractionResolver {
         zone: c.target?.zone,
         point: input.point,
         ruleId: c.rule.qualifiedId,
+        output: {},
       };
       const base = { targetId: c.target?.id, zone: c.target?.zone, ruleId: c.rule.qualifiedId };
       const cond = this.checkConditions(ctx, c.rule);
@@ -175,6 +176,7 @@ export class InteractionResolver {
         zone: c.target?.zone,
         point: input.point,
         ruleId: c.rule.qualifiedId,
+        output: {},
       };
       const cond = this.checkConditions(ctx, c.rule);
       if (!cond.ok) {
@@ -191,7 +193,7 @@ export class InteractionResolver {
           uiTarget: c.target ? undefined : c.rule.target.ui,
           actions: c.rule.actions.map((a) => a.type),
         });
-        return { kind: 'performed', ruleId: c.rule.qualifiedId, targetId: c.target?.id };
+        return { kind: 'performed', ruleId: c.rule.qualifiedId, targetId: c.target?.id, startDrag: ctx.output.startDrag };
       }
       // An action that does not validate cancels the whole rule (INTERACTION_SCHEMA §6).
       return this.reject(env, input, c, result.reason);

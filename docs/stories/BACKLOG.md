@@ -68,9 +68,9 @@ flowchart LR
 | [HU-GAME-034](mvp/EPIC-009-containers.md) | Abrir y cerrar muebles | EPIC-009 | Must | 1 | HU-GAME-025, HU-GAME-032 | Done (sonidos con EPIC-016) |
 | [HU-GAME-035](mvp/EPIC-009-containers.md) | Guardar objetos en contenedores | EPIC-009 | Must | 1 | HU-GAME-034, HU-GAME-031 | Done |
 | [HU-GAME-036](mvp/EPIC-009-containers.md) | Sacar objetos de contenedores | EPIC-009 | Must | 1 | HU-GAME-035 | Done |
-| [HU-GAME-039](mvp/EPIC-011-clothing.md) | Vestir prendas soltándolas sobre el personaje | EPIC-011 | Must | 1 | HU-GAME-013, HU-GAME-031 | Draft |
-| [HU-GAME-042](mvp/EPIC-012-food.md) | Comer alimentos por mordiscos | EPIC-012 | Must | 1 | HU-GAME-031, HU-GAME-014, HU-GAME-025 | Draft |
-| [HU-GAME-043](mvp/EPIC-012-food.md) | Beber bebidas | EPIC-012 | Must | 1 | HU-GAME-042 | Draft |
+| [HU-GAME-039](mvp/EPIC-011-clothing.md) | Vestir prendas soltándolas sobre el personaje | EPIC-011 | Must | 1 | HU-GAME-013, HU-GAME-031 | Done |
+| [HU-GAME-042](mvp/EPIC-012-food.md) | Comer alimentos por mordiscos | EPIC-012 | Must | 1 | HU-GAME-031, HU-GAME-014, HU-GAME-025 | Done (comida real de la casa con EPIC-017) |
+| [HU-GAME-043](mvp/EPIC-012-food.md) | Beber bebidas | EPIC-012 | Must | 1 | HU-GAME-042 | Done (bebidas reales con EPIC-017) |
 | [HU-GAME-045](mvp/EPIC-013-furniture.md) | Sentarse en asientos | EPIC-013 | Must | 1 | HU-GAME-017, HU-GAME-031 | Draft |
 | [HU-GAME-046](mvp/EPIC-013-furniture.md) | Dormir en camas | EPIC-013 | Must | 1 | HU-GAME-045 | Draft |
 | [HU-GAME-059](mvp/EPIC-017-home.md) | Salón jugable | EPIC-017 | Must | 1 | HU-GAME-012, HU-GAME-034, HU-GAME-035, HU-GAME-045, HU-GAME-047 | Draft |
@@ -92,9 +92,9 @@ flowchart LR
 | [HU-GAME-033](mvp/EPIC-008-interaction.md) | Resaltar el destino válido durante el arrastre | EPIC-008 | Should | 1 | HU-GAME-031 | Done (hint de rechazo visual y resaltado de la mochila llegan con HU-GAME-037) |
 | [HU-GAME-037](mvp/EPIC-010-inventory.md) | Guardar objetos en la mochila | EPIC-010 | Should | 1 | HU-GAME-031, HU-GAME-004 | Done (resaltado del botón durante el drag: pendiente) |
 | [HU-GAME-038](mvp/EPIC-010-inventory.md) | Sacar objetos de la mochila | EPIC-010 | Should | 1 | HU-GAME-037 | Done (verificación del arrastre desde la bandeja en dispositivo) |
-| [HU-GAME-040](mvp/EPIC-011-clothing.md) | Quitar prendas del personaje | EPIC-011 | Should | 1 | HU-GAME-039 | Draft |
-| [HU-GAME-041](mvp/EPIC-011-clothing.md) | Armario con ropa disponible | EPIC-011 | Should | 1 | HU-GAME-035, HU-GAME-039 | Draft |
-| [HU-GAME-044](mvp/EPIC-012-food.md) | Dispensadores de objetos | EPIC-012 | Should | 1 | HU-GAME-032, HU-GAME-024 | Draft |
+| [HU-GAME-040](mvp/EPIC-011-clothing.md) | Quitar prendas del personaje | EPIC-011 | Should | 1 | HU-GAME-039 | Done (gesto a verificar en dispositivo) |
+| [HU-GAME-041](mvp/EPIC-011-clothing.md) | Armario con ropa disponible | EPIC-011 | Should | 1 | HU-GAME-035, HU-GAME-039 | In Progress (mecánica lista; armario y ropa inicial llegan con el contenido de la casa, EPIC-017) |
+| [HU-GAME-044](mvp/EPIC-012-food.md) | Dispensadores de objetos | EPIC-012 | Should | 1 | HU-GAME-032, HU-GAME-024 | Done (frutero con EPIC-017) |
 | [HU-GAME-047](mvp/EPIC-013-furniture.md) | Objetos encendibles (lámpara, TV, grifo) | EPIC-013 | Should | 1 | HU-GAME-032, HU-GAME-025 | Draft |
 | [HU-GAME-048](mvp/EPIC-013-furniture.md) | Mover muebles | EPIC-013 | Should | 1 | HU-GAME-027, HU-GAME-028 | Draft |
 | [HU-GAME-056](mvp/EPIC-016-audio.md) | Sonidos de interacción | EPIC-016 | Should | 1 | HU-GAME-031 | Draft |

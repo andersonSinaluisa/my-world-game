@@ -114,6 +114,38 @@ export type Container = z.infer<typeof ContainerSchema>;
 export type Animations = z.infer<typeof AnimationsSchema>;
 export type Sounds = z.infer<typeof SoundsSchema>;
 
+// §5.9
+const FinishSchema = z.discriminatedUnion('type', [
+  z.strictObject({ type: z.literal('remove') }),
+  z.strictObject({ type: z.literal('replace'), prefabId: z.string().min(1) }),
+]);
+export const EdibleSchema = z.strictObject({
+  bites: z.number().int().min(1),
+  bitesLeft: z.number().int().min(0).optional(),
+  spriteByBitesLeft: z.record(z.string(), z.string().min(1)).optional(),
+  onFinish: FinishSchema.optional(),
+});
+export const DrinkableSchema = z.strictObject({
+  sips: z.number().int().min(1),
+  sipsLeft: z.number().int().min(0).optional(),
+  spriteBySipsLeft: z.record(z.string(), z.string().min(1)).optional(),
+  onFinish: FinishSchema.optional(),
+});
+
+// §5.13 / §5.13b
+export const SpawnerSchema = z.strictObject({
+  prefabId: z.string().min(1),
+  maxAlive: z.number().int().min(1).optional(),
+  trigger: z.literal('tap').optional(),
+  spawnOffset: z.strictObject({ x: finite, y: finite }).optional(),
+});
+export const SpawnedFromSchema = z.strictObject({ spawnerId: z.string().min(1) });
+
+export type Edible = z.infer<typeof EdibleSchema>;
+export type Drinkable = z.infer<typeof DrinkableSchema>;
+export type Spawner = z.infer<typeof SpawnerSchema>;
+export type SpawnedFrom = z.infer<typeof SpawnedFromSchema>;
+
 // §5.14 (Fase 2; isPurchased needs it for the backpack rule)
 export const PurchasableSchema = z.strictObject({
   price: z.number().int().min(0),

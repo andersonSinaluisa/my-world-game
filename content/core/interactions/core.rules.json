@@ -48,10 +48,7 @@
       "zone": [
         "handL",
         "handR",
-        "body",
-        "torso",
-        "legs",
-        "feet"
+        "body"
       ]
     },
     "conditions": [
@@ -150,5 +147,160 @@
       }
     ],
     "priority": 100
+  },
+  {
+    "id": "wear_clothes",
+    "trigger": "drop",
+    "source": {
+      "has": [
+        "wearable"
+      ]
+    },
+    "target": {
+      "has": [
+        "character"
+      ],
+      "zone": [
+        "body",
+        "torso",
+        "legs",
+        "feet"
+      ]
+    },
+    "conditions": [
+      {
+        "type": "canWear"
+      },
+      {
+        "type": "isPurchased",
+        "value": true,
+        "ifMissing": true
+      }
+    ],
+    "actions": [
+      {
+        "type": "wear"
+      }
+    ],
+    "priority": 90
+  },
+  {
+    "id": "unwear_clothes",
+    "trigger": "longPress",
+    "target": {
+      "has": [
+        "character"
+      ],
+      "zone": [
+        "torso",
+        "legs",
+        "feet"
+      ]
+    },
+    "conditions": [
+      {
+        "type": "slotWorn"
+      }
+    ],
+    "actions": [
+      {
+        "type": "unwear"
+      }
+    ],
+    "priority": 50
+  },
+  {
+    "id": "eat_food",
+    "trigger": "drop",
+    "source": {
+      "has": [
+        "edible"
+      ]
+    },
+    "target": {
+      "has": [
+        "character"
+      ],
+      "zone": [
+        "mouth",
+        "head"
+      ]
+    },
+    "conditions": [
+      {
+        "type": "isPurchased",
+        "value": true,
+        "ifMissing": true
+      },
+      {
+        "type": "poseIsNot",
+        "poses": [
+          "sleep"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "eat"
+      }
+    ],
+    "priority": 100
+  },
+  {
+    "id": "drink_drink",
+    "trigger": "drop",
+    "source": {
+      "has": [
+        "drinkable"
+      ]
+    },
+    "target": {
+      "has": [
+        "character"
+      ],
+      "zone": [
+        "mouth",
+        "head"
+      ]
+    },
+    "conditions": [
+      {
+        "type": "isPurchased",
+        "value": true,
+        "ifMissing": true
+      },
+      {
+        "type": "poseIsNot",
+        "poses": [
+          "sleep"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "drink"
+      }
+    ],
+    "priority": 100
+  },
+  {
+    "id": "tap_spawner",
+    "trigger": "tap",
+    "target": {
+      "has": [
+        "spawner"
+      ]
+    },
+    "conditions": [
+      {
+        "type": "belowMax"
+      }
+    ],
+    "actions": [
+      {
+        "type": "spawn"
+      }
+    ],
+    "priority": 20
   }
 ]

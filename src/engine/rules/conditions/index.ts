@@ -3,6 +3,9 @@ import { z } from 'zod';
 import { chooseHand } from '../../actions/character-actions';
 import { storeCheck } from '../../actions/container-actions';
 import { inventoryCheck } from '../../actions/inventory-actions';
+import { canWearCheck, ZONE_SLOT } from '../../actions/outfit-actions';
+import { aliveFrom, DEFAULT_MAX_ALIVE } from '../../actions/consume-actions';
+import { POSES } from '../../components/base';
 import { fail, PASS, resolveRole, type ConditionHandler } from '../../actions/types';
 
 const Role = z.enum(['$source', '$target']);
@@ -94,9 +97,62 @@ export const isPurchased: ConditionHandler<z.infer<typeof IsPurchasedParams>> = 
   },
 };
 
+const CanWearParams = z.strictObject({ type: z.literal('canWear'), item: Role.default('$source'), character: Role.default('$target') });
+
+/** The garment has a slot and sprites for the character's body (HU-GAME-039 R2). */
+export const canWear: ConditionHandler<z.infer<typeof CanWearParams>> = {
+  type: 'canWear',
+  params: CanWearParams,
+  evaluate(ctx, p) {
+    const item = resolveRole(ctx, p.item);
+    const character = resolveRole(ctx, p.character);
+    return item && character ? canWearCheck(item, character) : fail('entityNotFound');
+  },
+};
+
+const SlotWornParams = z.strictObject({ type: z.literal('slotWorn'), of: Role.default('$target') });
+
+/** There is a garment in the slot of the touched band: torso → top, legs → bottom, feet → shoes. */
+export const slotWorn: ConditionHandler<z.infer<typeof SlotWornParams>> = {
+  type: 'slotWorn',
+  params: SlotWornParams,
+  evaluate(ctx, p) {
+    const c = resolveRole(ctx, p.of);
+    const slot = ctx.zone ? ZONE_SLOT[ctx.zone] : undefined;
+    return c && slot && ctx.env.world.index.wornBy(c.id)[slot] ? PASS : fail('slotWorn');
+  },
+};
+
+const PoseIsNotParams = z.strictObject({ type: z.literal('poseIsNot'), of: Role.default('$target'), poses: z.array(z.enum(POSES)).min(1) });
+
+/** The character's pose is not in the list (no eating while asleep, HU-GAME-042 R7b). */
+export const poseIsNot: ConditionHandler<z.infer<typeof PoseIsNotParams>> = {
+  type: 'poseIsNot',
+  params: PoseIsNotParams,
+  evaluate(ctx, p) {
+    const e = resolveRole(ctx, p.of);
+    const pose = e?.components.pose?.current;
+    return pose && p.poses.includes(pose) ? fail('poseIsNot') : PASS;
+  },
+};
+
+const BelowMaxParams = z.strictObject({ type: z.literal('belowMax'), of: Role.default('$target') });
+
+/** Live instances of this spawner < maxAlive (default 3, HU-GAME-044 R3). */
+export const belowMax: ConditionHandler<z.infer<typeof BelowMaxParams>> = {
+  type: 'belowMax',
+  params: BelowMaxParams,
+  evaluate(ctx, p) {
+    const s = resolveRole(ctx, p.of);
+    const spec = s?.components.spawner;
+    if (!s || !spec) return fail('notSpawner');
+    return aliveFrom(ctx, s.id) < (spec.maxAlive ?? DEFAULT_MAX_ALIVE) ? PASS : fail('belowMax');
+  },
+};
+
 /** Closed set of conditions (INTERACTION_SCHEMA §4). No expressions, no scripting. */
 export const CONDITIONS: Record<string, ConditionHandler<never>> = Object.fromEntries(
-  [stateIs, isOpen, handFree, containerHasSpace, inventoryHasSpace, isPurchased].map((c) => [c.type, c as unknown as ConditionHandler<never>]),
+  [stateIs, isOpen, handFree, containerHasSpace, inventoryHasSpace, isPurchased, canWear, slotWorn, poseIsNot, belowMax].map((c) => [c.type, c as unknown as ConditionHandler<never>]),
 );
 
 export const CONDITION_TYPES = Object.keys(CONDITIONS);
