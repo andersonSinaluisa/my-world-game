@@ -274,3 +274,77 @@ describe('InteractionResolver (HU-GAME-031/032)', () => {
     expect(lastOf(g, 'interactionPerformed')).toMatchObject({ ruleId: 'test:aa_tap' });
   });
 });
+
+describe('drop preview (HU-GAME-033)', () => {
+  const onlyPaint = (patch: Record<string, unknown> = {}) => {
+    const pack = testPack();
+    const rules = pack.rules[0].data as Record<string, unknown>[];
+    const paint = rules.find((r) => r.id === 'paint_open_box')!;
+    Object.assign(paint, patch);
+    pack.rules[0].data = [paint];
+    return pack;
+  };
+  const previews = (g: TestGame) => g.events.filter((e) => e.type === 'dropPreview');
+  const start = (g: TestGame) => {
+    spawn(g, 'rt_brush', 'test:brush', 500);
+    g.dispatch({ type: 'dragStart', entityId: 'rt_brush', worldPoint: { x: 500, y: 930 } });
+  };
+
+  it('a valid target emits dropPreview ok', () => {
+    const g = game(onlyPaint());
+    g.world.update(BOX, { states: { ...g.world.get(BOX)!.components.states!, current: 'open' } });
+    start(g);
+    g.dispatch({ type: 'dragPreview', entityId: 'rt_brush', worldPoint: { x: 2000, y: 900 } });
+    expect(previews(g).at(-1)).toMatchObject({ targetId: BOX, ok: true, ruleId: 'test:paint_open_box', highlight: true });
+  });
+
+  it('a matching rule whose condition fails: ok false with its reason and rejectHint', () => {
+    const g = game(onlyPaint({ feedback: { rejectHint: 'ui_hint_closed' } }));
+    start(g);
+    g.dispatch({ type: 'dragPreview', entityId: 'rt_brush', worldPoint: { x: 2000, y: 900 } });
+    expect(previews(g).at(-1)).toMatchObject({ targetId: BOX, ok: false, reason: 'isOpen', rejectHint: 'ui_hint_closed' });
+  });
+
+  it('previews never change the World', () => {
+    const g = game();
+    start(g);
+    const before = g.world.all();
+    const eventsBefore = g.events.length;
+    for (let i = 0; i < 10; i++) g.dispatch({ type: 'dragPreview', entityId: 'rt_brush', worldPoint: { x: 300 + i * 350, y: 850 } });
+    expect(g.world.all()).toEqual(before);
+    expect(g.world.all().every((e, i) => e === before[i])).toBe(true);
+    expect(g.events.slice(eventsBefore).every((e) => e.type === 'dropPreview')).toBe(true);
+  });
+
+  it('moving inside the same target and zone emits no new preview', () => {
+    const g = game();
+    start(g);
+    g.dispatch({ type: 'dragPreview', entityId: 'rt_brush', worldPoint: { x: 1980, y: 900 } });
+    const n = previews(g).length;
+    g.dispatch({ type: 'dragPreview', entityId: 'rt_brush', worldPoint: { x: 2030, y: 910 } });
+    expect(previews(g)).toHaveLength(n);
+  });
+
+  it('highlight false in the rule: ok but no outline', () => {
+    const g = game(onlyPaint({ feedback: { highlight: false } }));
+    g.world.update(BOX, { states: { ...g.world.get(BOX)!.components.states!, current: 'open' } });
+    start(g);
+    g.dispatch({ type: 'dragPreview', entityId: 'rt_brush', worldPoint: { x: 2000, y: 900 } });
+    expect(previews(g).at(-1)).toMatchObject({ ok: true, highlight: false });
+  });
+
+  it('the drop applies the previewed rule', () => {
+    const g = game();
+    g.world.update(BOX, { states: { ...g.world.get(BOX)!.components.states!, current: 'open' } });
+    start(g);
+    g.dispatch({ type: 'dragPreview', entityId: 'rt_brush', worldPoint: { x: 2000, y: 900 } });
+    const ruleId = (previews(g).at(-1) as { ruleId?: string }).ruleId;
+    g.dispatch({ type: 'dragEnd', entityId: 'rt_brush', worldPoint: { x: 2000, y: 900 } });
+    expect(lastOf(g, 'interactionPerformed')).toMatchObject({ ruleId });
+  });
+
+  it('only while dragging', () => {
+    const g = game();
+    expect(g.dispatch({ type: 'dragPreview', entityId: BALL, worldPoint: { x: 0, y: 0 } })).toEqual({ ok: false, reason: 'notDragging' });
+  });
+});

@@ -19,7 +19,20 @@ export type GameEvent =
   /** Active zone of the camera changed (HU-GAME-012). Derived state: never saved. */
   | { type: 'zoneChanged'; sceneId: SceneId; zoneId?: string }
   /** Camera should center this world x (focusEntity, HU-GAME-023 R4). Presentation only. */
-  | { type: 'focusRequested'; entityId: EntityId; x: number };
+  | { type: 'focusRequested'; entityId: EntityId; x: number }
+  /** What a drop at the finger would do (HU-GAME-033). Only when the target or zone changes. */
+  | {
+      type: 'dropPreview';
+      sourceId: EntityId;
+      targetId?: EntityId;
+      uiTarget?: 'inventory' | 'trash';
+      zone?: string;
+      ruleId?: string;
+      ok: boolean;
+      reason?: string;
+      highlight: boolean;
+      rejectHint?: string;
+    };
 
 /** Events that never change game state (presentation / notifications only). */
 export const PRESENTATION_EVENTS: ReadonlySet<GameEvent['type']> = new Set([
@@ -28,6 +41,7 @@ export const PRESENTATION_EVENTS: ReadonlySet<GameEvent['type']> = new Set([
   'interactionRejected',
   'sceneWillChange',
   'focusRequested',
+  'dropPreview',
 ]);
 
 export type GameEventType = GameEvent['type'];

@@ -15,12 +15,14 @@ const LAYER_INDEX: Record<RenderLayer, number> = Object.fromEntries(RENDER_LAYER
 export interface RenderOrderContext {
   /** Entity supporting another one (SurfaceSystem, HU-GAME-028). Absent until then. */
   supportOf?: (id: EntityId) => EntityId | undefined;
+  /** World transform (items carried by furniture are relative to it, HU-GAME-030). */
+  transformOf?: (entity: Entity) => Entity['components']['transform'];
 }
 
 /** Returns [primary, secondary] keys for ordering inside a layer. */
 function layerKeys(entity: Entity, ctx: RenderOrderContext, getEntity: (id: EntityId) => Entity | undefined): [number, number] {
   const sprite = entity.components.sprite!;
-  const t = entity.components.transform;
+  const t = ctx.transformOf ? ctx.transformOf(entity) : entity.components.transform;
   const z = sprite.z ?? 0;
   const x = t?.x ?? 0;
   const y = t?.y ?? 0;

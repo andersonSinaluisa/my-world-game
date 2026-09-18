@@ -15,6 +15,7 @@ export type GameCommand =
   | { type: 'dragStart'; entityId: EntityId; worldPoint: WorldPoint }
   | { type: 'dragEnd'; entityId: EntityId; worldPoint: WorldPoint; uiTarget?: 'inventory' | 'trash'; minHitWorld?: number }
   | { type: 'dragCancel'; entityId: EntityId }
+  | { type: 'dragPreview'; entityId: EntityId; worldPoint: WorldPoint; uiTarget?: 'inventory' | 'trash'; minHitWorld?: number }
   | { type: 'createCharacter'; appearance: Appearance; outfit: Partial<Record<WearSlot, PrefabId>> }
   | { type: 'updateAppearance'; characterId: EntityId; patch: Partial<Appearance> }
   | { type: 'setOutfitSlot'; characterId: EntityId; slot: WearSlot; prefabId: PrefabId | null }

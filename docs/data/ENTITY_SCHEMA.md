@@ -81,7 +81,7 @@ type Location =
   flipX?: boolean;        // default false
   scale?: number;         // default 1; rango permitido 0.25..4
   rotation?: number;      // default 0
-  parentId?: EntityId;    // [DESIGNED FOR LATER] HU-GAME-030: x,y pasan a ser relativos al padre
+  parentId?: EntityId;    // [NEEDED NOW] HU-GAME-030: x,y pasan a ser relativos al padre (profundidad 1)
 }
 ```
 Solo es significativo cuando `location.kind === 'scene'`. En otros casos se conserva, pero no se renderiza.
@@ -125,7 +125,7 @@ El hit testing usa la forma **más** el `padding` (y el mínimo `minHitDp`). Si 
 ```ts
 {
   segments: { x1: number; x2: number; y: number }[];  // relativos al pivot; líneas horizontales de apoyo
-  carriesItems?: boolean;   // [DESIGNED FOR LATER] HU-GAME-030: los objetos apoyados se vuelven hijos
+  carriesItems?: boolean;   // [NEEDED NOW] HU-GAME-030: los objetos apoyados se vuelven hijos
 }
 ```
 El suelo de la escena se declara en la escena (`floor`), no como entidad. Ver [SCENE_SCHEMA](SCENE_SCHEMA.md).

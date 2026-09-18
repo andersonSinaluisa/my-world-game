@@ -1,17 +1,21 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Gesture } from 'react-native-gesture-handler';
-import { cancelAnimation, useSharedValue, withDecay, type SharedValue } from 'react-native-reanimated';
+import { cancelAnimation, useFrameCallback, useSharedValue, withDecay, type SharedValue } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
 import type { EntityId } from '../../core/types';
 import { clampCameraX } from '../../scene/camera-math';
 import type { SceneBounds } from '../../scene/scene-types';
+import { autoScrollStep, autoScrollVelocity } from './auto-scroll';
 import { screenToWorld } from './coords';
 
 /** INPUT_SYSTEM §2: pan and drag start after ≥ 6 dp of movement; a tap moves less. */
 export const PAN_MIN_DISTANCE_DP = 6;
 /** INPUT_SYSTEM §6 / HU-GAME-027 R9: no drag starts within 16 dp of a screen edge (system gestures). */
 export const EDGE_MARGIN_DP = 16;
+
+/** HU-GAME-033 R1 fallback: drop preview sampling (≤ 10 Hz). */
+export const PREVIEW_INTERVAL_MS = 100;
 
 const IDLE = 0;
 const PENDING = 1;
@@ -27,6 +31,8 @@ export interface WorldInputHandlers {
   dragEnd(id: EntityId, worldX: number, worldY: number): void;
   /** Gesture cancelled by the system (HU-GAME-027 R11). */
   dragCancel(id: EntityId): void;
+  /** Finger position while dragging, sampled at ≤ 10 Hz, for the drop preview (HU-GAME-033 R1 fallback). */
+  dragMove?(id: EntityId, worldX: number, worldY: number): void;
   tap(worldX: number, worldY: number): void;
 }
 
@@ -53,6 +59,53 @@ export function useWorldGesture(o: WorldGestureOptions) {
   const mode = useSharedValue(IDLE);
   const dragId = useSharedValue('');
   const { cameraX, pointerX, pointerY, scale, viewportW, canvasWidthDp, canvasHeightDp, bounds, onSettled, handlers } = o;
+  // Finger position in dp while dragging (-1 = none) and camera limits, read by the auto-scroll frame callback.
+  const fingerX = useSharedValue(-1);
+  const fingerY = useSharedValue(0);
+  const scrolling = useSharedValue(false);
+  const limits = useSharedValue({ minX: 0, maxX: 0, scale: 1, widthDp: 0 });
+  const lastPreview = useSharedValue({ t: 0, x: NaN, y: NaN });
+  const dragMove = handlers?.dragMove;
+
+  useEffect(() => {
+    limits.set({
+      minX: clampCameraX(bounds.minX, bounds, viewportW),
+      maxX: clampCameraX(bounds.maxX, bounds, viewportW),
+      scale,
+      widthDp: canvasWidthDp,
+    });
+  }, [bounds, viewportW, scale, canvasWidthDp, limits]);
+
+  // HU-GAME-029: auto-scroll near the edges, only while dragging an entity, on the UI thread (R4, R7).
+  useFrameCallback((frame) => {
+    const l = limits.get();
+    // HU-GAME-033: preview the drop target at most every 100 ms, and only if the finger moved.
+    if (dragMove && mode.get() === DRAG && dragId.get()) {
+      const last = lastPreview.get();
+      const px = pointerX.get();
+      const py = pointerY.get();
+      if (frame.timestamp - last.t >= PREVIEW_INTERVAL_MS && (px !== last.x || py !== last.y)) {
+        lastPreview.set({ t: frame.timestamp, x: px, y: py });
+        scheduleOnRN(dragMove, dragId.get(), px, py);
+      }
+    }
+    const v = mode.get() === DRAG && fingerX.get() >= 0 ? autoScrollVelocity(fingerX.get(), l.widthDp) : 0;
+    const current = cameraX.get();
+    const next = v === 0 ? current : autoScrollStep(current, v, frame.timeSincePreviousFrame ?? 16, l.minX, l.maxX);
+    if (next === current) {
+      // R6: stopped (finger left the zone, bounds reached or drag ended) → one cameraSettled.
+      if (scrolling.get()) {
+        scrolling.set(false);
+        scheduleOnRN(onSettled, current);
+      }
+      return;
+    }
+    scrolling.set(true);
+    cameraX.set(next);
+    // R5: the dragged item stays under the finger while the world scrolls.
+    pointerX.set(fingerX.get() / l.scale + next);
+    pointerY.set(fingerY.get() / l.scale);
+  });
 
   return useMemo(() => {
     const minX = clampCameraX(bounds.minX, bounds, viewportW);
@@ -103,6 +156,8 @@ export function useWorldGesture(o: WorldGestureOptions) {
         const p = screenToWorld(e.x, e.y, scale, cameraX.get());
         pointerX.set(p.x);
         pointerY.set(p.y);
+        fingerX.set(e.x);
+        fingerY.set(e.y);
         mode.set(PENDING);
         scheduleOnRN(decide, x0, y0, cameraX.get(), edge);
       })
@@ -112,6 +167,8 @@ export function useWorldGesture(o: WorldGestureOptions) {
           const next = cameraX.get() - e.changeX / scale;
           cameraX.set(Math.min(Math.max(next, minX), maxX));
         } else {
+          fingerX.set(e.x);
+          fingerY.set(e.y);
           const p = screenToWorld(e.x, e.y, scale, cameraX.get());
           pointerX.set(p.x);
           pointerY.set(p.y);
@@ -127,6 +184,8 @@ export function useWorldGesture(o: WorldGestureOptions) {
           );
           return;
         }
+        fingerX.set(-1);
+        // R8: the drop uses the camera after any auto-scroll.
         scheduleOnRN(finish, success, e.x, e.y, cameraX.get());
       });
 
@@ -137,5 +196,5 @@ export function useWorldGesture(o: WorldGestureOptions) {
       });
 
     return Gesture.Race(pan, tapGesture);
-  }, [bounds, viewportW, scale, canvasWidthDp, canvasHeightDp, cameraX, pointerX, pointerY, mode, dragId, onSettled, handlers]);
+  }, [bounds, viewportW, scale, canvasWidthDp, canvasHeightDp, cameraX, pointerX, pointerY, mode, dragId, fingerX, fingerY, onSettled, handlers]);
 }
