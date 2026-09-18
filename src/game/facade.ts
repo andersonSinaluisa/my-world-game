@@ -69,6 +69,10 @@ export interface GameFacadeOptions {
   locale?: LocaleId;
 }
 
+const NO_ENTITIES: EntityRenderData[] = [];
+/** Viewport keys kept per snapshot version; panning creates a new key per culling step. */
+const MAX_VISIBLE_KEYS = 8;
+
 /** Sprite asset for the entity's current state (sprite.byState, HU-GAME-025). */
 export function resolveAsset(entity: Entity): AssetKey {
   const sprite = entity.components.sprite!;
@@ -86,7 +90,9 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
   const globalListeners = new Set<() => void>();
   const entityListeners = new Map<EntityId, Set<() => void>>();
   let snapshot: GameSnapshot = { version: 0 };
-  let visibleCache: { key: string; version: number; data: EntityRenderData[] } | undefined;
+  // One entry per viewport key: several consumers (sandbox counter + SceneView) must each get a stable
+  // array for useSyncExternalStore. Entries of an older snapshot version are dropped.
+  let visibleCache: { version: number; byKey: Map<string, EntityRenderData[]> } = { version: -1, byKey: new Map() };
 
   // Commands dispatched from listeners are queued and run after the current one (deterministic order).
   let dispatching = false;
@@ -155,11 +161,11 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
       cameraX: () => engine.playerState.cameraX,
       visibleEntities(viewport) {
         const scene = engine.scene;
-        if (!scene) return [];
+        if (!scene) return NO_ENTITIES;
         const key = viewport ? `${Math.round(viewport.cameraX)}:${Math.round(viewport.viewportW)}` : 'all';
-        if (visibleCache && visibleCache.key === key && visibleCache.version === snapshot.version) {
-          return visibleCache.data;
-        }
+        if (visibleCache.version !== snapshot.version) visibleCache = { version: snapshot.version, byKey: new Map() };
+        const cached = visibleCache.byKey.get(key);
+        if (cached) return cached;
         let entities = engine.world.all().filter((e) => isRenderable(e, scene.id));
         if (viewport) entities = cullEntities(entities, cullingRange(viewport.cameraX, viewport.viewportW), assetSize);
         const data = sortForRender(entities, { supportOf: engine.world.index.supportOf }).map((e, order) => {
@@ -174,14 +180,15 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
             size: sprite.size,
           };
         });
-        visibleCache = { key, version: snapshot.version, data };
+        if (visibleCache.byKey.size >= MAX_VISIBLE_KEYS) visibleCache.byKey.delete(visibleCache.byKey.keys().next().value!);
+        visibleCache.byKey.set(key, data);
         return data;
       },
     },
     events: engine.events,
     setAssetSizeLookup(lookup) {
       assetSize = lookup;
-      visibleCache = undefined;
+      visibleCache = { version: -1, byKey: new Map() };
     },
     entityListenerCount: (id) => entityListeners.get(id)?.size ?? 0,
     dev: {

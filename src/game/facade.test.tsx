@@ -131,3 +131,18 @@ describe('hooks (HU-GAME-004)', () => {
     expect(view.getByText('gone')).toBeTruthy();
   });
 });
+
+describe('visibleEntities caching (useSyncExternalStore needs stable snapshots)', () => {
+  it('returns the same array per viewport key while nothing changes, for several consumers', () => {
+    const { facade } = setup();
+    const all = facade.selectors.visibleEntities();
+    const view = facade.selectors.visibleEntities({ cameraX: 0, viewportW: 2338 });
+    expect(facade.selectors.visibleEntities()).toBe(all);
+    expect(facade.selectors.visibleEntities({ cameraX: 0, viewportW: 2338 })).toBe(view);
+  });
+
+  it('returns a stable empty array without an active scene', () => {
+    const facade = createGameFacade(createTestGame().engine);
+    expect(facade.selectors.visibleEntities()).toBe(facade.selectors.visibleEntities());
+  });
+});
