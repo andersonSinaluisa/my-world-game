@@ -10,6 +10,7 @@ import type { CharacterLayerData } from '@/engine/characters/layers';
 import type { LocaleId } from '@/engine/content/schemas';
 import { cullEntities, cullingRange, type AssetSizeLookup } from '@/engine/scene/culling';
 import { isRenderable, sortForRender } from '@/engine/scene/render-order';
+import { spriteAssetOf } from '@/engine/scene/sprite-asset';
 import type { ActiveSceneInfo } from '@/engine/scene/scene-types';
 
 export { MAX_CHARACTERS } from '@/engine/characters/character-system';
@@ -106,9 +107,7 @@ const MAX_VISIBLE_KEYS = 8;
 
 /** Sprite asset for the entity's current state (sprite.byState, HU-GAME-025). */
 export function resolveAsset(entity: Entity): AssetKey {
-  const sprite = entity.components.sprite!;
-  const state = entity.components.states?.current;
-  return (state && sprite.byState?.[state]) || sprite.asset;
+  return spriteAssetOf(entity) ?? entity.components.sprite!.asset;
 }
 
 /**

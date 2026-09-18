@@ -1,7 +1,7 @@
 import type { z } from 'zod';
 
 import type { CharacterSystem } from '../characters/character-system';
-import type { Entity } from '../core/entity';
+import type { Entity, EntityInit } from '../core/entity';
 import type { LocationService } from '../core/location-service';
 import type { Logger } from '../core/runtime';
 import type { EntityId, WorldPoint } from '../core/types';
@@ -19,6 +19,11 @@ export interface ActionEnv {
   characters: CharacterSystem;
   /** Backpack size from player.inventory.capacity (HU-GAME-037 R2). */
   inventoryCapacity: () => number;
+  /**
+   * New runtime instance (rt_ id) of a prefab, without location; undefined if unknown. Unqualified ids
+   * resolve in the pack of `owner` (content refs are relative to their pack, CONTENT_PACK_SCHEMA §4).
+   */
+  instantiate: (prefabId: string, owner?: Entity) => EntityInit | undefined;
 }
 
 /** Context of one interaction: who is `$source`, who is `$target`, where the finger was. */
@@ -30,6 +35,8 @@ export interface InteractionContext {
   zone?: string;
   point: WorldPoint;
   ruleId?: string;
+  /** Results an action hands back to the command (unwear → startDrag, HU-GAME-040 R4). */
+  output: { startDrag?: EntityId };
 }
 
 export type RoleRef = '$source' | '$target';

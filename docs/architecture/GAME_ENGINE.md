@@ -68,7 +68,7 @@ Todos los comandos pasan por el `GameFacade` (§6). La UI y el Input **nunca** l
 | Comando | Origen | Efecto |
 |---|---|---|
 | `pointerTap { worldPoint }` | Input | hit test → InteractionResolver (`tap`) |
-| `pointerLongPress { worldPoint }` | Input | hit test → InteractionResolver (`longPress`). Puede devolver `startDrag` |
+| `pointerLongPress { worldPoint, minHitWorld? }` | Input (450 ms sin moverse < 10 dp) | hit test → InteractionResolver (`longPress`). Si una acción entrega `startDrag` (v1: `unwear`), el drag de ese objeto empieza ya y devuelve `{ ok, startDrag }`; `dragCancel` lo devuelve a su location |
 | `dragStart { entityId, worldPoint }` | Input | DragSystem valida y libera (standUp, takeOut, release) |
 | `dragPreview { entityId, worldPoint, uiTarget?, minHitWorld? }` | Input (muestreo ≤ 10 Hz durante el drag) | `resolver.preview` (pura) → evento `dropPreview { sourceId, targetId?, zone?, ruleId?, ok, reason?, highlight, rejectHint? }`, solo cuando cambia el resultado. Fallo: `notDragging` |
 | `dragEnd { entityId, worldPoint, uiTarget? }` | Input | InteractionResolver (`drop`) o `place` |

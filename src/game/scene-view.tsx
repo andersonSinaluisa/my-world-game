@@ -258,6 +258,23 @@ export function SceneView({ textures, showGrid, interactive = true, cameraRef, o
       tap(x, y) {
         game.dispatch({ type: 'pointerTap', worldPoint: { x, y }, minHitWorld });
       },
+      longPress(x, y) {
+        const r = game.dispatch({ type: 'pointerLongPress', worldPoint: { x, y }, minHitWorld });
+        const id = r.ok ? r.startDrag : undefined;
+        const e = id ? game.getEntity(id) : undefined;
+        const sprite = e?.components.sprite;
+        if (!e || !sprite) return undefined;
+        setDrag({
+          id: e.id,
+          asset: resolveAsset(e),
+          transform: e.components.transform ?? { x, y },
+          pivot: sprite.pivot ?? { x: 0.5, y: 1 },
+          size: sprite.size,
+          liftOffset: e.components.draggable?.liftOffset,
+          grabOffset: { x: 0, y: 0 },
+        });
+        return e.id;
+      },
     };
   }, [game, interactive, viewport, uiTargetAt]);
 

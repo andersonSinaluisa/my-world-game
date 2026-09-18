@@ -16,6 +16,10 @@ const PERSISTED: { [K in keyof Components]?: (value: NonNullable<Components[K]>)
   appearance: (a) => a,
   holder: (h) => h,
   pose: (p) => persistedPose(p),
+  edible: (e) => (e.bitesLeft === undefined ? undefined : { bitesLeft: e.bitesLeft }),
+  drinkable: (d) => (d.sipsLeft === undefined ? undefined : { sipsLeft: d.sipsLeft }),
+  spawnedFrom: (s) => s,
+  purchasable: (p) => (p.purchased === undefined ? undefined : { purchased: p.purchased }),
 };
 
 /** Components persisted in full only for entities without a prefab (they have no content to rebuild from). */
@@ -29,7 +33,8 @@ export function persistedComponents(e: Entity): Components {
   const comps = e.components as Record<string, unknown>;
   for (const [name, pick] of Object.entries(PERSISTED)) {
     const value = comps[name];
-    if (value !== undefined && pick) out[name] = (pick as (v: unknown) => unknown)(value);
+    const picked = value !== undefined && pick ? (pick as (v: unknown) => unknown)(value) : undefined;
+    if (picked !== undefined) out[name] = picked;
   }
   if (!e.prefabId) for (const name of PREFABLESS) if (comps[name] !== undefined) out[name] = comps[name];
   return out as Components;

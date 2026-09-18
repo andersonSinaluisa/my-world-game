@@ -206,8 +206,11 @@ export class GameEngine {
     return new GameEngine(options);
   }
 
+  /** A fresh rt_ id, never one already in the World (a loaded save may hold ids from the same clock). */
   newRuntimeId(): EntityId {
-    return runtimeEntityId(this.clock, this.random);
+    let id = runtimeEntityId(this.clock, this.random);
+    while (this.world.has(id)) id = runtimeEntityId(this.clock, this.random);
+    return id;
   }
 
   get scene(): ActiveSceneInfo | undefined {
@@ -242,6 +245,7 @@ export class GameEngine {
       scene: this.activeScene,
       characters: this.characters,
       inventoryCapacity: () => this.inventoryCapacity,
+      instantiate: (prefabId, owner) => this.instantiate(prefabId, owner),
     };
   }
 
@@ -285,6 +289,8 @@ export class GameEngine {
         return this.enterScene(command.sceneId, command.spawnId, command.travelers ?? []);
       case 'pointerTap':
         return this.pointerTap(command.worldPoint, command.minHitWorld);
+      case 'pointerLongPress':
+        return this.pointerLongPress(command.worldPoint, command.minHitWorld);
       case 'dragStart':
         return this.dragStart(command.entityId, command.worldPoint);
       case 'dragEnd':
@@ -413,6 +419,21 @@ export class GameEngine {
     this.world.emit({ type: 'zoneChanged', sceneId: scene.id, zoneId: next });
   }
 
+  /** A runtime instance of a prefab (rt_ id), without location (spawn, replace). */
+  instantiate(prefabId: string, owner?: Entity): EntityInit | undefined {
+    const content = this.content;
+    const pack = owner?.prefabId?.includes(':') ? owner.prefabId.split(':')[0] : undefined;
+    const p = content?.hasPrefab(prefabId, pack) ? content.prefab(prefabId, pack) : undefined;
+    if (!p) return undefined;
+    return {
+      id: this.newRuntimeId(),
+      prefabId: p.qualifiedId,
+      tags: [...(p.tags ?? [])],
+      location: { kind: 'limbo' },
+      components: JSON.parse(JSON.stringify(p.components)),
+    };
+  }
+
   get inventoryCapacity(): number {
     return this.player.inventory?.capacity ?? DEFAULT_INVENTORY_CAPACITY;
   }
@@ -493,6 +514,25 @@ export class GameEngine {
     if (!this.activeScene) return { ok: false, reason: 'noActiveScene' };
     this.resolver.resolve({ trigger: 'tap', point, minHitWorld });
     return OK;
+  }
+
+  /**
+   * longPress rules (v1: unwear_clothes). An action may return startDrag: the item is already in the scene
+   * at the finger and the drag starts now; dragCancel puts it back where it was (HU-GAME-040 R4, R9).
+   */
+  private pointerLongPress(point: WorldPoint, minHitWorld?: number): CommandResult {
+    if (!this.activeScene) return { ok: false, reason: 'noActiveScene' };
+    if (this.drag) return { ok: false, reason: 'alreadyDragging' };
+    const before = new Map(this.world.all().map((e) => [e.id, e]));
+    const outcome = this.resolver.resolve({ trigger: 'longPress', point, minHitWorld });
+    if (outcome.kind !== 'performed' || !outcome.startDrag) return OK;
+    const origin = before.get(outcome.startDrag);
+    this.drag = {
+      entityId: outcome.startDrag,
+      origin: { location: origin?.location ?? { kind: 'scene', sceneId: this.activeScene.id }, transform: origin?.components.transform },
+    };
+    this.lastPreview = undefined;
+    return { ok: true, startDrag: outcome.startDrag, entityId: outcome.startDrag };
   }
 
   private dragStart(entityId: EntityId, point: WorldPoint): CommandResult {

@@ -8,6 +8,10 @@ import {
   HolderSchema,
   PoseSchema,
   PurchasableSchema,
+  EdibleSchema,
+  DrinkableSchema,
+  SpawnerSchema,
+  SpawnedFromSchema,
   WearableSchema,
   ContainerSchema,
   DraggableSchema,
@@ -26,6 +30,10 @@ import {
   type Holder,
   type Pose,
   type Purchasable,
+  type Edible,
+  type Drinkable,
+  type Spawner,
+  type SpawnedFrom,
   type Wearable,
   type Container,
   type Draggable,
@@ -61,6 +69,10 @@ export interface ComponentMap {
   pose: Pose;
   expression: Expression;
   purchasable: Purchasable;
+  edible: Edible;
+  drinkable: Drinkable;
+  spawner: Spawner;
+  spawnedFrom: SpawnedFrom;
 }
 
 export type ComponentName = keyof ComponentMap;
@@ -85,6 +97,10 @@ export const COMPONENT_SCHEMAS: { [K in ComponentName]: z.ZodType<ComponentMap[K
   pose: PoseSchema,
   expression: ExpressionSchema,
   purchasable: PurchasableSchema,
+  edible: EdibleSchema,
+  drinkable: DrinkableSchema,
+  spawner: SpawnerSchema,
+  spawnedFrom: SpawnedFromSchema,
 };
 
 export function isComponentName(name: string): name is ComponentName {

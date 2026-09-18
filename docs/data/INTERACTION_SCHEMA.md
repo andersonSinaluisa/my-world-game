@@ -142,7 +142,7 @@ Archivo: `content/core/interactions/core.rules.json`.
 | `eat_food` | drop | has `edible` | has `character`, zone `mouth`/`head` | `isPurchased`, `poseIsNot [sleep]` | `eat` | 100 |
 | `drink_drink` | drop | has `drinkable` | has `character`, zone `mouth`/`head` | `isPurchased`, `poseIsNot [sleep]` | `drink` | 100 |
 | `wear_clothes` | drop | has `wearable` | has `character`, zone `body`/`torso`/`legs`/`feet` | `canWear`, `isPurchased` | `wear` | 90 |
-| `hold_item` | drop | has `draggable`, notTags `furniture`,`character` | has `holder`, zone `handL`/`handR`/`body`/`torso`/`legs`/`feet` | `handFree` | `hold` | 50 |
+| `hold_item` | drop | has `draggable`, notTags `furniture`,`character` | has `holder`, zone `handL`/`handR`/`body` | `handFree` | `hold` | 50 |
 | `sit_on_seat` | drop | has `character` | has `seat` | `seatFree` | `sit` | 80 |
 | `sleep_on_bed` | drop | has `character` | has `bed` | `seatFree` | `sleep` | 85 |
 | `store_in_container` | drop | has `draggable`, notTags `character`,`furniture` | has `container`, zone `inside` | `isOpen`, `containerHasSpace` | `store` | 70 |
@@ -156,7 +156,7 @@ Archivo: `content/core/interactions/core.rules.json`.
 | `tap_character` | tap | — | has `character` | — | `setExpression(happy, 1500)` | 5 |
 | `tap_collect` | tap | — | has `collectible` | — | `collect` | 30 |
 
-> `hold_item` incluye las bandas `torso`, `legs` y `feet`: la zona tocada es la de menor área, así que un objeto soltado sobre el pecho da `torso` y no `body`. Sin ellas, soltar en el cuerpo no sostendría nada (fallback de body de HU-GAME-016 R3).
+> `hold_item` usa solo `handL`, `handR` y `body` (zona fuera de las bandas): si incluyera `torso`/`legs`/`feet`, una prenda rechazada por `wear_clothes` (sin comprar o sin sprite para el cuerpo) acabaría sostenida en vez de rechazada (HU-GAME-039). Para sostener algo se suelta en la mano.
 >
 > En esta tabla, `isPurchased` sin parámetros equivale a `{ value: true, ifMissing: true }`: los productos de la tienda sin comprar no se comen, no se beben ni se visten.
 >

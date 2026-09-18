@@ -5,6 +5,7 @@ import type { Hand, WearSlot } from '../core/location';
 import type { Logger } from '../core/runtime';
 import type { AssetKey, EntityId } from '../core/types';
 import type { World } from '../core/world';
+import { spriteAssetOf } from '../scene/sprite-asset';
 import { BODY_LAYERS, handAnchor, SKIN_LAYERS, type CharacterPartsCatalog } from './catalog';
 
 /** Scale of a held item inside the character group (CHARACTER_SYSTEM §6). */
@@ -130,14 +131,6 @@ export function computeCharacterLayers(input: CharacterLookInput, env: LayerEnv)
   return out;
 }
 
-/** Sprite asset of an entity for its current state (same rule as the scene renderer). */
-function spriteAsset(e: Entity): AssetKey | undefined {
-  const sprite = e.components.sprite;
-  if (!sprite) return undefined;
-  const state = e.components.states?.current;
-  return (state && sprite.byState?.[state]) || sprite.asset;
-}
-
 /** Inputs of a character read from the World: the character, its worn clothes and held items. */
 function lookOf(world: World, id: EntityId): { input: CharacterLookInput; deps: Entity[] } | undefined {
   const e = world.get(id);
@@ -155,7 +148,7 @@ function lookOf(world: World, id: EntityId): { input: CharacterLookInput; deps: 
   for (const hand of ['left', 'right'] as Hand[]) {
     const itemId = world.index.occupantOf({ kind: 'held', holderId: id, hand });
     const item = itemId ? world.get(itemId) : undefined;
-    const asset = item && spriteAsset(item);
+    const asset = item && spriteAssetOf(item);
     if (!item || !asset) continue;
     deps.push(item);
     held[hand] = { id: item.id, sprite: item.components.sprite!, asset };
