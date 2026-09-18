@@ -215,7 +215,8 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
         if (visibleCache.version !== snapshot.version) visibleCache = { version: snapshot.version, byKey: new Map() };
         const cached = visibleCache.byKey.get(key);
         if (cached) return cached;
-        let entities = engine.world.all().filter((e) => isRenderable(e, scene.id));
+        // Scene entities plus what is shown inside open containers (HU-GAME-034 R5).
+        let entities = [...engine.world.all().filter((e) => isRenderable(e, scene.id)), ...engine.visibleContents()];
         const transformOf = (e: Entity) => engine.absoluteTransform(e.id);
         if (viewport) entities = cullEntities(entities, cullingRange(viewport.cameraX, viewport.viewportW), assetSize, transformOf);
         const data = sortForRender(entities, { supportOf: engine.world.index.supportOf, transformOf }).map((e, order) => {

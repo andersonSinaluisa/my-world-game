@@ -93,13 +93,16 @@ const EntityNode = memo(function EntityNode({ game, id, textures, hidden, hidden
   const sprite = entity?.components.sprite;
   // The original is hidden while its DragProxy is on screen (HU-GAME-027 R5), and so is what it carries.
   const parentId = entity?.components.transform?.parentId;
-  if (hidden || (parentId && hiddenParent === parentId) || !entity || !sprite || entity.location.kind !== 'scene') return null;
+  if (hidden || (parentId && hiddenParent === parentId) || !entity || !sprite) return null;
+  const transform = game.absoluteTransform(id);
+  // Scene entities, and items shown inside an open container (drawn at their slot, HU-GAME-034 R5).
+  if (!transform || (entity.location.kind !== 'scene' && entity.location.kind !== 'container')) return null;
   if (entity.components.character) return <CharacterNode game={game} id={id} textures={textures} breath={breath} />;
   return (
     <SpriteNode
       id={id}
       asset={resolveAsset(entity)}
-      transform={game.absoluteTransform(id) ?? { x: 0, y: 0 }}
+      transform={transform}
       pivot={sprite.pivot ?? { x: 0.5, y: 1 }}
       size={sprite.size}
       textures={textures}

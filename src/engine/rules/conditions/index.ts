@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { chooseHand } from '../../actions/character-actions';
+import { storeCheck } from '../../actions/container-actions';
 import { fail, PASS, resolveRole, type ConditionHandler } from '../../actions/types';
 
 const Role = z.enum(['$source', '$target']);
@@ -43,9 +44,24 @@ export const handFree: ConditionHandler<z.infer<typeof HandFreeParams>> = {
   },
 };
 
+const ContainerHasSpaceParams = z.strictObject({ type: z.literal('containerHasSpace'), of: Role.default('$target') });
+
+/** A free slot and the source's tags accepted (HU-GAME-035 R2). Reasons: containerFull, notAccepted. */
+export const containerHasSpace: ConditionHandler<z.infer<typeof ContainerHasSpaceParams>> = {
+  type: 'containerHasSpace',
+  params: ContainerHasSpaceParams,
+  evaluate(ctx, p) {
+    const container = resolveRole(ctx, p.of);
+    const item = ctx.sourceId ? ctx.env.world.get(ctx.sourceId) : undefined;
+    if (!container || !item) return fail('entityNotFound');
+    const r = storeCheck(ctx.env.world, container, item);
+    return r.ok ? PASS : fail(r.reason);
+  },
+};
+
 /** Closed set of conditions (INTERACTION_SCHEMA §4). No expressions, no scripting. */
 export const CONDITIONS: Record<string, ConditionHandler<never>> = Object.fromEntries(
-  [stateIs, isOpen, handFree].map((c) => [c.type, c as unknown as ConditionHandler<never>]),
+  [stateIs, isOpen, handFree, containerHasSpace].map((c) => [c.type, c as unknown as ConditionHandler<never>]),
 );
 
 export const CONDITION_TYPES = Object.keys(CONDITIONS);

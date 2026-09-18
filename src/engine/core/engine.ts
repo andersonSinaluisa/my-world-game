@@ -1,3 +1,4 @@
+import { isOpenEntity } from '../actions/container-actions';
 import type { ActionEnv } from '../actions/types';
 import { handAnchor } from '../characters/catalog';
 import { CharacterCommands } from '../characters/character-commands';
@@ -18,7 +19,7 @@ import { placeItem, recomputeSupport } from '../systems/surface-system';
 import { VisualEffects } from '../systems/visual-effects';
 import type { Components } from '../components/registry';
 import { OK, type CommandResult, type GameCommand } from './commands';
-import type { EntityInit } from './entity';
+import type { Entity, EntityInit } from './entity';
 import { EventBus } from './events';
 import type { Location } from './location';
 import { LocationService } from './location-service';
@@ -158,10 +159,38 @@ export class GameEngine {
     });
   }
 
-  /** World transform of an entity (HU-GAME-030: items on carriers are relative). */
+  /**
+   * World transform of an entity: items on carriers are relative (HU-GAME-030); items shown inside an open
+   * container sit at its slot (HU-GAME-034 R5). Undefined when the entity is not drawn in the world.
+   */
   absoluteTransform(id: EntityId): Components['transform'] | undefined {
     const e = this.world.get(id);
-    return e ? absoluteTransform((x) => this.world.get(x), e) : undefined;
+    if (!e) return undefined;
+    if (e.location.kind === 'container') return this.slotTransform(e);
+    return absoluteTransform((x) => this.world.get(x), e);
+  }
+
+  private slotTransform(e: Entity): Components['transform'] | undefined {
+    if (e.location.kind !== 'container') return undefined;
+    const container = this.world.get(e.location.containerId);
+    const c = container?.components.container;
+    const ct = container && absoluteTransform((x) => this.world.get(x), container);
+    const slot = c?.slots?.[e.location.slot];
+    if (!container || !c || !ct || !slot || container.location.kind !== 'scene') return undefined;
+    if (!isOpenEntity(container) || c.showContentsWhenOpen === false) return undefined;
+    const { parentId: _p, ...own } = e.components.transform ?? { x: 0, y: 0 };
+    void _p;
+    return { ...own, x: ct.x + slot.x, y: ct.y + slot.y };
+  }
+
+  /** Entities drawn inside open containers of the active scene (HU-GAME-034 R5). */
+  visibleContents(): Entity[] {
+    const scene = this.activeScene;
+    if (!scene) return [];
+    return this.world.query({ locationKind: 'container' }).filter((e) => {
+      const c = e.location.kind === 'container' ? this.world.get(e.location.containerId) : undefined;
+      return c?.location.kind === 'scene' && c.location.sceneId === scene.id && e.components.sprite && this.slotTransform(e) !== undefined;
+    });
   }
 
   static create(options: GameEngineOptions = {}): GameEngine {
@@ -443,8 +472,18 @@ export class GameEngine {
           this.world.update(entityId, { transform: { ...(e.components.transform ?? {}), x: point.x, y: point.y } });
         });
         break;
+      case 'container': {
+        // takeOut implícito (HU-GAME-036 R3): only from an open container of the active scene.
+        const at = this.slotTransform(e);
+        if (!at) return { ok: false, reason: 'notDraggable' };
+        this.world.transaction(() => {
+          this.locations.move(entityId, { kind: 'scene', sceneId: this.activeScene!.id });
+          this.world.update(entityId, { transform: { ...at, x: point.x, y: point.y } });
+        });
+        break;
+      }
       default:
-        // container (HU-GAME-036), worn (HU-GAME-040), inventory (HU-GAME-038): not draggable yet.
+        // worn (HU-GAME-040), inventory (HU-GAME-038): not draggable yet.
         return { ok: false, reason: 'notDraggable' };
     }
     // Characters: standUp implícito, temporary pose cancelled, dangle + surprised (HU-GAME-017 R2).
@@ -485,6 +524,16 @@ export class GameEngine {
    */
   private refreshCarried(parentId: EntityId): void {
     const scene = this.activeScene;
+    // Items shown inside a moved container follow it too: re-emit them so views redraw (HU-GAME-034 R5).
+    const contents = this.world.index.inContainer(parentId).filter((x): x is EntityId => !!x);
+    if (contents.length) {
+      this.world.transaction(() => {
+        for (const id of contents) {
+          const t = this.world.get(id)?.components.transform;
+          if (t) this.world.update(id, { transform: { ...t } });
+        }
+      });
+    }
     const kids = childrenOf(this.world, parentId);
     if (!scene || !kids.length) return;
     let unlinked = false;
