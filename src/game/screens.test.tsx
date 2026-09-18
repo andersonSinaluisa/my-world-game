@@ -187,3 +187,69 @@ describe('title and settings (HU-GAME-073/075)', () => {
     expect(game.engine.settings.language).toBe('en');
   });
 });
+
+/**
+ * HU-GAME-070 RN-1/RN-2/RN-5: every button has a label and an explicit touch area of at least 64 dp
+ * (child screens) or 48 dp (adult screens). Size = explicit width/height or minWidth/minHeight, plus hitSlop.
+ */
+function touchIssues(min: number): string[] {
+  const { StyleSheet } = jest.requireActual('react-native') as typeof import('react-native');
+  const issues: string[] = [];
+  const buttons = screen.getAllByRole('button');
+  if (buttons.length < 2) issues.push(`only ${buttons.length} buttons found`);
+  for (const b of buttons) {
+    const label = b.props.accessibilityLabel as string | undefined;
+    if (!label) issues.push(`button without accessibilityLabel (${JSON.stringify(b.props.testID ?? '')})`);
+    const s = (StyleSheet.flatten(b.props.style) ?? {}) as Record<string, unknown>;
+    const slop = typeof b.props.hitSlop === 'number' ? b.props.hitSlop * 2 : 0;
+    const side = (a: string, m: string) => Math.max(Number(s[a]) || 0, Number(s[m]) || 0) + slop;
+    if (side('width', 'minWidth') < min || side('height', 'minHeight') < min) {
+      issues.push(`${label}: ${side('width', 'minWidth')}×${side('height', 'minHeight')} < ${min}`);
+    }
+  }
+  return issues;
+}
+
+describe('touch targets and labels (HU-GAME-070)', () => {
+  it('title (child UI): ≥ 64 dp and labelled', async () => {
+    const TitleScreen = jest.requireActual('@/app/index').default;
+    (mockSession as unknown as { inspect: () => Promise<string> }).inspect = async () => 'save';
+    const { facade } = setup();
+    await render(
+      <GameProvider facade={facade}>
+        <TitleScreen />
+      </GameProvider>,
+    );
+    await act(async () => {});
+    expect(touchIssues(64)).toEqual([]);
+  });
+
+  it('creator and characters (child UI): ≥ 64 dp and labelled', async () => {
+    const { facade } = setup();
+    facade.dispatch({ type: 'createCharacter', appearance: { bodyType: 'child', skinTone: 'skin_01', eyes: 'eyes_round', mouth: 'mouth_smile', hairStyle: 'hair_buns', hairColor: 'hair_black' }, outfit: {} });
+    const view = await render(
+      <GameProvider facade={facade}>
+        <CreatorScreen />
+      </GameProvider>,
+    );
+    expect(touchIssues(64)).toEqual([]);
+    await view.unmount();
+    await render(
+      <GameProvider facade={facade}>
+        <CharactersScreen />
+      </GameProvider>,
+    );
+    expect(touchIssues(64)).toEqual([]);
+  });
+
+  it('settings (adult UI): ≥ 48 dp and labelled', async () => {
+    const SettingsScreen = jest.requireActual('@/app/settings').default;
+    const { facade } = setup();
+    await render(
+      <GameProvider facade={facade}>
+        <SettingsScreen />
+      </GameProvider>,
+    );
+    expect(touchIssues(48)).toEqual([]);
+  });
+});

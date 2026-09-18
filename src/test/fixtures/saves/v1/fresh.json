@@ -1,0 +1,95 @@
+{
+  "slot": {
+    "slotId": "main",
+    "saveVersion": 1,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z",
+    "contentVersions": {
+      "core": "1.0.0"
+    },
+    "player": {
+      "currentSceneId": "core:home",
+      "wallet": {
+        "coins": 50
+      },
+      "unlocks": [],
+      "inventory": {
+        "capacity": 12
+      },
+      "flags": {},
+      "cameraX": 0
+    }
+  },
+  "entities": [
+    {
+      "id": "rt_01KDVDNA0064832ATXTAJ62N4F",
+      "location": {
+        "kind": "scene",
+        "sceneId": "core:home"
+      },
+      "components": {
+        "transform": {
+          "x": 700,
+          "y": 960
+        },
+        "character": {
+          "isNpc": false,
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "colorTag": "#FFB5C2"
+        },
+        "appearance": {
+          "bodyType": "child",
+          "skinTone": "skin_04",
+          "eyes": "eyes_round",
+          "mouth": "mouth_smile",
+          "hairStyle": "hair_buns",
+          "hairColor": "hair_berry"
+        },
+        "holder": {
+          "hands": [
+            "left",
+            "right"
+          ]
+        },
+        "pose": {
+          "current": "idle"
+        },
+        "draggable": {}
+      },
+      "tags": [
+        "character"
+      ]
+    },
+    {
+      "id": "rt_01KDVDNA00FQMD5K6M066SVYA4",
+      "location": {
+        "kind": "worn",
+        "characterId": "rt_01KDVDNA0064832ATXTAJ62N4F",
+        "slot": "top"
+      },
+      "components": {},
+      "prefabId": "core:shirt_star_yellow"
+    },
+    {
+      "id": "rt_01KDVDNA00H0C9Y0RRNYMMWBYN",
+      "location": {
+        "kind": "worn",
+        "characterId": "rt_01KDVDNA0064832ATXTAJ62N4F",
+        "slot": "bottom"
+      },
+      "components": {},
+      "prefabId": "core:jeans_blue"
+    },
+    {
+      "id": "rt_01KDVDNA00QQMTMJMR8V1AXAXZ",
+      "location": {
+        "kind": "worn",
+        "characterId": "rt_01KDVDNA0064832ATXTAJ62N4F",
+        "slot": "shoes"
+      },
+      "components": {},
+      "prefabId": "core:sneakers_red"
+    }
+  ],
+  "removed": []
+}

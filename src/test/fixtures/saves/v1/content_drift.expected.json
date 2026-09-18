@@ -1,0 +1,9 @@
+{
+  "discarded": "rt_01J8Z8RETIREDTOY000000000",
+  "aliased": {
+    "id": "rt_01J8Z8RENAMEDBALL00000000",
+    "prefabId": "core:ball"
+  },
+  "lampState": "off",
+  "note": "retired_toy has no alias (discarded); old_ball needs idAliases core:old_ball → core:ball (the test adds it); lamp state \"broken\" no longer exists."
+}

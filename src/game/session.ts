@@ -198,6 +198,11 @@ export class GameSession {
     return this.textures.registry.source(key);
   }
 
+  /** Last autosave write duration (dev overlay). */
+  get lastFlushMs(): number | undefined {
+    return this.save?.lastFlushMs;
+  }
+
   flush(): Promise<void> {
     return this.save?.flush() ?? Promise.resolve();
   }

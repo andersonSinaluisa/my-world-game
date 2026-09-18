@@ -90,6 +90,8 @@ export class GameEngine {
   private player: PlayerState = {};
   private viewportW: number | undefined;
   private zoneId: string | undefined;
+  /** Duration of the last enterScene, for the dev performance overlay (HU-GAME-071). */
+  lastTransitionMs: number | undefined;
   private drag: DragState | undefined;
   /** Saved diff per scene, provided by the SaveService (HU-GAME-053). */
   savedSceneProvider: ((sceneId: SceneId) => SavedSceneState | undefined) | undefined;
@@ -364,6 +366,7 @@ export class GameEngine {
       this.logger.warn(`Unknown spawn "${spawnId}" in ${sceneId}; using "default"`);
       spawn = def.spawnPoints.find((s) => s.id === 'default')!;
     }
+    const t0 = this.clock.now();
     const from = this.activeScene?.id;
     const resuming = this.player.currentSceneId === sceneId && this.player.cameraX !== undefined && !from;
     this.beforeSceneUnload?.();
@@ -399,6 +402,7 @@ export class GameEngine {
       this.zoneId = undefined;
       this.updateZone(built.info, cameraX);
     });
+    this.lastTransitionMs = this.clock.now() - t0;
     return OK;
   }
 
