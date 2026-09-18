@@ -1,0 +1,45 @@
+{
+  "id": "lamp_floor",
+  "category": "decor",
+  "tags": [
+    "furniture",
+    "light"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_lamp_floor_off",
+      "layer": "furniture",
+      "byState": {
+        "on": "env_home_lamp_floor_on"
+      }
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -40,
+        "y": -280,
+        "w": 80,
+        "h": 280
+      }
+    },
+    "draggable": {
+      "mode": "floorOnly"
+    },
+    "states": {
+      "current": "off",
+      "values": [
+        "off",
+        "on"
+      ]
+    },
+    "switchable": {
+      "onState": "on",
+      "offState": "off"
+    }
+  },
+  "metadata": {
+    "name": "object.lamp_floor.name",
+    "placeholder": true,
+    "license": "CC0"
+  }
+}

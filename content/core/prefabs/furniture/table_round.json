@@ -1,0 +1,39 @@
+{
+  "id": "table_round",
+  "category": "furniture",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_home_table_round",
+      "layer": "furniture"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -160,
+        "y": -123,
+        "w": 320,
+        "h": 123
+      }
+    },
+    "draggable": {
+      "mode": "floorOnly"
+    },
+    "surface": {
+      "segments": [
+        {
+          "x1": -150,
+          "x2": 150,
+          "y": -115
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "name": "object.table_round.name",
+    "placeholder": true,
+    "license": "CC0"
+  }
+}

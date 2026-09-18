@@ -1,0 +1,32 @@
+{
+  "id": "ball",
+  "category": "toy",
+  "tags": [
+    "toy"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_toy_ball",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "circle",
+        "x": 0,
+        "y": -40,
+        "r": 38
+      }
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "spin"
+    }
+  },
+  "metadata": {
+    "name": "object.ball.name",
+    "price": 5,
+    "placeholder": true,
+    "license": "own"
+  }
+}

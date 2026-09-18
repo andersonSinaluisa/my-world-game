@@ -1,0 +1,32 @@
+[
+  {
+    "id": "tap_open",
+    "trigger": "tap",
+    "target": {
+      "has": [
+        "openable"
+      ]
+    },
+    "actions": [
+      {
+        "type": "cycleState"
+      }
+    ],
+    "priority": 10
+  },
+  {
+    "id": "tap_switch",
+    "trigger": "tap",
+    "target": {
+      "has": [
+        "switchable"
+      ]
+    },
+    "actions": [
+      {
+        "type": "cycleState"
+      }
+    ],
+    "priority": 10
+  }
+]

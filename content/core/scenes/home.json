@@ -1,0 +1,166 @@
+{
+  "id": "home",
+  "name": "scene.home.name",
+  "location": "home",
+  "size": {
+    "width": 7680,
+    "height": 1080
+  },
+  "background": {
+    "layers": [
+      {
+        "id": "walls",
+        "chunks": [
+          {
+            "asset": "env_home_bg_living_01",
+            "x": 0,
+            "width": 1920
+          },
+          {
+            "asset": "env_home_bg_kitchen_01",
+            "x": 1920,
+            "width": 1920
+          },
+          {
+            "asset": "env_home_bg_bedroom_01",
+            "x": 3840,
+            "width": 1920
+          },
+          {
+            "asset": "env_home_bg_bathroom_01",
+            "x": 5760,
+            "width": 1920
+          }
+        ]
+      }
+    ]
+  },
+  "floor": [
+    {
+      "y": 960
+    }
+  ],
+  "zones": [
+    {
+      "id": "living",
+      "name": "zone.living.name",
+      "x1": 0,
+      "x2": 1920,
+      "snapCameraX": 720
+    },
+    {
+      "id": "kitchen",
+      "name": "zone.kitchen.name",
+      "x1": 1920,
+      "x2": 3840,
+      "snapCameraX": 2880
+    },
+    {
+      "id": "bedroom",
+      "name": "zone.bedroom.name",
+      "x1": 3840,
+      "x2": 5760,
+      "snapCameraX": 4800
+    },
+    {
+      "id": "bathroom",
+      "name": "zone.bathroom.name",
+      "x1": 5760,
+      "x2": 7680,
+      "snapCameraX": 6720
+    }
+  ],
+  "spawnPoints": [
+    {
+      "id": "default",
+      "x": 700,
+      "y": 960
+    },
+    {
+      "id": "front_door",
+      "x": 150,
+      "y": 960,
+      "facing": "right"
+    }
+  ],
+  "entities": [
+    {
+      "localId": "table",
+      "prefabId": "table_round",
+      "transform": {
+        "x": 1200,
+        "y": 960
+      }
+    },
+    {
+      "localId": "apple_1",
+      "prefabId": "apple_red",
+      "transform": {
+        "x": 1150,
+        "y": 845
+      }
+    },
+    {
+      "localId": "ball_1",
+      "prefabId": "ball",
+      "transform": {
+        "x": 450,
+        "y": 960
+      }
+    },
+    {
+      "localId": "lamp",
+      "prefabId": "lamp_floor",
+      "transform": {
+        "x": 1700,
+        "y": 960
+      }
+    },
+    {
+      "localId": "toybox",
+      "prefabId": "toybox",
+      "transform": {
+        "x": 4400,
+        "y": 960
+      }
+    },
+    {
+      "localId": "toybox_ball",
+      "prefabId": "ball",
+      "inContainer": {
+        "localId": "toybox",
+        "slot": 0
+      }
+    },
+    {
+      "localId": "kitchen_table",
+      "prefabId": "table_round",
+      "transform": {
+        "x": 2700,
+        "y": 960
+      }
+    },
+    {
+      "localId": "apple_2",
+      "prefabId": "apple_red",
+      "transform": {
+        "x": 2750,
+        "y": 845
+      }
+    },
+    {
+      "localId": "bath_lamp",
+      "prefabId": "lamp_floor",
+      "transform": {
+        "x": 6400,
+        "y": 960
+      }
+    }
+  ],
+  "camera": {
+    "startSpawnId": "default"
+  },
+  "metadata": {
+    "placeholder": true
+  }
+}

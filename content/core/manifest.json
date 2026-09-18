@@ -1,0 +1,20 @@
+{
+  "id": "core",
+  "name": "pack.core.name",
+  "version": "1.0.0",
+  "formatVersion": 1,
+  "provides": {
+    "scenes": [
+      "home"
+    ]
+  },
+  "newGame": {
+    "sceneId": "core:home",
+    "spawnId": "default",
+    "coins": 50,
+    "dailyGiftCoins": 10,
+    "unlocks": [],
+    "inventoryCapacity": 12
+  },
+  "distribution": "bundled"
+}

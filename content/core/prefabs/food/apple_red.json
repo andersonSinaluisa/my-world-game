@@ -1,0 +1,33 @@
+{
+  "id": "apple_red",
+  "category": "food",
+  "tags": [
+    "food",
+    "fruit"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_food_apple_red",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "circle",
+        "x": 0,
+        "y": -36,
+        "r": 34
+      }
+    },
+    "draggable": {},
+    "animations": {
+      "drop": "squash",
+      "tap": "bounce"
+    }
+  },
+  "metadata": {
+    "name": "object.apple_red.name",
+    "price": 2,
+    "placeholder": true,
+    "license": "CC0"
+  }
+}
