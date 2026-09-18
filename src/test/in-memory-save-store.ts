@@ -84,6 +84,21 @@ export class InMemorySaveStore implements SaveStore {
     this.rowsWritten += rows.length;
   }
 
+  async deleteSlot(slotId: string): Promise<void> {
+    if (this.failNextWrite) {
+      this.failNextWrite = false;
+      throw new Error('Simulated write failure');
+    }
+    const next: StoreState = JSON.parse(JSON.stringify(this.state));
+    delete next.slots[slotId];
+    delete next.entities[slotId];
+    delete next.removed[slotId];
+    this.state = next;
+  }
+
+  /** Test helper: make the next backup fail (HU-GAME-055 "backup fallido"). */
+  failNextBackup = false;
+
   /** Test helper: fail the next write (HU-GAME-052 "un fallo de escritura no molesta al niño"). */
   failNextWrite = false;
 
@@ -93,6 +108,10 @@ export class InMemorySaveStore implements SaveStore {
   }
 
   async backup(): Promise<void> {
+    if (this.failNextBackup) {
+      this.failNextBackup = false;
+      throw new Error('Simulated backup failure');
+    }
     this.backupState = JSON.parse(JSON.stringify(this.state));
   }
 

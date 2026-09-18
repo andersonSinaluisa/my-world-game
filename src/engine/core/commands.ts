@@ -22,7 +22,7 @@ export type GameCommand =
   | { type: 'setOutfitSlot'; characterId: EntityId; slot: WearSlot; prefabId: PrefabId | null }
   | { type: 'focusEntity'; entityId: EntityId }
   | { type: 'takeFromInventory'; slot: number; worldPoint: WorldPoint }
-  | { type: 'setSetting'; key: 'musicVolume' | 'sfxVolume' | 'muted'; value: number | boolean };
+  | { type: 'setSetting'; key: 'musicVolume' | 'sfxVolume' | 'muted' | 'language'; value: number | boolean | string };
 
 export type CommandFailure =
   | 'unknownCommand'

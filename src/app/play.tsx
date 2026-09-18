@@ -4,6 +4,7 @@ import { ActivityIndicator, StyleSheet, View, type LayoutChangeEvent, type Layou
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Backpack } from '@/game/backpack';
+import { GateGear } from '@/game/gate-gear';
 import { useGame, useGameSession } from '@/game/game-context';
 import { useActiveScene } from '@/game/hooks';
 import { SceneView, type CameraController } from '@/game/scene-view';
@@ -70,7 +71,10 @@ export default function PlayScreen() {
               router.back();
             }}
           />
-          <IconButton label={game.t('ui.play.characters')} glyph="☺" color={COLORS.selected} onPress={() => router.push('/characters')} />
+          <View style={styles.topRight} pointerEvents="box-none">
+            <IconButton label={game.t('ui.play.characters')} glyph="☺" color={COLORS.selected} onPress={() => router.push('/characters')} />
+            <GateGear onPassed={() => router.push('/settings')} />
+          </View>
         </View>
         {/* Bottom center: away from the auto-scroll edge zones (HU-GAME-037 open question). */}
         <View style={styles.bottomRow} pointerEvents="box-none">
@@ -87,4 +91,5 @@ const styles = StyleSheet.create({
   hud: { ...StyleSheet.absoluteFill, justifyContent: 'space-between' },
   topRow: { flexDirection: 'row', justifyContent: 'space-between', padding: 16 },
   bottomRow: { alignItems: 'center', paddingBottom: 12 },
+  topRight: { flexDirection: 'row', gap: 12 },
 });

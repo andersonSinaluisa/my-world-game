@@ -248,7 +248,9 @@ export class SaveService {
   startNewGame(): void {
     const ng = this.engine.content?.newGame();
     if (!ng) throw new Error('No newGame configuration in the content packs');
+    const settings = this.engine.playerState.settings;
     this.engine.setPlayerState({
+      ...(settings ? { settings } : {}),
       currentSceneId: ng.sceneId,
       wallet: { coins: ng.coins },
       unlocks: [...ng.unlocks],
@@ -309,6 +311,75 @@ export class SaveService {
     this.playerDirty = false;
     this.cancelTimers();
     return result.ok ? { status: 'loaded' } : { status: 'failed', detail: result.reason };
+  }
+
+  /**
+   * Resets the world (SAVE_SYSTEM §6, HU-GAME-055): backup first (no backup → nothing changes), then a new
+   * slot from newGame keeping the settings. With keepCharacters, characters and their worn clothes stay and
+   * appear at the new-game spawn 120 units apart, standing. Without it the slot is deleted: new game.
+   */
+  async resetWorld(keepCharacters: boolean): Promise<{ ok: true; status: 'new' | 'loaded' } | { ok: false; reason: 'backupFailed' | 'noContent' }> {
+    const ng = this.engine.content?.newGame();
+    if (!ng) return { ok: false, reason: 'noContent' };
+    await this.flush();
+    try {
+      await this.store.backup();
+    } catch (error) {
+      this.engine.logger.error('Backup before reset failed; nothing changed', { error: String(error) });
+      return { ok: false, reason: 'backupFailed' };
+    }
+    const settings = this.engine.playerState.settings;
+    const now = new Date(this.engine.clock.now()).toISOString();
+    const spawn = this.engine.content?.scene(ng.sceneId)?.spawnPoints.find((s) => s.id === ng.spawnId) ?? { x: 0, y: 960 };
+    const kept: SavedEntity[] = [];
+    if (keepCharacters) {
+      const characters = this.engine.world.all().filter((e) => e.components.character && !e.components.character.isNpc);
+      const all = [...new Map([...this.rows.values(), ...characters.map(toSavedEntity)].map((r) => [r.id, r])).values()];
+      const chars = all.filter(isCharacterRow).sort((a, b) => a.id.localeCompare(b.id));
+      chars.forEach((c, i) => {
+        kept.push({
+          ...c,
+          location: { kind: 'scene', sceneId: ng.sceneId },
+          components: { ...c.components, transform: { x: spawn.x + i * 120, y: spawn.y }, pose: { current: 'idle' } },
+        });
+      });
+      const ids = new Set(chars.map((c) => c.id));
+      for (const r of all) if (r.location.kind === 'worn' && ids.has(r.location.characterId)) kept.push(r);
+    }
+    this.cancelTimers();
+    this.dirty.clear();
+    this.removedNow.clear();
+    this.retry = emptyPending();
+    this.engine.unloadAll();
+    this.dirty.clear();
+    this.removedNow.clear();
+    this.cancelTimers();
+    if (!keepCharacters) {
+      await this.store.deleteSlot(this.slotId);
+      this.slot = undefined;
+      this.rows = new Map();
+      this.removed = new Set();
+      this.engine.setPlayerState({ settings });
+      return { ok: true, status: 'new' };
+    }
+    const slot: SaveSlotData = {
+      slotId: this.slotId,
+      saveVersion: this.saveVersion,
+      createdAt: now,
+      updatedAt: now,
+      contentVersions: Object.fromEntries((this.engine.content?.packs() ?? []).map((m) => [m.id, m.version])),
+      player: {
+        currentSceneId: ng.sceneId,
+        wallet: { coins: ng.coins },
+        unlocks: [...ng.unlocks],
+        inventory: { capacity: ng.inventoryCapacity },
+        flags: {},
+        ...(settings ? { settings } : {}),
+      },
+    };
+    await this.store.replaceAll({ slot, entities: kept, removed: [] });
+    const r = await this.load();
+    return r.status === 'loaded' ? { ok: true, status: 'loaded' } : { ok: false, reason: 'backupFailed' };
   }
 
   /** idAliases / removedIds of the installed packs (SAVE_SCHEMA §5, CONTENT_PACK_SCHEMA §2). */

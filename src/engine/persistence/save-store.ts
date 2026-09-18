@@ -24,7 +24,7 @@ export interface PlayerState {
   inventory?: { capacity: number };
   flags?: Record<string, boolean | number | string>;
   /** HU-GAME-058: audio settings; kept by resetWorld (HU-GAME-055). */
-  settings?: { musicVolume: number; sfxVolume: number; muted: boolean };
+  settings?: { musicVolume: number; sfxVolume: number; muted: boolean; language?: 'es' | 'en' };
   [key: string]: unknown;
 }
 
@@ -59,6 +59,8 @@ export interface SaveStore {
   writeBatch(batch: WriteBatch): Promise<void>;
   backup(): Promise<void>;
   restoreBackup(): Promise<void>;
+  /** Removes the whole slot (reset to a new game, HU-GAME-055 RN-6). Atomic. */
+  deleteSlot(slotId: string): Promise<void>;
 }
 
 export function sceneIdOfLocation(location: Location): SceneId | undefined {

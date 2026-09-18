@@ -14,6 +14,7 @@ import { spriteAssetOf } from '@/engine/scene/sprite-asset';
 import type { ActiveSceneInfo } from '@/engine/scene/scene-types';
 
 export { MAX_CHARACTERS } from '@/engine/characters/character-system';
+export { CURRENT_SAVE_VERSION } from '@/engine/persistence/migrations';
 
 /** Data ready for the renderer (GAME_ENGINE §6). */
 export interface EntityRenderData {
@@ -68,8 +69,10 @@ export interface GameFacade {
     activeZone(): string | undefined;
     /** Layers of a character, memoized (same array while its look does not change, HU-GAME-013 R7). */
     characterLayers(id: EntityId): CharacterLayerData[];
+    /** Version of an installed pack (settings info, HU-GAME-075). */
+    packVersion(packId: string): string | undefined;
     /** Audio settings (HU-GAME-058). */
-    settings(): { musicVolume: number; sfxVolume: number; muted: boolean };
+    settings(): { musicVolume: number; sfxVolume: number; muted: boolean; language?: 'es' | 'en' };
     /** Backpack slots 0..capacity-1 (HU-GAME-038). Same array while nothing changes. */
     inventorySlots(): InventorySlotView[];
     /** Player characters, oldest first (HU-GAME-022 R4). Same array while nothing changes. */
@@ -128,7 +131,7 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
   // array for useSyncExternalStore. Entries of an older snapshot version are dropped.
   let charactersCache: { version: number; data: CharacterSummary[] } | undefined;
   let inventoryCache: { version: number; data: InventorySlotView[] } | undefined;
-  let settingsCache: { version: number; data: { musicVolume: number; sfxVolume: number; muted: boolean } } | undefined;
+  let settingsCache: { version: number; data: { musicVolume: number; sfxVolume: number; muted: boolean; language?: 'es' | 'en' } } | undefined;
   const previewCache = new Map<string, CharacterLayerData[]>();
   let clothingCache: ClothingOption[] | undefined;
   let visibleCache: { version: number; byKey: Map<string, EntityRenderData[]> } = { version: -1, byKey: new Map() };
@@ -196,12 +199,14 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
     absoluteTransform: (id) => engine.absoluteTransform(id),
     carriedBy: (id) => engine.world.all().filter((e) => e.components.transform?.parentId === id),
     pickDraggable: (point, minHitWorld) => engine.pickDraggable(point, minHitWorld),
-    t: (key, locale) => engine.content?.t(key, locale ?? options.locale ?? 'es') ?? key,
+    // Active language: the player's setting, else the device default passed at creation (HU-GAME-075 RN-3).
+    t: (key, locale) => engine.content?.t(key, locale ?? engine.settings.language ?? options.locale ?? 'es') ?? key,
     selectors: {
       activeScene: () => engine.scene,
       cameraX: () => engine.playerState.cameraX,
       activeZone: () => engine.activeZoneId,
       characterLayers: (id) => engine.characterLayers(id),
+      packVersion: (packId) => engine.content?.manifest(packId)?.version,
       settings() {
         if (settingsCache?.version !== snapshot.version) settingsCache = { version: snapshot.version, data: engine.settings };
         return settingsCache.data;

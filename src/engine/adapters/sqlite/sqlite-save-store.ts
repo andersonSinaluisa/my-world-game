@@ -153,6 +153,12 @@ export class SqliteSaveStore implements SaveStore {
     );
   }
 
+  async deleteSlot(slotId: string): Promise<void> {
+    await this.db.withExclusiveTransactionAsync(async (txn) => {
+      for (const t of TABLES) await txn.runAsync(`DELETE FROM ${t} WHERE slot_id = ?`, slotId);
+    });
+  }
+
   /**
    * Copies every table into myworld.backup.db (SAVE_SCHEMA §5 rule 2). Uses ATTACH instead of
    * `VACUUM INTO` because VACUUM INTO fails when the target file exists and deleting it needs a

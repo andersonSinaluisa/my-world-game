@@ -8,10 +8,13 @@ import { computeViewport } from '@/engine/adapters/render/viewport';
 import { ContentRegistry } from '@/engine/content/registry';
 import { GameEngine } from '@/engine/core/engine';
 import type { Logger } from '@/engine/core/runtime';
+import { defaultLocale } from '@/engine/content/locale';
+import { CURRENT_SAVE_VERSION } from '@/engine/persistence/migrations';
 import { SaveService, type LoadStatus } from '@/engine/persistence/save-service';
 import type { SaveStore } from '@/engine/persistence/save-store';
 
 import { createGameFacade, type GameFacade } from './facade';
+import { ParentalGate } from './parental-gate';
 import { createTextureStore, type TextureStore } from './textures';
 
 const isDev = () => (typeof __DEV__ !== 'undefined' ? __DEV__ : true);
@@ -50,6 +53,8 @@ export class GameSession {
   private appState: { remove(): void } | undefined;
   private audioState: { remove(): void } | undefined;
   readonly audio: AudioDirector | undefined;
+  /** Parental gate state for the whole app: a 30 s lock survives screen changes (HU-GAME-074 RN-3). */
+  readonly gate = new ParentalGate(Math.random, Date.now);
 
   constructor(
     private readonly openStore: () => Promise<{ store: SaveStore; status: 'ok' | 'incompatible' }>,
@@ -58,7 +63,7 @@ export class GameSession {
   ) {
     this.content = ContentRegistry.load(BUNDLED_PACKS, { dev: isDev(), logger, corePack: 'core' });
     this.engine = GameEngine.create({ content: this.content, logger });
-    this.facade = createGameFacade(this.engine, { assetSize: (k) => this.content.assetSize(k) });
+    this.facade = createGameFacade(this.engine, { assetSize: (k) => this.content.assetSize(k), locale: defaultLocale(deviceLanguageTag()) });
     this.textures = createTextureStore(bundledTextureEntries(this.content), { logger });
     if (audioPort) {
       const port = audioPort((key) => BUNDLED_ASSET_MODULES[key]);
@@ -101,17 +106,53 @@ export class GameSession {
    * "Jugar" (HU-GAME-053/054): loads the save or starts a new game. Idempotent.
    * An incompatible save (newer app or content) is never touched: the child plays a new game that is not saved.
    */
+  /** The save database, opened once (a failure leaves the game playable without saves). */
+  private opened: Promise<{ store: SaveStore; status: 'ok' | 'incompatible' } | undefined> | undefined;
+
+  private openOnce() {
+    this.opened ??= this.openStore().catch((error) => {
+      this.logger.error('Could not open the save database', { error: String(error) });
+      return undefined;
+    });
+    return this.opened;
+  }
+
+  /**
+   * What the title screen offers (HU-GAME-073): a save to continue, none (create a character), or an
+   * incompatible/unreadable one (warning, no "Continue"). Loads nothing into the world.
+   */
+  async inspect(): Promise<'save' | 'none' | 'incompatible' | 'failed'> {
+    if (this.save?.hasSave || this.engine.scene) return 'save';
+    const opened = await this.openOnce();
+    if (!opened) return 'failed';
+    if (opened.status === 'incompatible') return 'incompatible';
+    const slot = await opened.store.loadSlot('main');
+    if (!slot) return 'none';
+    return slot.saveVersion > CURRENT_SAVE_VERSION ? 'incompatible' : 'save';
+  }
+
+  /** Resets the world behind the parental gate (HU-GAME-055). */
+  async resetWorld(keepCharacters: boolean) {
+    await this.start();
+    if (!this.save) return { ok: false as const, reason: 'noSave' as const };
+    const r = await this.save.resetWorld(keepCharacters);
+    // A later "Jugar" loads the new state (or starts a new game).
+    if (r.ok) this.starting = r.status === 'new' ? undefined : this.starting;
+    return r;
+  }
+
   start(): Promise<LoadStatus> {
     this.starting ??= this.doStart();
     return this.starting;
   }
 
   private async doStart(): Promise<LoadStatus> {
-    let opened: { store: SaveStore; status: 'ok' | 'incompatible' } | undefined;
-    try {
-      opened = await this.openStore();
-    } catch (error) {
-      this.logger.error('Could not open the save database', { error: String(error) });
+    const opened = await this.openOnce();
+    if (this.save) {
+      // After a reset to a new game the service is still attached: start the new game on it.
+      const r = await this.save.load();
+      if (r.status === 'new') this.save.startNewGame();
+      return r.status;
     }
     if (!opened || opened.status === 'incompatible') {
       this.startUnsaved();
@@ -166,5 +207,14 @@ export class GameSession {
     this.audioState?.remove();
     this.audio?.dispose();
     this.save?.detach();
+  }
+}
+
+/** Language tag of the device (HU-GAME-075 RN-3), without expo-localization: Intl is available in Hermes. */
+function deviceLanguageTag(): string | undefined {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().locale;
+  } catch {
+    return undefined;
   }
 }

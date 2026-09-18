@@ -76,7 +76,7 @@ flowchart LR
 | [HU-GAME-059](mvp/EPIC-017-home.md) | Salón jugable | EPIC-017 | Must | 1 | HU-GAME-012, HU-GAME-034, HU-GAME-035, HU-GAME-045, HU-GAME-047 | Done (arte placeholder) |
 | [HU-GAME-060](mvp/EPIC-017-home.md) | Cocina jugable | EPIC-017 | Must | 1 | HU-GAME-035, HU-GAME-042, HU-GAME-043, HU-GAME-044, HU-GAME-045, HU-GAME-047 | Done (arte placeholder) |
 | [HU-GAME-061](mvp/EPIC-017-home.md) | Dormitorio jugable | EPIC-017 | Must | 1 | HU-GAME-041, HU-GAME-046, HU-GAME-047 | Done (arte placeholder) |
-| [HU-GAME-073](mvp/EPIC-026-app-shell.md) | Pantalla de inicio | EPIC-026 | Must | 1 | HU-GAME-004, HU-GAME-053 | Draft |
+| [HU-GAME-073](mvp/EPIC-026-app-shell.md) | Pantalla de inicio | EPIC-026 | Must | 1 | HU-GAME-004, HU-GAME-053 | Done (música de inicio y medición de arranque en frío pendientes) |
 | [HU-GAME-049](mvp/EPIC-014-navigation.md) | Puertas y portales entre escenas | EPIC-014 | Must | 2 | HU-GAME-010, HU-GAME-031, HU-GAME-017 | Draft |
 | [HU-GAME-050](mvp/EPIC-014-navigation.md) | Transición entre escenas | EPIC-014 | Must | 2 | HU-GAME-049 | Draft |
 
@@ -99,13 +99,13 @@ flowchart LR
 | [HU-GAME-048](mvp/EPIC-013-furniture.md) | Mover muebles | EPIC-013 | Should | 1 | HU-GAME-027, HU-GAME-028 | Done (propuesta R6, dibujar al ocupante con el proxy: pendiente) |
 | [HU-GAME-056](mvp/EPIC-016-audio.md) | Sonidos de interacción | EPIC-016 | Should | 1 | HU-GAME-031 | Done (efectos placeholder CC0; verificación de polifonía en dispositivo) |
 | [HU-GAME-057](mvp/EPIC-016-audio.md) | Música y ambiente por ubicación | EPIC-016 | Should | 1 | HU-GAME-012 | In Progress (motor y adaptador listos; faltan pistas de música/ambiente CC0) |
-| [HU-GAME-058](mvp/EPIC-016-audio.md) | Control de volumen y silencio | EPIC-016 | Must | 1 | HU-GAME-056, HU-GAME-075 | In Progress (setSetting y persistencia listos; controles en la pantalla de Ajustes, HU-GAME-075) |
+| [HU-GAME-058](mvp/EPIC-016-audio.md) | Control de volumen y silencio | EPIC-016 | Must | 1 | HU-GAME-056, HU-GAME-075 | Done |
 | [HU-GAME-062](mvp/EPIC-017-home.md) | Baño jugable | EPIC-017 | Should | 1 | HU-GAME-035, HU-GAME-045, HU-GAME-047 | Done (arte placeholder; frente de la bañera delante del personaje: pendiente) |
 | [HU-GAME-070](mvp/EPIC-022-accessibility.md) | Objetivos táctiles grandes y UI sin texto | EPIC-022 | Must | 1 | HU-GAME-004 | Draft |
 | [HU-GAME-071](mvp/EPIC-023-performance.md) | Overlay de rendimiento y verificación de presupuestos | EPIC-023 | Must | 1 | HU-GAME-006 | Draft |
 | [HU-GAME-072](mvp/EPIC-024-testing.md) | Pruebas de regresión de guardado con fixtures | EPIC-024 | Should | 1 | HU-GAME-054 | Draft |
-| [HU-GAME-074](mvp/EPIC-026-app-shell.md) | Puerta parental | EPIC-026 | Must | 1 | HU-GAME-073 | Draft |
-| [HU-GAME-075](mvp/EPIC-026-app-shell.md) | Pantalla de ajustes | EPIC-026 | Must | 1 | HU-GAME-074 | Draft |
+| [HU-GAME-074](mvp/EPIC-026-app-shell.md) | Puerta parental | EPIC-026 | Must | 1 | HU-GAME-073 | Done |
+| [HU-GAME-075](mvp/EPIC-026-app-shell.md) | Pantalla de ajustes | EPIC-026 | Must | 1 | HU-GAME-074 | Done |
 | [HU-GAME-051](mvp/EPIC-014-navigation.md) | Mapa de ubicaciones | EPIC-014 | Should | 2 | HU-GAME-050 | Draft |
 | [HU-GAME-063](mvp/EPIC-018-street.md) | Calle jugable | EPIC-018 | Must | 2 | HU-GAME-008, HU-GAME-035, HU-GAME-045, HU-GAME-047, HU-GAME-049 | Draft |
 | [HU-GAME-064](mvp/EPIC-019-store.md) | Tienda jugable | EPIC-019 | Must | 2 | HU-GAME-035, HU-GAME-049, HU-GAME-066 | Draft |
@@ -117,7 +117,7 @@ flowchart LR
 | ID | Título | Epic | MoSCoW | Fase | Depende de | Estado |
 |---|---|---|---|---|---|---|
 | [HU-GAME-030](mvp/EPIC-007-drag-drop.md) | Los objetos apoyados se mueven con su mueble | EPIC-007 | Could | 1 | HU-GAME-028, HU-GAME-048 | Done |
-| [HU-GAME-055](mvp/EPIC-015-save.md) | Reiniciar el mundo | EPIC-015 | Could | 1 | HU-GAME-053, HU-GAME-074 | Draft |
+| [HU-GAME-055](mvp/EPIC-015-save.md) | Reiniciar el mundo | EPIC-015 | Could | 1 | HU-GAME-053, HU-GAME-074 | Done |
 | [HU-GAME-067](mvp/EPIC-020-economy.md) | Regalo diario y monedas escondidas | EPIC-020 | Could | 2 | HU-GAME-065, HU-GAME-032 | Draft |
 
 ## POST-MVP

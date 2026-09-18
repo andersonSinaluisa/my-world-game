@@ -86,3 +86,37 @@ describe('GameSession (HU-GAME-053/054/068)', () => {
     spy.mockRestore();
   });
 });
+
+describe('title support (HU-GAME-073) and settings (HU-GAME-075)', () => {
+  it('inspect: none, then save after playing, incompatible for a newer save', async () => {
+    const store = new InMemorySaveStore();
+    const s = new GameSession(open(store), createTestLogger());
+    expect(await s.inspect()).toBe('none');
+    await s.start();
+    await s.flush();
+    const s2 = new GameSession(open(store), createTestLogger());
+    expect(await s2.inspect()).toBe('save');
+    const slot = (await store.loadSlot('main'))!;
+    await store.writeBatch({ slotId: 'main', upserts: [], removals: [], slot: { ...slot, saveVersion: 99 } });
+    const s3 = new GameSession(open(store), createTestLogger());
+    expect(await s3.inspect()).toBe('incompatible');
+  });
+
+  it('the language setting changes translations at once', () => {
+    const s = new GameSession(open(new InMemorySaveStore()), createTestLogger());
+    s.facade.dispatch({ type: 'setSetting', key: 'language', value: 'en' });
+    expect(s.facade.t('ui.play.label')).toBe('Play');
+    s.facade.dispatch({ type: 'setSetting', key: 'language', value: 'es' });
+    expect(s.facade.t('ui.play.label')).toBe('Jugar');
+  });
+
+  it('reset everything returns to a new game; "Jugar" then starts it', async () => {
+    const store = new InMemorySaveStore();
+    const s = new GameSession(open(store), createTestLogger());
+    await s.start();
+    expect(await s.resetWorld(false)).toEqual({ ok: true, status: 'new' });
+    expect(await s.inspect()).toBe('none');
+    expect(await s.start()).toBe('new');
+    expect(s.facade.selectors.activeScene()).toBeDefined();
+  });
+});
