@@ -406,6 +406,12 @@ function crossReferences(p: ParsedPack, byId: Map<string, ParsedPack>, options: 
     else if (!resolvePrefab(ref)) rep.add(file, path, 'unknownPrefab', `prefab "${ref}" does not exist`);
   };
 
+  const checkSceneTarget = (file: string, path: (string | number)[], sceneRef: string, spawnId: string) => {
+    const target = visiblePacks.flatMap((vp) => vp.scenes.map((sc) => ({ id: `${vp.manifest.id}:${sc.def.id}`, def: sc.def }))).find((sc) => sc.id === qualify(sceneRef, packId));
+    if (!target) rep.add(file, path, 'unknownScene', `scene "${sceneRef}" does not exist`);
+    else if (!target.def.spawnPoints.some((sp) => sp.id === spawnId)) rep.add(file, path, 'unknownSpawn', `spawn "${spawnId}" does not exist in ${sceneRef}`);
+  };
+
   i18n('manifest.json', ['name'], p.manifest.name);
 
   for (const { file, def } of p.prefabs) {
@@ -451,6 +457,9 @@ function crossReferences(p: ParsedPack, byId: Map<string, ParsedPack>, options: 
       const merged = { ...(prefab?.components ?? {}), ...('overrides' in e ? e.overrides ?? {} : {}) } as Record<string, unknown>;
       const container = (merged.container ?? ('inline' in e ? e.inline.components.container : undefined)) as { capacity?: number } | undefined;
       if (container?.capacity) containers.set(e.localId, container.capacity);
+      // Portals lead to an existing scene and spawn (SCENE_SCHEMA §6, HU-GAME-049).
+      const portal = (merged.portal ?? ('inline' in e ? e.inline.components.portal : undefined)) as { targetSceneId?: string; targetSpawnId?: string } | undefined;
+      if (portal?.targetSceneId) checkSceneTarget(file, ['entities', def.entities.indexOf(e), 'portal'], portal.targetSceneId, portal.targetSpawnId ?? 'default');
     });
     const usedSlots = new Set<string>();
     def.entities.forEach((e, i) => {
@@ -483,6 +492,11 @@ function crossReferences(p: ParsedPack, byId: Map<string, ParsedPack>, options: 
 
   for (const [i, s] of (p.manifest.provides.scenes ?? []).entries()) {
     if (!sceneIds.has(s)) rep.add('manifest.json', ['provides', 'scenes', i], 'unknownScene', `scene "${s}" has no file`);
+  }
+  for (const [i, l] of (p.manifest.provides.locations ?? []).entries()) {
+    checkSceneTarget('manifest.json', ['provides', 'locations', i], l.entrySceneId, l.entrySpawnId);
+    checkAsset('manifest.json', ['provides', 'locations', i, 'icon'], l.icon);
+    i18n('manifest.json', ['provides', 'locations', i, 'name'], l.name);
   }
   const ng = p.manifest.newGame;
   if (ng) {

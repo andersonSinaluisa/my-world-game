@@ -1,0 +1,41 @@
+{
+  "id": "street_lamp",
+  "category": "furniture",
+  "tags": [
+    "furniture",
+    "light"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_street_lamp_off",
+      "layer": "furniture",
+      "byState": {
+        "on": "env_street_lamp_on"
+      }
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -60,
+        "y": -520,
+        "w": 120,
+        "h": 520
+      }
+    },
+    "states": {
+      "current": "off",
+      "values": [
+        "off",
+        "on"
+      ]
+    },
+    "switchable": {
+      "onState": "on",
+      "offState": "off"
+    }
+  },
+  "metadata": {
+    "name": "object.street_lamp.name",
+    "placeholder": true
+  }
+}

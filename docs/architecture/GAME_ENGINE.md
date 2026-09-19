@@ -76,7 +76,8 @@ Todos los comandos pasan por el `GameFacade` (§6). La UI y el Input **nunca** l
 | `cameraSettled { cameraX, viewportW }` | Input o Render (fin del paneo o de la inercia, fin del auto-scroll o de un salto de zona) | Actualiza `player.cameraX` (limitado a los bounds; por eso lleva `viewportW`, que el motor no conoce) y la zona activa. **No** se envía por frame. |
 | `viewportChanged { viewportW }` | Render (al medir la Canvas o rotar) | Guarda el ancho visible en world units para centrar la cámara inicial de cada escena ([SCENE_SYSTEM §2](SCENE_SYSTEM.md), paso 6). Sin viewport conocido, la cámara inicial usa la x del spawn. |
 | `enterScene { sceneId, spawnId, travelers? }` | Carga de partida, puertas | Descarga la escena activa (eventos `entityRemoved` con `unload: true`), instancia la nueva (prefab ⊕ overrides ⊕ diff guardado) y emite `sceneLoaded { cameraX }`. Fallos: `noContent`, `unknownScene`. |
-| `enterScene { sceneId, spawnId }` | UI (mapa) o acción `teleport` | SceneService |
+| `travelTo { sceneId, spawnId }` | UI (mapa, HU-GAME-051) | Viaje sin viajeros por la misma vía que la acción `teleport`: con un `travelHandler` registrado (la app) emite `transitionStarted`, bloquea la entrada y deja que la UI haga fundido → flush → `enterScene` → precarga → fundido → `transitionDone`; sin handler (tests, herramientas) entra en la escena en el acto. Fallos: `unknownScene`, `transitioning` |
+| `transitionDone {}` | UI (fin del fundido de entrada) | Desbloquea la entrada. Mientras dura la transición, `pointerTap`, `pointerLongPress`, `dragStart`, `dragPreview`, `takeFromInventory`, `travelTo` y `focusEntity` devuelven `transitioning` (HU-GAME-050 RN-4) |
 | `createCharacter { appearance, outfit }` | Creator UI | Crea el personaje en el spawn `default` de la escena activa (desplazado 120 u si está ocupado) y una instancia `worn` por prenda, en una transacción. Devuelve `{ ok: true, entityId }`. Fallos: `maxCharacters` (12), `invalidPart`, `noActiveScene` |
 | `updateAppearance { characterId, patch }` | Creator UI | Actualiza solo los campos del `patch` (recalcula sprite y hitbox si cambia el cuerpo). No toca location, pose ni ropa. Fallos: `entityNotFound`, `notCharacter`, `invalidPart` |
 | `setOutfitSlot { characterId, slot, prefabId \| null }` | Creator UI (modo edición) | Viste una instancia nueva del prefab. La prenda anterior va al **armario** si hay espacio o, si no, a los pies del personaje |
@@ -96,6 +97,7 @@ Todos los comandos pasan por el `GameFacade` (§6). La UI y el Input **nunca** l
 | `interactionRejected` | `{ ruleId?, reason, sourceId?, targetId?, uiTarget? }` | Feedback (shake del target o del botón de la HUD + sonido "nop") |
 | `dropPreview` | `{ targetId?, ok, reason? }` | Resaltado (HU-GAME-033) |
 | `sceneWillChange` / `sceneLoaded` | `{ from?, to }` | Transición, Audio, SaveService (flush) |
+| `transitionStarted` | `{ from?, to }` | Overlay de fundido, Audio (`sfx_portal_whoosh`). Solo presentación |
 | `walletChanged` | `{ coins, delta }` | HUD, SaveService (flush inmediato) |
 | `playerChanged` | `{ keys }` | UI de ajustes, DirtyTracker |
 | `visualEffect` | `{ entityId, preset }` | Render (tweens de `animations`) |

@@ -253,3 +253,31 @@ describe('touch targets and labels (HU-GAME-070)', () => {
     expect(touchIssues(48)).toEqual([]);
   });
 });
+
+describe('map (HU-GAME-051)', () => {
+  it('lists the locations, travels to another one, closes on the current one and jumps to zones', async () => {
+    const { MapOverlay } = jest.requireActual('@/game/map-overlay') as typeof import('@/game/map-overlay');
+    const pack = withCharacters(testPack());
+    (pack.manifest.data as { provides: Record<string, unknown> }).provides.locations = [
+      { id: 'room', name: 'scene.room.name', icon: 'test_obj_ball', entrySceneId: 'room', entrySpawnId: 'default' },
+      { id: 'hall', name: 'scene.hall.name', icon: 'test_obj_ball', entrySceneId: 'hall', entrySpawnId: 'door' },
+    ];
+    const game = createTestGame({ packs: [pack], enter: { sceneId: 'test:room' } });
+    const facade = createGameFacade(game.engine);
+    const onClose = jest.fn();
+    const onZone = jest.fn();
+    await render(
+      <GameProvider facade={facade}>
+        <MapOverlay visible onClose={onClose} onZone={onZone} />
+      </GameProvider>,
+    );
+    expect(touchIssues(64)).toEqual([]);
+    await act(async () => fireEvent.press(screen.getByRole('button', { name: 'Cuarto' })));
+    expect(game.engine.scene?.id).toBe('test:room');
+    expect(onClose).toHaveBeenCalledTimes(1);
+    await act(async () => fireEvent.press(screen.getByRole('button', { name: 'Derecha' })));
+    expect(onZone).toHaveBeenCalledWith('right');
+    await act(async () => fireEvent.press(screen.getByRole('button', { name: 'Pasillo' })));
+    expect(game.engine.scene?.id).toBe('test:hall');
+  });
+});

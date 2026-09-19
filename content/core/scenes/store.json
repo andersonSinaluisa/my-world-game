@@ -1,0 +1,127 @@
+{
+  "id": "store",
+  "name": "scene.store.name",
+  "location": "store",
+  "size": {
+    "width": 3840,
+    "height": 1080
+  },
+  "background": {
+    "layers": [
+      {
+        "id": "walls",
+        "chunks": [
+          {
+            "asset": "env_store_bg_entrance_01",
+            "x": 0,
+            "width": 1920
+          },
+          {
+            "asset": "env_store_bg_checkout_01",
+            "x": 1920,
+            "width": 1920
+          }
+        ]
+      }
+    ]
+  },
+  "floor": [
+    {
+      "y": 960
+    }
+  ],
+  "zones": [
+    {
+      "id": "entrance",
+      "name": "zone.entrance.name",
+      "x1": 0,
+      "x2": 1280,
+      "snapCameraX": 640
+    },
+    {
+      "id": "shelves",
+      "name": "zone.shelves.name",
+      "x1": 1280,
+      "x2": 2560,
+      "snapCameraX": 1920
+    },
+    {
+      "id": "checkout",
+      "name": "zone.checkout.name",
+      "x1": 2560,
+      "x2": 3840,
+      "snapCameraX": 3200
+    }
+  ],
+  "spawnPoints": [
+    {
+      "id": "default",
+      "x": 500,
+      "y": 960
+    },
+    {
+      "id": "entrance",
+      "x": 360,
+      "y": 960,
+      "facing": "right"
+    }
+  ],
+  "entities": [
+    {
+      "localId": "entrance_door",
+      "prefabId": "door_store_inside",
+      "transform": {
+        "x": 200,
+        "y": 960
+      }
+    },
+    {
+      "localId": "fridge_display",
+      "prefabId": "fridge_display",
+      "transform": {
+        "x": 850,
+        "y": 960
+      }
+    },
+    {
+      "localId": "shelf_1",
+      "prefabId": "store_shelf",
+      "transform": {
+        "x": 1350,
+        "y": 960
+      }
+    },
+    {
+      "localId": "shelf_2",
+      "prefabId": "store_shelf",
+      "transform": {
+        "x": 1900,
+        "y": 960
+      }
+    },
+    {
+      "localId": "shelf_3",
+      "prefabId": "store_shelf",
+      "transform": {
+        "x": 2450,
+        "y": 960
+      }
+    },
+    {
+      "localId": "register",
+      "prefabId": "cash_register",
+      "transform": {
+        "x": 3200,
+        "y": 960
+      }
+    }
+  ],
+  "audio": {
+    "music": "mus_store_happy_01",
+    "ambience": "amb_store_murmur_01"
+  },
+  "transitionColor": "#D8F3DC",
+  "metadata": {
+    "placeholder": true
+  }
+}

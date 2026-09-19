@@ -1,0 +1,50 @@
+{
+  "id": "cash_register",
+  "category": "furniture",
+  "tags": [
+    "furniture",
+    "checkout"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_store_register_01",
+      "layer": "furniture"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -220,
+        "y": -300,
+        "w": 440,
+        "h": 300
+      },
+      "zones": {
+        "body": {
+          "type": "rect",
+          "x": -220,
+          "y": -300,
+          "w": 440,
+          "h": 300
+        }
+      }
+    },
+    "surface": {
+      "segments": [
+        {
+          "x1": -200,
+          "x2": -70,
+          "y": -170
+        },
+        {
+          "x1": 120,
+          "x2": 200,
+          "y": -170
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "name": "object.cash_register.name",
+    "placeholder": true
+  }
+}

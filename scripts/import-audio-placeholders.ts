@@ -37,6 +37,8 @@ const SFX: Record<string, [string, string]> = {
   sfx_store_default: ['interface-sounds', 'drop_004.ogg'],
   sfx_coin: ['digital-audio', 'highUp.ogg'],
   sfx_character_appear: ['interface-sounds', 'confirmation_001.ogg'],
+  sfx_portal_whoosh: ['interface-sounds', 'maximize_003.ogg'],
+  sfx_register_ching: ['digital-audio', 'powerUp2.ogg'],
 };
 
 function main() {
@@ -47,7 +49,8 @@ function main() {
   for (const [key, [pack, file]] of Object.entries(SFX)) {
     const input = path.join(VENDOR, pack, 'Audio', file);
     const out = path.join(dir, `${key}.m4a`);
-    execFileSync(ffmpeg, ['-y', '-loglevel', 'error', '-i', input, '-t', '1.5', '-ac', '1', '-ar', '44100', '-af', 'loudnorm=I=-16:TP=-1.5', '-c:a', 'aac', '-b:a', '96k', out]);
+    // Already converted files are kept: re-encoding would change their bytes for nothing.
+    if (!fs.existsSync(out)) execFileSync(ffmpeg, ['-y', '-loglevel', 'error', '-i', input, '-t', '1.5', '-ac', '1', '-ar', '44100', '-af', 'loudnorm=I=-16:TP=-1.5', '-c:a', 'aac', '-b:a', '96k', out]);
     assets.audio[key] = { file: `assets/audio/${key}.m4a`, kind: 'sfx', placeholder: true, license: 'CC0', source: SOURCES[pack] };
   }
   assets.audio = Object.fromEntries(Object.entries(assets.audio).sort(([a], [b]) => a.localeCompare(b)));

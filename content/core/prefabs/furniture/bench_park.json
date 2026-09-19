@@ -1,0 +1,41 @@
+{
+  "id": "bench_park",
+  "category": "furniture",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_street_bench_park_green",
+      "layer": "furniture"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -578.5,
+        "y": -150,
+        "w": 1157,
+        "h": 150
+      }
+    },
+    "seat": {
+      "anchor": {
+        "x": 0,
+        "y": -83
+      }
+    },
+    "surface": {
+      "segments": [
+        {
+          "x1": -558.5,
+          "x2": 558.5,
+          "y": -83
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "name": "object.bench_park.name",
+    "placeholder": true
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "store_shelf",
+  "category": "furniture",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_store_shelf_wood",
+      "layer": "furniture"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -160,
+        "y": -420,
+        "w": 320,
+        "h": 420
+      }
+    },
+    "surface": {
+      "segments": [
+        {
+          "x1": -140,
+          "x2": 140,
+          "y": -300
+        },
+        {
+          "x1": -140,
+          "x2": 140,
+          "y": -180
+        },
+        {
+          "x1": -140,
+          "x2": 140,
+          "y": -60
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "name": "object.store_shelf.name",
+    "placeholder": true
+  }
+}

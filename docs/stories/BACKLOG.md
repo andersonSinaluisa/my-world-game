@@ -77,8 +77,8 @@ flowchart LR
 | [HU-GAME-060](mvp/EPIC-017-home.md) | Cocina jugable | EPIC-017 | Must | 1 | HU-GAME-035, HU-GAME-042, HU-GAME-043, HU-GAME-044, HU-GAME-045, HU-GAME-047 | Done (arte placeholder) |
 | [HU-GAME-061](mvp/EPIC-017-home.md) | Dormitorio jugable | EPIC-017 | Must | 1 | HU-GAME-041, HU-GAME-046, HU-GAME-047 | Done (arte placeholder) |
 | [HU-GAME-073](mvp/EPIC-026-app-shell.md) | Pantalla de inicio | EPIC-026 | Must | 1 | HU-GAME-004, HU-GAME-053 | Done (música de inicio y medición de arranque en frío pendientes) |
-| [HU-GAME-049](mvp/EPIC-014-navigation.md) | Puertas y portales entre escenas | EPIC-014 | Must | 2 | HU-GAME-010, HU-GAME-031, HU-GAME-017 | Draft |
-| [HU-GAME-050](mvp/EPIC-014-navigation.md) | Transición entre escenas | EPIC-014 | Must | 2 | HU-GAME-049 | Draft |
+| [HU-GAME-049](mvp/EPIC-014-navigation.md) | Puertas y portales entre escenas | EPIC-014 | Must | 2 | HU-GAME-010, HU-GAME-031, HU-GAME-017 | Done |
+| [HU-GAME-050](mvp/EPIC-014-navigation.md) | Transición entre escenas | EPIC-014 | Must | 2 | HU-GAME-049 | Done (tiempos de la transición: medición en dispositivo pendiente) |
 
 ## MVP · P1
 
@@ -106,8 +106,8 @@ flowchart LR
 | [HU-GAME-072](mvp/EPIC-024-testing.md) | Pruebas de regresión de guardado con fixtures | EPIC-024 | Should | 1 | HU-GAME-054 | Done |
 | [HU-GAME-074](mvp/EPIC-026-app-shell.md) | Puerta parental | EPIC-026 | Must | 1 | HU-GAME-073 | Done |
 | [HU-GAME-075](mvp/EPIC-026-app-shell.md) | Pantalla de ajustes | EPIC-026 | Must | 1 | HU-GAME-074 | Done |
-| [HU-GAME-051](mvp/EPIC-014-navigation.md) | Mapa de ubicaciones | EPIC-014 | Should | 2 | HU-GAME-050 | Draft |
-| [HU-GAME-063](mvp/EPIC-018-street.md) | Calle jugable | EPIC-018 | Must | 2 | HU-GAME-008, HU-GAME-035, HU-GAME-045, HU-GAME-047, HU-GAME-049 | Draft |
+| [HU-GAME-051](mvp/EPIC-014-navigation.md) | Mapa de ubicaciones | EPIC-014 | Should | 2 | HU-GAME-050 | Done |
+| [HU-GAME-063](mvp/EPIC-018-street.md) | Calle jugable | EPIC-018 | Must | 2 | HU-GAME-008, HU-GAME-035, HU-GAME-045, HU-GAME-047, HU-GAME-049 | Done (música y ambiente de la calle: sin pista todavía, como HU-GAME-057) |
 | [HU-GAME-064](mvp/EPIC-019-store.md) | Tienda jugable | EPIC-019 | Must | 2 | HU-GAME-035, HU-GAME-049, HU-GAME-066 | Draft |
 | [HU-GAME-065](mvp/EPIC-020-economy.md) | Monedero de monedas | EPIC-020 | Must | 2 | HU-GAME-052, HU-GAME-004 | Draft |
 | [HU-GAME-066](mvp/EPIC-020-economy.md) | Comprar objetos | EPIC-020 | Must | 2 | HU-GAME-065, HU-GAME-031 | Draft |

@@ -15,6 +15,8 @@ export type GameEvent =
   | { type: 'interactionPerformed'; ruleId: string; sourceId?: EntityId; targetId?: EntityId; uiTarget?: 'inventory' | 'trash'; actions: string[] }
   | { type: 'interactionRejected'; ruleId?: string; reason: string; sourceId?: EntityId; targetId?: EntityId; uiTarget?: 'inventory' | 'trash' }
   | { type: 'sceneWillChange'; from?: SceneId; to: SceneId }
+  /** A transition to another scene begins: the UI fades out and then enters it (HU-GAME-050). */
+  | { type: 'transitionStarted'; from?: SceneId; to: SceneId }
   | { type: 'sceneLoaded'; from?: SceneId; to: SceneId; cameraX?: number }
   /** Active zone of the camera changed (HU-GAME-012). Derived state: never saved. */
   | { type: 'zoneChanged'; sceneId: SceneId; zoneId?: string }
@@ -45,6 +47,7 @@ export const PRESENTATION_EVENTS: ReadonlySet<GameEvent['type']> = new Set([
   'interactionPerformed',
   'interactionRejected',
   'sceneWillChange',
+  'transitionStarted',
   'focusRequested',
   'dropPreview',
   'pickedUp',

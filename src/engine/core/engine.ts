@@ -2,7 +2,7 @@ import { isOpenEntity } from '../actions/container-actions';
 import { DEFAULT_INVENTORY_CAPACITY } from '../actions/inventory-actions';
 import { DEFAULT_AUDIO_SETTINGS, type AudioSettings } from '../audio/audio-director';
 import { seatedTransform, seatSpec } from '../actions/seat-actions';
-import type { ActionEnv } from '../actions/types';
+import type { ActionEnv, TravelRequest } from '../actions/types';
 import { handAnchor } from '../characters/catalog';
 import { CharacterCommands } from '../characters/character-commands';
 import { CharacterSystem, type DragOrigin } from '../characters/character-system';
@@ -60,6 +60,20 @@ function defaultDev(): boolean {
 /** Travelers arrive at the spawn separated by 120 units (SCENE_SYSTEM §2). */
 export const TRAVELER_SPACING = 120;
 
+/** Commands that come from the player's fingers; ignored while a transition plays (HU-GAME-050 RN-4). */
+const INPUT_COMMANDS: ReadonlySet<string> = new Set(['pointerTap', 'pointerLongPress', 'dragStart', 'dragPreview', 'takeFromInventory', 'travelTo', 'focusEntity']);
+
+/** First x from the spawn, stepping 120 units right (then left at the edge), with nobody closer than 120. */
+export function freeSpot(spawnX: number, taken: readonly number[], width: number): number {
+  const free = (x: number) => taken.every((o) => Math.abs(o - x) >= TRAVELER_SPACING);
+  for (let i = 0; i < 24; i++) {
+    for (const x of [spawnX + i * TRAVELER_SPACING, spawnX - i * TRAVELER_SPACING]) {
+      if (x >= 0 && x <= width && free(x)) return x;
+    }
+  }
+  return Math.min(Math.max(spawnX, 0), width);
+}
+
 interface DragState {
   entityId: EntityId;
   origin: { location: Location; transform?: Components['transform']; character?: DragOrigin };
@@ -97,6 +111,13 @@ export class GameEngine {
   savedSceneProvider: ((sceneId: SceneId) => SavedSceneState | undefined) | undefined;
   /** Called synchronously before a scene unloads so dirty state is snapshotted (HU-GAME-052 RN-3). */
   beforeSceneUnload: (() => void) | undefined;
+  /**
+   * Plays scene changes (HU-GAME-050): fade out, flush, `enterScene`, fade in, `transitionDone`. Without a
+   * handler (headless tests, tools) a travel enters the scene at once.
+   */
+  travelHandler: ((request: TravelRequest) => void) | undefined;
+  /** A transition is playing: world input is ignored (HU-GAME-050 RN-4). */
+  private transitioning = false;
 
   private constructor(options: GameEngineOptions) {
     this.clock = options.clock ?? systemClock;
@@ -296,6 +317,7 @@ export class GameEngine {
   }
 
   private handle(command: GameCommand): CommandResult {
+    if (this.transitioning && command && INPUT_COMMANDS.has(command.type)) return { ok: false, reason: 'transitioning' };
     switch (command?.type) {
       case 'cameraSettled':
         return this.cameraSettled(command.cameraX, command.viewportW);
@@ -305,6 +327,11 @@ export class GameEngine {
         return OK;
       case 'enterScene':
         return this.enterScene(command.sceneId, command.spawnId, command.travelers ?? []);
+      case 'travelTo':
+        return this.travel({ sceneId: command.sceneId, spawnId: command.spawnId, travelers: [] });
+      case 'transitionDone':
+        this.transitioning = false;
+        return OK;
       case 'pointerTap':
         return this.pointerTap(command.worldPoint, command.minHitWorld);
       case 'pointerLongPress':
@@ -386,15 +413,24 @@ export class GameEngine {
           this.world.create({ ...e, location: { kind: 'scene', sceneId }, components: { ...e.components, transform: { ...t, x: spawnDefault.x, y: spawnDefault.y } } });
         }
       }
-      travelers.forEach((id, i) => {
+      // Travelers stand at the spawn, 120 units away from anyone already there (HU-GAME-049 RN-8).
+      const taken = this.world
+        .query({ sceneId, has: ['character'] })
+        .filter((c) => !travelers.includes(c.id))
+        .map((c) => c.components.transform?.x ?? 0);
+      for (const id of travelers) {
         const t = this.world.get(id);
-        if (!t) return;
+        if (!t) continue;
+        const x = freeSpot(spawn!.x, taken, def.size.width);
+        taken.push(x);
         this.locations.move(id, { kind: 'scene', sceneId });
-        this.world.update(id, { transform: { ...(t.components.transform ?? {}), x: spawn!.x + i * TRAVELER_SPACING, y: spawn!.y } });
-      });
+        this.world.update(id, { transform: { ...(t.components.transform ?? {}), x, y: spawn!.y, flipX: spawn!.facing === 'left' ? true : spawn!.facing === 'right' ? false : t.components.transform?.flipX } });
+        if (t.components.pose && t.components.pose.current !== 'idle') this.characters.setPose(id, 'idle', { force: true });
+      }
       this.activeScene = built.info;
       this.repairSeats(sceneId, spawnDefault);
-      const cameraX = resuming ? this.player.cameraX! : this.initialCameraX(built.info, spawn!.x);
+      // Arriving from another scene the camera centers the arrival spawn (HU-GAME-049 RN-9).
+      const cameraX = resuming ? this.player.cameraX! : this.initialCameraX(built.info, spawn!.x, !!from);
       this.player = { ...this.player, currentSceneId: sceneId, cameraX };
       recomputeSupport(this.world, built.info);
       this.world.emit({ type: 'sceneLoaded', from, to: sceneId, cameraX });
@@ -432,10 +468,11 @@ export class GameEngine {
   }
 
   /** SCENE_SYSTEM §2 step 6: camera.startX, else centered on camera.startSpawnId, else on the arrival spawn. */
-  private initialCameraX(scene: ActiveSceneInfo, arrivalX: number): number {
+  private initialCameraX(scene: ActiveSceneInfo, arrivalX: number, arriving = false): number {
     const w = this.viewportW;
     let target: number;
-    if (scene.camera?.startX !== undefined) target = scene.camera.startX;
+    if (arriving) target = arrivalX - (w ?? 0) / 2;
+    else if (scene.camera?.startX !== undefined) target = scene.camera.startX;
     else {
       const sp = scene.spawnPoints?.find((s) => s.id === scene.camera?.startSpawnId);
       target = (sp?.x ?? arrivalX) - (w ?? 0) / 2;
@@ -670,7 +707,32 @@ export class GameEngine {
     if (this.world.get(entityId)?.components.character) this.characters.onDragEnd(entityId);
     this.effects.trigger(entityId, 'drop');
     this.world.emit({ type: 'dropped', entityId, placed: outcome.kind !== 'performed' });
+    if (outcome.kind === 'performed' && outcome.travel) return this.travel(outcome.travel);
     return OK;
+  }
+
+  /** Portal or map travel (HU-GAME-049/051): through the travel handler when the app has one. */
+  private travel(request: TravelRequest): CommandResult {
+    if (!this.content?.scene(request.sceneId)) {
+      this.logger.warn(`Travel to unknown scene ${request.sceneId}`);
+      return { ok: false, reason: 'unknownScene' };
+    }
+    if (!this.travelHandler) return this.enterScene(request.sceneId, request.spawnId, request.travelers);
+    if (this.drag) this.dragCancel(this.drag.entityId);
+    this.transitioning = true;
+    this.world.transaction(() => this.world.emit({ type: 'transitionStarted', from: this.activeScene?.id, to: request.sceneId }));
+    this.travelHandler(request);
+    return OK;
+  }
+
+  /** An entity is being dragged (the map button waits, HU-GAME-051 RN-7). */
+  get isDragging(): boolean {
+    return !!this.drag;
+  }
+
+  /** True while a transition plays (HUD buttons are disabled too). */
+  get isTransitioning(): boolean {
+    return this.transitioning;
   }
 
   /**

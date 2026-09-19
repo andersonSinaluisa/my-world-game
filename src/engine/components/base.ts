@@ -165,6 +165,14 @@ export type Spawner = z.infer<typeof SpawnerSchema>;
 export type SpawnedFrom = z.infer<typeof SpawnedFromSchema>;
 
 // §5.14 (Fase 2; isPurchased needs it for the backpack rule)
+/** Door to another scene (ENTITY_SCHEMA §5.12, HU-GAME-049). */
+export const PortalSchema = z.strictObject({
+  targetSceneId: z.string().min(1),
+  targetSpawnId: z.string().min(1),
+  accepts: z.array(z.string().min(1)).optional(),
+});
+export type Portal = z.infer<typeof PortalSchema>;
+
 export const PurchasableSchema = z.strictObject({
   price: z.number().int().min(0),
   purchased: z.boolean().optional(),

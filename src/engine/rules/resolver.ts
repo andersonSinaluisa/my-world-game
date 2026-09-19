@@ -1,5 +1,5 @@
 import { ACTIONS } from '../actions';
-import { fail, PASS, type ActionEnv, type Check, type InteractionContext } from '../actions/types';
+import { fail, PASS, type ActionEnv, type Check, type InteractionContext, type TravelRequest } from '../actions/types';
 import type { RegisteredRule } from '../content/registry';
 import type { ActionSpec } from '../content/schemas';
 import type { Entity } from '../core/entity';
@@ -33,7 +33,7 @@ export interface PreviewOutcome {
 }
 
 export type ResolveOutcome =
-  | { kind: 'performed'; ruleId: string; targetId?: EntityId; startDrag?: EntityId }
+  | { kind: 'performed'; ruleId: string; targetId?: EntityId; startDrag?: EntityId; travel?: TravelRequest }
   | { kind: 'rejected'; ruleId: string; reason: string; targetId?: EntityId }
   | { kind: 'none'; targetId?: EntityId };
 
@@ -193,7 +193,7 @@ export class InteractionResolver {
           uiTarget: c.target ? undefined : c.rule.target.ui,
           actions: c.rule.actions.map((a) => a.type),
         });
-        return { kind: 'performed', ruleId: c.rule.qualifiedId, targetId: c.target?.id, startDrag: ctx.output.startDrag };
+        return { kind: 'performed', ruleId: c.rule.qualifiedId, targetId: c.target?.id, startDrag: ctx.output.startDrag, travel: ctx.output.travel };
       }
       // An action that does not validate cancels the whole rule (INTERACTION_SCHEMA §6).
       return this.reject(env, input, c, result.reason);

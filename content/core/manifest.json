@@ -5,16 +5,45 @@
   "formatVersion": 1,
   "provides": {
     "scenes": [
-      "home"
+      "home",
+      "street",
+      "store"
     ],
-    "characterParts": true
+    "characterParts": true,
+    "locations": [
+      {
+        "id": "home",
+        "name": "location.home.name",
+        "icon": "ui_map_home",
+        "entrySceneId": "core:home",
+        "entrySpawnId": "front_door"
+      },
+      {
+        "id": "street",
+        "name": "location.street.name",
+        "icon": "ui_map_street",
+        "entrySceneId": "core:street",
+        "entrySpawnId": "default"
+      },
+      {
+        "id": "store",
+        "name": "location.store.name",
+        "icon": "ui_map_store",
+        "entrySceneId": "core:store",
+        "entrySpawnId": "entrance"
+      }
+    ]
   },
   "newGame": {
     "sceneId": "core:home",
     "spawnId": "default",
     "coins": 50,
     "dailyGiftCoins": 10,
-    "unlocks": [],
+    "unlocks": [
+      "core:home",
+      "core:street",
+      "core:store"
+    ],
     "inventoryCapacity": 12
   },
   "distribution": "bundled"

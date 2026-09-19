@@ -30,6 +30,21 @@ export interface EntityRenderData {
   cover?: boolean;
 }
 
+/** A card of the map (HU-GAME-051). */
+export interface MapLocation {
+  id: string;
+  label: string;
+  icon: string;
+  sceneId: string;
+  spawnId: string;
+  current: boolean;
+  locked: boolean;
+}
+
+const EMPTY_LOCATIONS: MapLocation[] = [];
+/** Palette color of the fades when the scene declares none (HU-GAME-050 RN-2). */
+export const DEFAULT_TRANSITION_COLOR = '#FFE7C2';
+
 /** A backpack slot for the tray (HU-GAME-038 R1). */
 export interface InventorySlotView {
   slot: number;
@@ -67,6 +82,14 @@ export interface GameFacade {
     cameraX(): number | undefined;
     /** Active zone (room) of the camera; updated on cameraSettled and scene entry (HU-GAME-012). */
     activeZone(): string | undefined;
+    /** A drag or a scene transition is in progress: HUD navigation waits (HU-GAME-051 RN-7). */
+    busy(): boolean;
+    /** Map cards: every provides.locations of the loaded packs (HU-GAME-051 RN-2). */
+    locations(): MapLocation[];
+    /** Zone buttons of the active scene, with labels (HU-GAME-051 RN-5). */
+    zones(): { id: string; label: string; icon?: string }[];
+    /** Fade color into a scene (content data, default from the palette). */
+    transitionColor(sceneId: string | undefined): string;
     /** Layers of a character, memoized (same array while its look does not change, HU-GAME-013 R7). */
     characterLayers(id: EntityId): CharacterLayerData[];
     /** Numbers for the dev performance overlay (HU-GAME-071). */
@@ -136,6 +159,9 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
   let settingsCache: { version: number; data: { musicVolume: number; sfxVolume: number; muted: boolean; language?: 'es' | 'en' } } | undefined;
   const previewCache = new Map<string, CharacterLayerData[]>();
   let clothingCache: ClothingOption[] | undefined;
+  let locationCache: { key: string; value: MapLocation[] } | undefined;
+  let zoneCache: { key: string; value: { id: string; label: string; icon?: string }[] } | undefined;
+  const locale = (): LocaleId => engine.settings.language ?? options.locale ?? 'es';
   let visibleCache: { version: number; byKey: Map<string, EntityRenderData[]> } = { version: -1, byKey: new Map() };
 
   // Commands dispatched from listeners are queued and run after the current one (deterministic order).
@@ -207,6 +233,42 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
       activeScene: () => engine.scene,
       cameraX: () => engine.playerState.cameraX,
       activeZone: () => engine.activeZoneId,
+      busy: () => engine.isDragging || engine.isTransitioning,
+      locations: () => {
+        const content = engine.content;
+        if (!content) return EMPTY_LOCATIONS;
+        const current = engine.scene ? content.scene(engine.scene.id) : undefined;
+        const unlocks = engine.playerState.unlocks;
+        const key = JSON.stringify([current?.qualifiedId, unlocks, locale()]);
+        if (locationCache?.key === key) return locationCache.value;
+        const value = content.packs().flatMap((m) =>
+          (m.provides.locations ?? []).map((l) => {
+            const sceneId = l.entrySceneId.includes(':') ? l.entrySceneId : `${m.id}:${l.entrySceneId}`;
+            const id = `${m.id}:${l.id}`;
+            return {
+              id,
+              label: content.t(l.name, locale()),
+              icon: l.icon,
+              sceneId,
+              spawnId: l.entrySpawnId,
+              current: !!current && current.pack === m.id && current.location === l.id,
+              // MVP: every location is unlocked unless player.unlocks lists some (GAME_RULES R7).
+              locked: !!unlocks?.length && !unlocks.includes(id) && !unlocks.includes(l.id),
+            };
+          }),
+        );
+        locationCache = { key, value };
+        return value;
+      },
+      zones: () => {
+        const scene = engine.scene;
+        const key = JSON.stringify([scene?.id, locale()]);
+        if (zoneCache?.key === key) return zoneCache.value;
+        const value = (scene?.zones ?? []).map((z) => ({ id: z.id, label: engine.content?.t(z.name, locale()) ?? z.name, icon: z.icon }));
+        zoneCache = { key, value };
+        return value;
+      },
+      transitionColor: (sceneId) => (sceneId && engine.content?.scene(sceneId)?.transitionColor) || DEFAULT_TRANSITION_COLOR,
       characterLayers: (id) => engine.characterLayers(id),
       packVersion: (packId) => engine.content?.manifest(packId)?.version,
       perf: () => ({ loadedEntities: engine.world.size, lastTransitionMs: engine.lastTransitionMs }),

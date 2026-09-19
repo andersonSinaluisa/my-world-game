@@ -872,6 +872,22 @@
       "license": "own",
       "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
     },
+    "env_home_door_front": {
+      "file": "assets/images/env_home_door_front.webp",
+      "w": 320,
+      "h": 408,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_home_door_front_open": {
+      "file": "assets/images/env_home_door_front_open.webp",
+      "w": 320,
+      "h": 408,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
     "env_home_fridge_closed": {
       "file": "assets/images/env_home_fridge_closed.webp",
       "w": 210,
@@ -1055,6 +1071,174 @@
       "placeholder": true,
       "license": "own",
       "source": "MyWorld placeholder (scripts/generate-home-content.ts)"
+    },
+    "env_store_bg_checkout_01": {
+      "file": "assets/images/env_store_bg_checkout_01.webp",
+      "w": 1920,
+      "h": 1080,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_store_bg_entrance_01": {
+      "file": "assets/images/env_store_bg_entrance_01.webp",
+      "w": 1920,
+      "h": 1080,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_store_door_entrance": {
+      "file": "assets/images/env_store_door_entrance.webp",
+      "w": 320,
+      "h": 408,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_store_door_entrance_open": {
+      "file": "assets/images/env_store_door_entrance_open.webp",
+      "w": 320,
+      "h": 408,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_store_fridge_display_closed": {
+      "file": "assets/images/env_store_fridge_display_closed.webp",
+      "w": 310,
+      "h": 428,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_store_fridge_display_open": {
+      "file": "assets/images/env_store_fridge_display_open.webp",
+      "w": 390,
+      "h": 428,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_store_register_01": {
+      "file": "assets/images/env_store_register_01.webp",
+      "w": 460,
+      "h": 308,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_store_shelf_wood": {
+      "file": "assets/images/env_store_shelf_wood.webp",
+      "w": 330,
+      "h": 428,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_street_bench_park_green": {
+      "file": "assets/images/env_street_bench_park_green.webp",
+      "w": 1157,
+      "h": 150,
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://opengameart.org/content/glitch-furniture-svg"
+    },
+    "env_street_bg_home_01": {
+      "file": "assets/images/env_street_bg_home_01.webp",
+      "w": 1920,
+      "h": 1080,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_street_bg_park_01": {
+      "file": "assets/images/env_street_bg_park_01.webp",
+      "w": 1920,
+      "h": 1080,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_street_bg_store_01": {
+      "file": "assets/images/env_street_bg_store_01.webp",
+      "w": 1920,
+      "h": 1080,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_street_door_home": {
+      "file": "assets/images/env_street_door_home.webp",
+      "w": 320,
+      "h": 408,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_street_door_home_open": {
+      "file": "assets/images/env_street_door_home_open.webp",
+      "w": 320,
+      "h": 408,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_street_door_store": {
+      "file": "assets/images/env_street_door_store.webp",
+      "w": 320,
+      "h": 408,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_street_door_store_open": {
+      "file": "assets/images/env_street_door_store_open.webp",
+      "w": 320,
+      "h": 408,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_street_lamp_off": {
+      "file": "assets/images/env_street_lamp_off.webp",
+      "w": 240,
+      "h": 530,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_street_lamp_on": {
+      "file": "assets/images/env_street_lamp_on.webp",
+      "w": 240,
+      "h": 560,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_street_mailbox_blue_closed": {
+      "file": "assets/images/env_street_mailbox_blue_closed.webp",
+      "w": 160,
+      "h": 280,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_street_mailbox_blue_open": {
+      "file": "assets/images/env_street_mailbox_blue_open.webp",
+      "w": 160,
+      "h": 280,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "env_street_sky_01": {
+      "file": "assets/images/env_street_sky_01.webp",
+      "w": 1920,
+      "h": 1080,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
     },
     "obj_bath_toothbrush": {
       "file": "assets/images/obj_bath_toothbrush.webp",
@@ -1551,6 +1735,30 @@
       "placeholder": true,
       "license": "own",
       "source": "MyWorld placeholder (scripts/generate-character-placeholders.ts)"
+    },
+    "ui_map_home": {
+      "file": "assets/images/ui_map_home.webp",
+      "w": 200,
+      "h": 200,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "ui_map_store": {
+      "file": "assets/images/ui_map_store.webp",
+      "w": 200,
+      "h": 200,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
+    },
+    "ui_map_street": {
+      "file": "assets/images/ui_map_street.webp",
+      "w": 200,
+      "h": 200,
+      "placeholder": true,
+      "license": "own",
+      "source": "MyWorld placeholder (scripts/generate-town-content.ts)"
     }
   },
   "audio": {
@@ -1623,6 +1831,20 @@
       "placeholder": true,
       "license": "CC0",
       "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_portal_whoosh": {
+      "file": "assets/audio/sfx_portal_whoosh.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/interface-sounds"
+    },
+    "sfx_register_ching": {
+      "file": "assets/audio/sfx_register_ching.m4a",
+      "kind": "sfx",
+      "placeholder": true,
+      "license": "CC0",
+      "source": "https://kenney.nl/assets/digital-audio"
     },
     "sfx_reject_soft": {
       "file": "assets/audio/sfx_reject_soft.m4a",

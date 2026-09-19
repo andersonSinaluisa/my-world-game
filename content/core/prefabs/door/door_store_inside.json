@@ -1,0 +1,44 @@
+{
+  "id": "door_store_inside",
+  "category": "furniture",
+  "tags": [
+    "door"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_store_door_entrance",
+      "layer": "furniture",
+      "byState": {
+        "open": "env_store_door_entrance_open"
+      }
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -100,
+        "y": -400,
+        "w": 200,
+        "h": 400
+      }
+    },
+    "states": {
+      "current": "closed",
+      "values": [
+        "closed",
+        "open"
+      ]
+    },
+    "openable": {
+      "openState": "open",
+      "closedState": "closed"
+    },
+    "portal": {
+      "targetSceneId": "core:street",
+      "targetSpawnId": "store_door"
+    }
+  },
+  "metadata": {
+    "name": "object.door_store_inside.name",
+    "placeholder": true
+  }
+}

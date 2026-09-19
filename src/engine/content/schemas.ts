@@ -212,6 +212,8 @@ export const SceneSchema = z.strictObject({
         x2: finite,
         audio: AudioRef.optional(),
         snapCameraX: finite.optional(),
+        /** Map button icon (HU-GAME-051 RN-5). */
+        icon: z.string().min(1).optional(),
       }),
     )
     .optional(),
@@ -221,6 +223,8 @@ export const SceneSchema = z.strictObject({
   entities: z.array(SceneEntitySchema),
   audio: AudioRef.optional(),
   camera: z.strictObject({ startX: finite.optional(), startSpawnId: z.string().optional() }).optional(),
+  /** Palette color of the fade into this scene (HU-GAME-050 RN-2). */
+  transitionColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
   metadata: z.strictObject({ author: z.string().optional(), placeholder: z.boolean().optional() }).optional(),
 });
 export type SceneDefinition = z.infer<typeof SceneSchema>;

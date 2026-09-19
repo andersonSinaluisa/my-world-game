@@ -1,0 +1,70 @@
+{
+  "id": "mailbox",
+  "category": "container",
+  "tags": [
+    "furniture"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "env_street_mailbox_blue_closed",
+      "layer": "furniture",
+      "byState": {
+        "open": "env_street_mailbox_blue_open"
+      }
+    },
+    "hitbox": {
+      "shape": {
+        "type": "rect",
+        "x": -70,
+        "y": -260,
+        "w": 140,
+        "h": 260
+      },
+      "zones": {
+        "inside": {
+          "type": "rect",
+          "x": -64,
+          "y": -250,
+          "w": 128,
+          "h": 120
+        }
+      }
+    },
+    "states": {
+      "current": "closed",
+      "values": [
+        "closed",
+        "open"
+      ]
+    },
+    "openable": {
+      "openState": "open",
+      "closedState": "closed"
+    },
+    "container": {
+      "capacity": 4,
+      "slots": [
+        {
+          "x": -30,
+          "y": -200
+        },
+        {
+          "x": 30,
+          "y": -200
+        },
+        {
+          "x": -30,
+          "y": -150
+        },
+        {
+          "x": 30,
+          "y": -150
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "name": "object.mailbox.name",
+    "placeholder": true
+  }
+}

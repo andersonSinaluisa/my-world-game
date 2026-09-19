@@ -1,0 +1,151 @@
+{
+  "id": "street",
+  "name": "scene.street.name",
+  "location": "street",
+  "size": {
+    "width": 5760,
+    "height": 1080
+  },
+  "background": {
+    "layers": [
+      {
+        "id": "sky",
+        "parallax": 0.5,
+        "chunks": [
+          {
+            "asset": "env_street_sky_01",
+            "x": 0,
+            "width": 1920
+          },
+          {
+            "asset": "env_street_sky_01",
+            "x": 1920,
+            "width": 1920
+          },
+          {
+            "asset": "env_street_sky_01",
+            "x": 3840,
+            "width": 1920
+          }
+        ]
+      },
+      {
+        "id": "street",
+        "chunks": [
+          {
+            "asset": "env_street_bg_home_01",
+            "x": 0,
+            "width": 1920
+          },
+          {
+            "asset": "env_street_bg_park_01",
+            "x": 1920,
+            "width": 1920
+          },
+          {
+            "asset": "env_street_bg_store_01",
+            "x": 3840,
+            "width": 1920
+          }
+        ]
+      }
+    ]
+  },
+  "floor": [
+    {
+      "y": 960
+    }
+  ],
+  "zones": [
+    {
+      "id": "home_front",
+      "name": "zone.home_front.name",
+      "x1": 0,
+      "x2": 1920,
+      "snapCameraX": 960
+    },
+    {
+      "id": "park",
+      "name": "zone.park.name",
+      "x1": 1920,
+      "x2": 3840,
+      "snapCameraX": 2880
+    },
+    {
+      "id": "store_front",
+      "name": "zone.store_front.name",
+      "x1": 3840,
+      "x2": 5760,
+      "snapCameraX": 4800
+    }
+  ],
+  "spawnPoints": [
+    {
+      "id": "default",
+      "x": 960,
+      "y": 960
+    },
+    {
+      "id": "home_door",
+      "x": 820,
+      "y": 960,
+      "facing": "right"
+    },
+    {
+      "id": "store_door",
+      "x": 4700,
+      "y": 960,
+      "facing": "left"
+    }
+  ],
+  "entities": [
+    {
+      "localId": "home_door",
+      "prefabId": "door_home_outside",
+      "transform": {
+        "x": 700,
+        "y": 960
+      }
+    },
+    {
+      "localId": "mailbox",
+      "prefabId": "mailbox",
+      "transform": {
+        "x": 1500,
+        "y": 960
+      }
+    },
+    {
+      "localId": "bench",
+      "prefabId": "bench_park",
+      "transform": {
+        "x": 2700,
+        "y": 960
+      }
+    },
+    {
+      "localId": "street_lamp",
+      "prefabId": "street_lamp",
+      "transform": {
+        "x": 3200,
+        "y": 960
+      }
+    },
+    {
+      "localId": "store_door",
+      "prefabId": "door_store",
+      "transform": {
+        "x": 4820,
+        "y": 960
+      }
+    }
+  ],
+  "audio": {
+    "music": "mus_street_day_01",
+    "ambience": "amb_street_birds_01"
+  },
+  "transitionColor": "#BEE9FF",
+  "metadata": {
+    "placeholder": true
+  }
+}
