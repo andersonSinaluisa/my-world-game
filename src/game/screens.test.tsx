@@ -192,11 +192,11 @@ describe('title and settings (HU-GAME-073/075)', () => {
  * HU-GAME-070 RN-1/RN-2/RN-5: every button has a label and an explicit touch area of at least 64 dp
  * (child screens) or 48 dp (adult screens). Size = explicit width/height or minWidth/minHeight, plus hitSlop.
  */
-function touchIssues(min: number): string[] {
+function touchIssues(min: number, minButtons = 2): string[] {
   const { StyleSheet } = jest.requireActual('react-native') as typeof import('react-native');
   const issues: string[] = [];
   const buttons = screen.getAllByRole('button');
-  if (buttons.length < 2) issues.push(`only ${buttons.length} buttons found`);
+  if (buttons.length < minButtons) issues.push(`only ${buttons.length} buttons found`);
   for (const b of buttons) {
     const label = b.props.accessibilityLabel as string | undefined;
     if (!label) issues.push(`button without accessibilityLabel (${JSON.stringify(b.props.testID ?? '')})`);
@@ -279,5 +279,27 @@ describe('map (HU-GAME-051)', () => {
     expect(onZone).toHaveBeenCalledWith('right');
     await act(async () => fireEvent.press(screen.getByRole('button', { name: 'Pasillo' })));
     expect(game.engine.scene?.id).toBe('test:hall');
+  });
+});
+
+describe('wallet HUD (HU-GAME-065/067)', () => {
+  it('shows the coins and claims the daily gift once', async () => {
+    const { CoinCounter, GiftBox } = jest.requireActual('@/game/wallet-hud') as typeof import('@/game/wallet-hud');
+    const pack = withCharacters(testPack());
+    (pack.manifest.data as { newGame: Record<string, unknown> }).newGame = { sceneId: 'test:room', spawnId: 'default', coins: 50, dailyGiftCoins: 10, unlocks: [], inventoryCapacity: 12 };
+    const game = createTestGame({ packs: [pack], enter: { sceneId: 'test:room' } });
+    game.engine.setPlayerState({ ...game.engine.playerState, wallet: { coins: 50 } });
+    const facade = createGameFacade(game.engine);
+    await render(
+      <GameProvider facade={facade}>
+        <CoinCounter />
+        <GiftBox />
+      </GameProvider>,
+    );
+    expect(screen.getByLabelText('50 ui.wallet.label')).toBeTruthy();
+    expect(touchIssues(64, 1)).toEqual([]);
+    await act(async () => fireEvent.press(screen.getByRole('button', { name: 'ui.gift.open' })));
+    expect(screen.getByLabelText('60 ui.wallet.label')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'ui.gift.open' })).toBeNull();
   });
 });

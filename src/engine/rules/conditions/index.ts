@@ -151,6 +151,19 @@ export const belowMax: ConditionHandler<z.infer<typeof BelowMaxParams>> = {
   },
 };
 
+const CanAffordParams = z.strictObject({ type: z.literal('canAfford'), item: Role.default('$source') });
+
+/** The wallet covers purchasable.price of the item (HU-GAME-066 RN-1). */
+export const canAfford: ConditionHandler<z.infer<typeof CanAffordParams>> = {
+  type: 'canAfford',
+  params: CanAffordParams,
+  evaluate(ctx, p) {
+    const price = resolveRole(ctx, p.item)?.components.purchasable?.price;
+    if (price === undefined) return fail('notPurchasable');
+    return ctx.env.wallet.coins() >= price ? PASS : fail('canAfford');
+  },
+};
+
 const SeatFreeParams = z.strictObject({ type: z.literal('seatFree'), of: Role.default('$target') });
 
 /** Nobody occupies the seat or bed (HU-GAME-045/046). The dragged character itself does not count. */
@@ -166,7 +179,7 @@ export const seatFree: ConditionHandler<z.infer<typeof SeatFreeParams>> = {
 
 /** Closed set of conditions (INTERACTION_SCHEMA §4). No expressions, no scripting. */
 export const CONDITIONS: Record<string, ConditionHandler<never>> = Object.fromEntries(
-  [stateIs, isOpen, handFree, containerHasSpace, inventoryHasSpace, isPurchased, canWear, slotWorn, poseIsNot, belowMax, seatFree].map((c) => [c.type, c as unknown as ConditionHandler<never>]),
+  [stateIs, isOpen, handFree, containerHasSpace, inventoryHasSpace, isPurchased, canWear, slotWorn, poseIsNot, belowMax, seatFree, canAfford].map((c) => [c.type, c as unknown as ConditionHandler<never>]),
 );
 
 export const CONDITION_TYPES = Object.keys(CONDITIONS);

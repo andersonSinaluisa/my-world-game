@@ -2,6 +2,7 @@ import { isOpenEntity } from '../actions/container-actions';
 import { DEFAULT_INVENTORY_CAPACITY } from '../actions/inventory-actions';
 import { DEFAULT_AUDIO_SETTINGS, type AudioSettings } from '../audio/audio-director';
 import { seatedTransform, seatSpec } from '../actions/seat-actions';
+import { isUnpaid, MAX_COINS, returnToOrigin } from '../actions/economy-actions';
 import type { ActionEnv, TravelRequest } from '../actions/types';
 import { handAnchor } from '../characters/catalog';
 import { CharacterCommands } from '../characters/character-commands';
@@ -285,6 +286,7 @@ export class GameEngine {
       characters: this.characters,
       inventoryCapacity: () => this.inventoryCapacity,
       instantiate: (prefabId, owner) => this.instantiate(prefabId, owner),
+      wallet: { coins: () => this.coins, add: (delta) => this.addCoins(delta) },
     };
   }
 
@@ -329,6 +331,8 @@ export class GameEngine {
         return this.enterScene(command.sceneId, command.spawnId, command.travelers ?? []);
       case 'travelTo':
         return this.travel({ sceneId: command.sceneId, spawnId: command.spawnId, travelers: [] });
+      case 'claimDailyGift':
+        return this.claimDailyGift();
       case 'transitionDone':
         this.transitioning = false;
         return OK;
@@ -708,6 +712,8 @@ export class GameEngine {
     this.effects.trigger(entityId, 'drop');
     this.world.emit({ type: 'dropped', entityId, placed: outcome.kind !== 'performed' });
     if (outcome.kind === 'performed' && outcome.travel) return this.travel(outcome.travel);
+    // A character stopped at the door with an unpaid product: the product goes back to its shelf (HU-GAME-066 RN-5).
+    if (outcome.kind === 'rejected' && outcome.reason === 'notPurchased') this.returnUnpaidHeld(entityId);
     return OK;
   }
 
@@ -723,6 +729,59 @@ export class GameEngine {
     this.world.transaction(() => this.world.emit({ type: 'transitionStarted', from: this.activeScene?.id, to: request.sceneId }));
     this.travelHandler(request);
     return OK;
+  }
+
+  // ---------- economy (HU-GAME-065..067) ----------
+
+  get coins(): number {
+    return this.player.wallet?.coins ?? 0;
+  }
+
+  /** Applies a coin change: never below 0 (refused), capped at 999 (RN-3, RN-7). Emits walletChanged. */
+  addCoins(delta: number): boolean {
+    if (!Number.isInteger(delta)) return false;
+    const before = this.coins;
+    if (before + delta < 0) return false;
+    const coins = Math.min(before + delta, MAX_COINS);
+    if (coins === before) return true;
+    this.world.transaction(() => {
+      this.player = { ...this.player, wallet: { coins } };
+      this.world.emit({ type: 'playerChanged', keys: ['wallet'] });
+      this.world.emit({ type: 'walletChanged', coins, delta: coins - before });
+    });
+    return true;
+  }
+
+  /** Local calendar day of the injected clock (HU-GAME-067 RN-3). */
+  private today(): string {
+    const d = new Date(this.clock.now());
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  /** The gift box shows when today's gift is still unclaimed (HU-GAME-067 RN-1). */
+  get dailyGiftAvailable(): boolean {
+    return !!this.content?.newGame()?.dailyGiftCoins && this.player.dailyReward?.lastClaimDate !== this.today();
+  }
+
+  private claimDailyGift(): CommandResult {
+    if (!this.dailyGiftAvailable) return { ok: false, reason: 'alreadyClaimed' };
+    const amount = this.content?.newGame()?.dailyGiftCoins ?? 0;
+    this.world.transaction(() => {
+      this.player = { ...this.player, dailyReward: { lastClaimDate: this.today() } };
+      this.world.emit({ type: 'playerChanged', keys: ['dailyReward'] });
+      this.addCoins(amount);
+    });
+    return OK;
+  }
+
+  private returnUnpaidHeld(characterId: EntityId): void {
+    const env = this.env();
+    if (!env) return;
+    const unpaid = this.world.index.heldBy(characterId).filter((id) => isUnpaid(this.world.get(id)));
+    if (!unpaid.length) return;
+    this.world.transaction(() => {
+      for (const id of unpaid) returnToOrigin(env, id);
+    });
   }
 
   /** An entity is being dragged (the map button waits, HU-GAME-051 RN-7). */

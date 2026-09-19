@@ -1,7 +1,9 @@
 /**
  * Placeholder content of the street and the store building (EPIC-014/018/019, HU-GAME-049/063/064). NOT
  * final art: simple own vector drawings plus a Glitch CC0 bench. Writes images, assets.json entries,
- * prefabs, the street and store scenes, the home front door, map icons, locations and i18n.
+ * prefabs, the street and store scenes (with the products of HU-GAME-064), the home front door, hidden coins
+ * (HU-GAME-067), the economy rules, map icons, locations and i18n. Run it AFTER generate-home-content.ts,
+ * which rewrites the house entities.
  *
  * Usage: npx tsx scripts/generate-town-content.ts   (then npm run content:assets && npm run content:validate)
  */
@@ -137,6 +139,7 @@ async function main() {
   await own('env_store_register_01', 460, 308, register());
   await own('env_store_fridge_display_closed', 310, 428, fridgeDisplay(false));
   await own('env_store_fridge_display_open', 390, 428, fridgeDisplay(true));
+  await own('obj_misc_coin_hidden', 72, 72, c(0, -36, 30, '#FFD23F', 5) + c(0, -36, 18, '#FFE58A', 3) + `<path d="M-6 -48 L6 -48 L6 -24 L-6 -24 Z" fill="#C9971C"/>`);
   await own('ui_map_home', 200, 200, houseIcon());
   await own('ui_map_street', 200, 200, streetIcon());
   await own('ui_map_store', 200, 200, storeIcon());
@@ -181,6 +184,12 @@ async function main() {
     hitbox: { shape: { type: 'rect', x: -220, y: -300, w: 440, h: 300 }, zones: { body: { type: 'rect', x: -220, y: -300, w: 440, h: 300 } } },
     surface: { segments: [{ x1: -200, x2: -70, y: -170 }, { x1: 120, x2: 200, y: -170 }] },
   }, 'Caja registradora', 'Cash register');
+  prefab('misc', 'coin_hidden', 'misc', ['coin'], {
+    sprite: { asset: 'obj_misc_coin_hidden', layer: 'props' },
+    hitbox: { shape: { type: 'circle', x: 0, y: -36, r: 30 }, padding: 12 },
+    collectible: { reward: { coins: 5 } },
+    animations: { tap: 'bounce' },
+  }, 'Moneda escondida', 'Hidden coin');
   prefab('container', 'fridge_display', 'container', ['furniture', 'appliance'], {
     sprite: { asset: 'env_store_fridge_display_closed', layer: 'furniture', byState: { open: 'env_store_fridge_display_open' } },
     hitbox: { shape: { type: 'rect', x: -150, y: -420, w: 300, h: 420 }, zones: { inside: { type: 'rect', x: -134, y: -404, w: 268, h: 384 } } },
@@ -221,6 +230,7 @@ async function main() {
   }
   writeScenes();
   writeManifest();
+  writeRules();
   console.log(`Wrote ${Object.keys(images).length} images and ${prefabs.length} prefabs`);
 }
 
@@ -262,6 +272,8 @@ function writeScenes() {
       at('bench', 'bench_park', 2700),
       at('street_lamp', 'street_lamp', 3200),
       at('store_door', 'door_store', 4820),
+      at('coin_1', 'coin_hidden', 2080),
+      at('coin_2', 'coin_hidden', 4320),
     ],
     audio: { music: 'mus_street_day_01', ambience: 'amb_street_birds_01' },
     transitionColor: '#BEE9FF',
@@ -300,6 +312,8 @@ function writeScenes() {
       at('shelf_2', 'store_shelf', 1900),
       at('shelf_3', 'store_shelf', 2450),
       at('register', 'cash_register', 3200),
+      ...products(),
+      at('coin_1', 'coin_hidden', 2860),
     ],
     audio: { music: 'mus_store_happy_01', ambience: 'amb_store_murmur_01' },
     transitionColor: '#D8F3DC',
@@ -318,12 +332,62 @@ function writeScenes() {
   // The house gets its front door (HU-GAME-059 RN-6, now with the portal of HU-GAME-049).
   const homeFile = path.join(PACK, 'scenes', 'home.json');
   const home = JSON.parse(fs.readFileSync(homeFile, 'utf8'));
-  home.entities = home.entities.filter((e: { localId: string }) => e.localId !== 'front_door');
+  home.entities = home.entities.filter((e: { localId: string }) => e.localId !== 'front_door' && !e.localId.startsWith('coin_'));
+  // Hidden coins peeking out next to furniture, never fully covered by something with tap rules (HU-GAME-067 RN-4).
+  home.entities.push(at('coin_1', 'coin_hidden', 1480), at('coin_2', 'coin_hidden', 2515), at('coin_3', 'coin_hidden', 5330));
   const plant = home.entities.find((e: { localId: string }) => e.localId === 'plant');
   if (plant) plant.transform.x = 1660;
   home.entities.unshift(at('front_door', 'door_front', 120));
   home.transitionColor = '#FFE3C2';
   fs.writeFileSync(homeFile, JSON.stringify(home, null, 2) + '\n');
+}
+
+/** Store stock (HU-GAME-064 RN-5): prefab, price and place (shelf row or display fridge slot). */
+function products() {
+  const shelf = (row: 0 | 1 | 2) => 960 - [300, 180, 60][row];
+  const out: Json[] = [];
+  const onShelf = (localId: string, prefabId: string, price: number, x: number, row: 0 | 1 | 2) =>
+    out.push({ localId, prefabId, transform: { x, y: shelf(row) }, overrides: { purchasable: { price } } });
+  const inFridge = (localId: string, prefabId: string, price: number, slot: number) =>
+    out.push({ localId, prefabId, inContainer: { localId: 'fridge_display', slot }, overrides: { purchasable: { price } } });
+  onShelf('p_apple', 'apple_red', 2, 1260, 0);
+  onShelf('p_banana', 'banana', 2, 1350, 0);
+  onShelf('p_cookie', 'cookie', 2, 1440, 1);
+  inFridge('p_sandwich', 'sandwich', 4, 0);
+  inFridge('p_cake', 'cake_slice', 5, 1);
+  inFridge('p_milk', 'milk_carton', 3, 2);
+  inFridge('p_juice', 'juice_glass', 3, 3);
+  onShelf('p_ball', 'ball', 8, 1820, 0);
+  onShelf('p_duck', 'rubber_duck', 6, 1960, 0);
+  onShelf('p_blocks', 'toy_blocks', 12, 1840, 1);
+  onShelf('p_teddy', 'teddy', 15, 1960, 2);
+  onShelf('p_cloth_1', 'shirt_dino_orange', 15, 2390, 0);
+  onShelf('p_cloth_2', 'pants_green', 12, 2510, 1);
+  onShelf('p_cloth_3', 'shoes_black', 10, 2390, 2);
+  onShelf('p_cloth_4', 'sandals_blue', 10, 2510, 2);
+  return out;
+}
+
+/** Economy rules (INTERACTION_SCHEMA §7): pay at the register, pick up hidden coins. */
+function writeRules() {
+  const file = path.join(PACK, 'interactions', 'core.rules.json');
+  const rules = JSON.parse(fs.readFileSync(file, 'utf8')) as Json[];
+  const mine: Json[] = [
+    {
+      id: 'buy_at_register',
+      trigger: 'drop',
+      source: { has: ['purchasable'] },
+      target: { tags: ['checkout'] },
+      conditions: [{ type: 'isPurchased', value: false }, { type: 'canAfford' }],
+      actions: [{ type: 'purchase' }],
+      priority: 95,
+      fallback: 'returnToOrigin',
+      feedback: { rejectHint: 'ui_hint_need_coins' },
+    },
+    { id: 'tap_collect', trigger: 'tap', target: { has: ['collectible'] }, actions: [{ type: 'collect' }], priority: 30 },
+  ];
+  const ids = new Set(mine.map((r) => r.id));
+  fs.writeFileSync(file, JSON.stringify([...rules.filter((r) => !ids.has(r.id as string)), ...mine], null, 2) + '\n');
 }
 
 function writeManifest() {

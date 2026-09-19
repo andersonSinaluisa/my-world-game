@@ -108,9 +108,9 @@ flowchart LR
 | [HU-GAME-075](mvp/EPIC-026-app-shell.md) | Pantalla de ajustes | EPIC-026 | Must | 1 | HU-GAME-074 | Done |
 | [HU-GAME-051](mvp/EPIC-014-navigation.md) | Mapa de ubicaciones | EPIC-014 | Should | 2 | HU-GAME-050 | Done |
 | [HU-GAME-063](mvp/EPIC-018-street.md) | Calle jugable | EPIC-018 | Must | 2 | HU-GAME-008, HU-GAME-035, HU-GAME-045, HU-GAME-047, HU-GAME-049 | Done (música y ambiente de la calle: sin pista todavía, como HU-GAME-057) |
-| [HU-GAME-064](mvp/EPIC-019-store.md) | Tienda jugable | EPIC-019 | Must | 2 | HU-GAME-035, HU-GAME-049, HU-GAME-066 | Draft |
-| [HU-GAME-065](mvp/EPIC-020-economy.md) | Monedero de monedas | EPIC-020 | Must | 2 | HU-GAME-052, HU-GAME-004 | Draft |
-| [HU-GAME-066](mvp/EPIC-020-economy.md) | Comprar objetos | EPIC-020 | Must | 2 | HU-GAME-065, HU-GAME-031 | Draft |
+| [HU-GAME-064](mvp/EPIC-019-store.md) | Tienda jugable | EPIC-019 | Must | 2 | HU-GAME-035, HU-GAME-049, HU-GAME-066 | Done (música y ambiente de la tienda: sin pista todavía; animación de monedas volando: pendiente) |
+| [HU-GAME-065](mvp/EPIC-020-economy.md) | Monedero de monedas | EPIC-020 | Must | 2 | HU-GAME-052, HU-GAME-004 | Done |
+| [HU-GAME-066](mvp/EPIC-020-economy.md) | Comprar objetos | EPIC-020 | Must | 2 | HU-GAME-065, HU-GAME-031 | Done |
 
 ## MVP · P2
 
@@ -118,7 +118,7 @@ flowchart LR
 |---|---|---|---|---|---|---|
 | [HU-GAME-030](mvp/EPIC-007-drag-drop.md) | Los objetos apoyados se mueven con su mueble | EPIC-007 | Could | 1 | HU-GAME-028, HU-GAME-048 | Done |
 | [HU-GAME-055](mvp/EPIC-015-save.md) | Reiniciar el mundo | EPIC-015 | Could | 1 | HU-GAME-053, HU-GAME-074 | Done |
-| [HU-GAME-067](mvp/EPIC-020-economy.md) | Regalo diario y monedas escondidas | EPIC-020 | Could | 2 | HU-GAME-065, HU-GAME-032 | Draft |
+| [HU-GAME-067](mvp/EPIC-020-economy.md) | Regalo diario y monedas escondidas | EPIC-020 | Could | 2 | HU-GAME-065, HU-GAME-032 | Done |
 
 ## POST-MVP
 

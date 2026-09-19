@@ -491,6 +491,30 @@
         "x": 7620,
         "y": 960
       }
+    },
+    {
+      "localId": "coin_1",
+      "prefabId": "coin_hidden",
+      "transform": {
+        "x": 1480,
+        "y": 960
+      }
+    },
+    {
+      "localId": "coin_2",
+      "prefabId": "coin_hidden",
+      "transform": {
+        "x": 2515,
+        "y": 960
+      }
+    },
+    {
+      "localId": "coin_3",
+      "prefabId": "coin_hidden",
+      "transform": {
+        "x": 5330,
+        "y": 960
+      }
     }
   ],
   "camera": {

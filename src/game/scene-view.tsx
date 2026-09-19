@@ -1,3 +1,4 @@
+import { Group } from '@shopify/react-native-skia';
 import { memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState, type Ref } from 'react';
 import { Easing, useAnimatedReaction, useSharedValue, withRepeat, withTiming, type SharedValue } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
@@ -6,6 +7,7 @@ import type { WorldInputHandlers } from '@/engine/adapters/input/use-world-gestu
 import { CharacterSprite } from '@/engine/adapters/render/character-sprite';
 import { CharacterDragProxy, DragProxy, type CarriedVisual } from '@/engine/adapters/render/drag-proxy';
 import { SceneCanvas } from '@/engine/adapters/render/scene-canvas';
+import { PriceTag } from '@/engine/adapters/render/price-tag';
 import { SpriteNode } from '@/engine/adapters/render/sprite-node';
 import type { TextureStore } from '@/engine/adapters/render/texture-store';
 import type { Viewport } from '@/engine/adapters/render/viewport';
@@ -109,10 +111,11 @@ const EntityNode = memo(function EntityNode({ game, id, textures, hidden, hidden
   // Scene entities, and items shown inside an open container (drawn at their slot, HU-GAME-034 R5).
   if (!transform || (entity.location.kind !== 'scene' && entity.location.kind !== 'container')) return null;
   if (entity.components.character) return <CharacterNode game={game} id={id} textures={textures} breath={breath} />;
-  return (
+  const asset = resolveAsset(entity);
+  const node = (
     <SpriteNode
       id={id}
-      asset={resolveAsset(entity)}
+      asset={asset}
       transform={transform}
       pivot={sprite.pivot ?? { x: 0.5, y: 1 }}
       size={sprite.size}
@@ -120,6 +123,16 @@ const EntityNode = memo(function EntityNode({ game, id, textures, hidden, hidden
       events={game.events}
       highlight={highlighted}
     />
+  );
+  const purchasable = entity.components.purchasable;
+  // Unpaid products show their price (HU-GAME-064 RN-8), not inside closed or open containers.
+  if (purchasable?.purchased !== false || entity.location.kind !== 'scene') return node;
+  const h = sprite.size?.h ?? textures.registry.size(asset)?.h ?? 0;
+  return (
+    <Group>
+      {node}
+      <PriceTag x={transform.x} y={transform.y - h - 8} price={purchasable.price} />
+    </Group>
   );
 });
 

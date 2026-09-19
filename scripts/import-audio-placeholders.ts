@@ -39,6 +39,7 @@ const SFX: Record<string, [string, string]> = {
   sfx_character_appear: ['interface-sounds', 'confirmation_001.ogg'],
   sfx_portal_whoosh: ['interface-sounds', 'maximize_003.ogg'],
   sfx_register_ching: ['digital-audio', 'powerUp2.ogg'],
+  sfx_gift_open: ['interface-sounds', 'confirmation_003.ogg'],
 };
 
 function main() {

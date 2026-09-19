@@ -58,6 +58,8 @@ export const SFX_COIN = 'sfx_coin';
 export const SFX_UI_TAP = 'sfx_ui_tap';
 /** Scene travel through a door or the map (HU-GAME-049 assets). */
 export const SFX_TRAVEL = 'sfx_portal_whoosh';
+/** The daily gift box opens (HU-GAME-067 RN-2). */
+export const SFX_GIFT = 'sfx_gift_open';
 
 /** Role of a performed interaction by its first action (RN-1 "fallback por tipo de acción"). */
 const ACTION_ROLE: Record<string, string> = {
@@ -138,6 +140,9 @@ export class AudioDirector {
           break;
         case 'walletChanged':
           if (e.delta > 0) this.play(SFX_COIN, 'coin');
+          break;
+        case 'playerChanged':
+          if (e.keys.includes('dailyReward')) this.play(SFX_GIFT, 'gift');
           break;
         case 'transitionStarted':
           this.play(SFX_TRAVEL, 'travel');

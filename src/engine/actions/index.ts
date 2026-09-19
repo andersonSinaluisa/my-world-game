@@ -6,6 +6,7 @@ import { sitAction, sleepAction, standUpAction } from './seat-actions';
 import { closeAction, openAction, storeAction, toggleOpenAction, toggleSwitchAction } from './container-actions';
 import { placeAction } from './place';
 import { teleportAction } from './travel-actions';
+import { collectAction, purchaseAction } from './economy-actions';
 import { cycleStateAction, setStateAction } from './state-actions';
 import type { ActionHandler } from './types';
 
@@ -36,6 +37,8 @@ export const ACTIONS: Record<string, ActionHandler<never>> = Object.fromEntries(
     sleepAction,
     standUpAction,
     teleportAction,
+    purchaseAction,
+    collectAction,
   ].map((a) => [a.type, a as unknown as ActionHandler<never>]),
 );
 

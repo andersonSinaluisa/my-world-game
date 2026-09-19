@@ -30,7 +30,8 @@ interface InteractionRule {
   actions: ActionSpec[];           // se ejecutan en orden, en una transacción (§6)
   priority?: number;               // default 0; mayor = gana (ver INTERACTION_SYSTEM §4)
   fallback?: 'place' | 'returnToOrigin';  // qué pasa con el source si la regla coincide pero se rechaza; default 'place'.
-                                   // 'returnToOrigin' = vuelve a purchasable.origin (productos de tienda)
+                                   // 'returnToOrigin' = vuelve a purchasable.origin (productos de tienda); solo aplica a productos sin pagar:
+                                   // un objeto ya comprado se apoya con 'place'
   feedback?: {
     highlight?: boolean;           // resaltar el target durante el arrastre (HU-GAME-033); default true
     rejectHint?: AssetKey;         // icono cuando la regla coincide pero falla una condición

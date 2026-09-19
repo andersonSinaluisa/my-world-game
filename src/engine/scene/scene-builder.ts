@@ -93,11 +93,22 @@ export function buildScene(registry: ContentRegistry, sceneId: SceneId, options:
     }
     const components = mergeComponents(content, savedRow?.components as Record<string, unknown> | undefined);
     sanitizeStates(id, components, content, options.logger);
-    const location: Location =
-      savedRow?.location ??
-      ('inContainer' in e
+    const declared: Location =
+      'inContainer' in e
         ? { kind: 'container', containerId: sceneEntityId(sceneId, e.inContainer.localId), slot: e.inContainer.slot }
-        : { kind: 'scene', sceneId });
+        : { kind: 'scene', sceneId };
+    let location: Location = savedRow?.location ?? declared;
+    // Products: origin defaults to the declared place, and an unpaid one always reloads there (ENTITY_SCHEMA §5.14).
+    const purchasable = components.purchasable as { purchased?: boolean; origin?: unknown } | undefined;
+    if (purchasable) {
+      const t = content.transform as { x: number; y: number } | undefined;
+      const origin = purchasable.origin ?? (declared.kind === 'container' ? { containerId: declared.containerId, slot: declared.slot } : t ? { x: t.x, y: t.y } : undefined);
+      components.purchasable = { ...purchasable, purchased: purchasable.purchased ?? false, origin };
+      if (purchasable.purchased !== true && savedRow) {
+        location = declared;
+        if (t) components.transform = { ...(components.transform as object), x: t.x, y: t.y };
+      }
+    }
     const init: EntityInit = { id, prefabId, tags, location, components };
     // Saved rows may move a scene entity elsewhere (e.g. into the backpack): those are global and loaded apart.
     if (location.kind === 'scene' && location.sceneId === sceneId) sceneLocated.push(init);

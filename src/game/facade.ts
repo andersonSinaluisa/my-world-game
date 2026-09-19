@@ -84,6 +84,10 @@ export interface GameFacade {
     activeZone(): string | undefined;
     /** A drag or a scene transition is in progress: HUD navigation waits (HU-GAME-051 RN-7). */
     busy(): boolean;
+    /** Wallet (HU-GAME-065). */
+    coins(): number;
+    /** Today's gift box is waiting in the HUD (HU-GAME-067). */
+    dailyGiftAvailable(): boolean;
     /** Map cards: every provides.locations of the loaded packs (HU-GAME-051 RN-2). */
     locations(): MapLocation[];
     /** Zone buttons of the active scene, with labels (HU-GAME-051 RN-5). */
@@ -234,6 +238,8 @@ export function createGameFacade(engine: GameEngine, options: GameFacadeOptions 
       cameraX: () => engine.playerState.cameraX,
       activeZone: () => engine.activeZoneId,
       busy: () => engine.isDragging || engine.isTransitioning,
+      coins: () => engine.coins,
+      dailyGiftAvailable: () => engine.dailyGiftAvailable,
       locations: () => {
         const content = engine.content;
         if (!content) return EMPTY_LOCATIONS;

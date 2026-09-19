@@ -69,6 +69,7 @@ export const BUNDLED_PACKS: RawPack[] = [
       { file: 'prefabs/furniture/table_round.json', data: require('./core/prefabs/furniture/table_round.json') },
       { file: 'prefabs/furniture/toilet.json', data: require('./core/prefabs/furniture/toilet.json') },
       { file: 'prefabs/furniture/toybox.json', data: require('./core/prefabs/furniture/toybox.json') },
+      { file: 'prefabs/misc/coin_hidden.json', data: require('./core/prefabs/misc/coin_hidden.json') },
       { file: 'prefabs/toy/ball.json', data: require('./core/prefabs/toy/ball.json') },
       { file: 'prefabs/toy/book.json', data: require('./core/prefabs/toy/book.json') },
       { file: 'prefabs/toy/pillow.json', data: require('./core/prefabs/toy/pillow.json') },

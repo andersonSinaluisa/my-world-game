@@ -1,4 +1,5 @@
 import { ACTIONS } from '../actions';
+import { returnToOrigin } from '../actions/economy-actions';
 import { fail, PASS, type ActionEnv, type Check, type InteractionContext, type TravelRequest } from '../actions/types';
 import type { RegisteredRule } from '../content/registry';
 import type { ActionSpec } from '../content/schemas';
@@ -269,8 +270,11 @@ export class InteractionResolver {
         uiTarget: c.target ? undefined : c.rule.target.ui,
       });
       if (c.target) env.effects.rejected(c.target.id);
-      // Fallback of the failing rule (HU-GAME-031 R3.6). 'returnToOrigin' arrives with HU-GAME-064/066.
-      if (input.trigger === 'drop' && input.sourceId) this.place(env, input.sourceId, input.point);
+      // Fallback of the failing rule (HU-GAME-031 R3.6): returnToOrigin sends an unpaid product back to its shelf.
+      if (input.trigger === 'drop' && input.sourceId) {
+        const back = c.rule.fallback === 'returnToOrigin' && returnToOrigin(env, input.sourceId);
+        if (!back) this.place(env, input.sourceId, input.point);
+      }
     });
     return { kind: 'rejected', ruleId: c.rule.qualifiedId, reason, targetId: c.target?.id };
   }

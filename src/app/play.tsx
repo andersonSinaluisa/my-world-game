@@ -11,6 +11,7 @@ import { useActiveScene } from '@/game/hooks';
 import { MapButton, MapOverlay } from '@/game/map-overlay';
 import { SceneView, type CameraController } from '@/game/scene-view';
 import { TransitionOverlay } from '@/game/transition-overlay';
+import { CoinCounter, GiftBox } from '@/game/wallet-hud';
 import { COLORS, IconButton } from '@/ui/buttons';
 
 /** Extra margin around the backpack button that still counts as dropping on it (children's fingers). */
@@ -81,6 +82,10 @@ export default function PlayScreen() {
             <GateGear onPassed={() => router.push('/settings')} />
           </View>
         </View>
+        <View style={styles.walletRow} pointerEvents="box-none">
+          {scene && <CoinCounter />}
+          {scene && <GiftBox />}
+        </View>
         {/* Bottom center: away from the auto-scroll edge zones (HU-GAME-037 open question). */}
         <View style={styles.bottomRow} pointerEvents="box-none">
           {scene && <Backpack cameraRef={camera} onBounds={(r) => (backpack.current = r)} />}
@@ -100,4 +105,5 @@ const styles = StyleSheet.create({
   topRow: { flexDirection: 'row', justifyContent: 'space-between', padding: 16 },
   bottomRow: { alignItems: 'center', paddingBottom: 12 },
   topRight: { flexDirection: 'row', gap: 12 },
+  walletRow: { position: 'absolute', top: 16, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 12 },
 });

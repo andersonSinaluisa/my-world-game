@@ -37,6 +37,8 @@ export function persistedComponents(e: Entity): Components {
     if (picked !== undefined) out[name] = picked;
   }
   if (!e.prefabId) for (const name of PREFABLESS) if (comps[name] !== undefined) out[name] = comps[name];
+  // Runtime copies (restock) have no scene declaration: they keep price and origin too (HU-GAME-066 RN-8).
+  if (isRuntimeId(e.id) && comps.purchasable !== undefined) out.purchasable = comps.purchasable;
   return out as Components;
 }
 

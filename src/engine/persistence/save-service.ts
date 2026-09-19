@@ -100,6 +100,7 @@ export class SaveService {
   private track(batch: readonly GameEvent[]): void {
     const sceneLoad = batch.some((e) => e.type === 'sceneLoaded');
     let changed = false;
+    let walletChanged = false;
     for (const e of batch) {
       switch (e.type) {
         case 'entityCreated':
@@ -127,11 +128,16 @@ export class SaveService {
           this.playerDirty = true;
           changed = true;
           break;
+        case 'walletChanged':
+          walletChanged = true;
+          break;
         default:
           break;
       }
     }
-    if (changed) this.schedule();
+    // Coins are written at once, never left to the debounce (HU-GAME-065 RN-6).
+    if (walletChanged) void this.flush();
+    else if (changed) this.schedule();
   }
 
   /** Expression changes and temporary poses are never saved (HU-GAME-014 R9, HU-GAME-015 R6). */

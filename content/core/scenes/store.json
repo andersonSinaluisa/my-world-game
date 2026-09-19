@@ -114,6 +114,209 @@
         "x": 3200,
         "y": 960
       }
+    },
+    {
+      "localId": "p_apple",
+      "prefabId": "apple_red",
+      "transform": {
+        "x": 1260,
+        "y": 660
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 2
+        }
+      }
+    },
+    {
+      "localId": "p_banana",
+      "prefabId": "banana",
+      "transform": {
+        "x": 1350,
+        "y": 660
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 2
+        }
+      }
+    },
+    {
+      "localId": "p_cookie",
+      "prefabId": "cookie",
+      "transform": {
+        "x": 1440,
+        "y": 780
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 2
+        }
+      }
+    },
+    {
+      "localId": "p_sandwich",
+      "prefabId": "sandwich",
+      "inContainer": {
+        "localId": "fridge_display",
+        "slot": 0
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 4
+        }
+      }
+    },
+    {
+      "localId": "p_cake",
+      "prefabId": "cake_slice",
+      "inContainer": {
+        "localId": "fridge_display",
+        "slot": 1
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 5
+        }
+      }
+    },
+    {
+      "localId": "p_milk",
+      "prefabId": "milk_carton",
+      "inContainer": {
+        "localId": "fridge_display",
+        "slot": 2
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 3
+        }
+      }
+    },
+    {
+      "localId": "p_juice",
+      "prefabId": "juice_glass",
+      "inContainer": {
+        "localId": "fridge_display",
+        "slot": 3
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 3
+        }
+      }
+    },
+    {
+      "localId": "p_ball",
+      "prefabId": "ball",
+      "transform": {
+        "x": 1820,
+        "y": 660
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 8
+        }
+      }
+    },
+    {
+      "localId": "p_duck",
+      "prefabId": "rubber_duck",
+      "transform": {
+        "x": 1960,
+        "y": 660
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 6
+        }
+      }
+    },
+    {
+      "localId": "p_blocks",
+      "prefabId": "toy_blocks",
+      "transform": {
+        "x": 1840,
+        "y": 780
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 12
+        }
+      }
+    },
+    {
+      "localId": "p_teddy",
+      "prefabId": "teddy",
+      "transform": {
+        "x": 1960,
+        "y": 900
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 15
+        }
+      }
+    },
+    {
+      "localId": "p_cloth_1",
+      "prefabId": "shirt_dino_orange",
+      "transform": {
+        "x": 2390,
+        "y": 660
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 15
+        }
+      }
+    },
+    {
+      "localId": "p_cloth_2",
+      "prefabId": "pants_green",
+      "transform": {
+        "x": 2510,
+        "y": 780
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 12
+        }
+      }
+    },
+    {
+      "localId": "p_cloth_3",
+      "prefabId": "shoes_black",
+      "transform": {
+        "x": 2390,
+        "y": 900
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 10
+        }
+      }
+    },
+    {
+      "localId": "p_cloth_4",
+      "prefabId": "sandals_blue",
+      "transform": {
+        "x": 2510,
+        "y": 900
+      },
+      "overrides": {
+        "purchasable": {
+          "price": 10
+        }
+      }
+    },
+    {
+      "localId": "coin_1",
+      "prefabId": "coin_hidden",
+      "transform": {
+        "x": 2860,
+        "y": 960
+      }
     }
   ],
   "audio": {
