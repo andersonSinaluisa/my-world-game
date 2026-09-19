@@ -164,5 +164,9 @@
   "zone.store_front.name": "Frente a la tienda",
   "zone.entrance.name": "Entrada",
   "zone.shelves.name": "Estantes",
-  "zone.checkout.name": "Caja"
+  "zone.checkout.name": "Caja",
+  "ui.wallet.label": "monedas",
+  "ui.gift.open": "Regalo del día",
+  "ui.hint.needCoins": "Faltan monedas",
+  "object.coin_hidden.name": "Moneda escondida"
 }

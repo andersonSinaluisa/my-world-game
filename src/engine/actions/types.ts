@@ -24,6 +24,8 @@ export interface ActionEnv {
    * resolve in the pack of `owner` (content refs are relative to their pack, CONTENT_PACK_SCHEMA §4).
    */
   instantiate: (prefabId: string, owner?: Entity) => EntityInit | undefined;
+  /** Coins of the player (HU-GAME-065). `add` refuses to go below 0 and caps at 999; returns false if refused. */
+  wallet: { coins(): number; add(delta: number): boolean };
 }
 
 /** Context of one interaction: who is `$source`, who is `$target`, where the finger was. */

@@ -1,0 +1,34 @@
+{
+  "id": "coin_hidden",
+  "category": "misc",
+  "tags": [
+    "coin"
+  ],
+  "components": {
+    "sprite": {
+      "asset": "obj_misc_coin_hidden",
+      "layer": "props"
+    },
+    "hitbox": {
+      "shape": {
+        "type": "circle",
+        "x": 0,
+        "y": -36,
+        "r": 30
+      },
+      "padding": 12
+    },
+    "collectible": {
+      "reward": {
+        "coins": 5
+      }
+    },
+    "animations": {
+      "tap": "bounce"
+    }
+  },
+  "metadata": {
+    "name": "object.coin_hidden.name",
+    "placeholder": true
+  }
+}

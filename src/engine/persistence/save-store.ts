@@ -20,6 +20,8 @@ export interface PlayerState {
   currentSceneId?: SceneId;
   cameraX?: number;
   wallet?: { coins: number };
+  /** HU-GAME-067: local date (YYYY-MM-DD) of the last daily gift. */
+  dailyReward?: { lastClaimDate?: string };
   unlocks?: string[];
   inventory?: { capacity: number };
   flags?: Record<string, boolean | number | string>;

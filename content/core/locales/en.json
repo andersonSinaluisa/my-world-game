@@ -164,5 +164,9 @@
   "zone.store_front.name": "In front of the store",
   "zone.entrance.name": "Entrance",
   "zone.shelves.name": "Shelves",
-  "zone.checkout.name": "Checkout"
+  "zone.checkout.name": "Checkout",
+  "ui.wallet.label": "coins",
+  "ui.gift.open": "Today's gift",
+  "ui.hint.needCoins": "Not enough coins",
+  "object.coin_hidden.name": "Hidden coin"
 }

@@ -372,5 +372,53 @@
       }
     ],
     "priority": 85
+  },
+  {
+    "id": "buy_at_register",
+    "trigger": "drop",
+    "source": {
+      "has": [
+        "purchasable"
+      ]
+    },
+    "target": {
+      "tags": [
+        "checkout"
+      ]
+    },
+    "conditions": [
+      {
+        "type": "isPurchased",
+        "value": false
+      },
+      {
+        "type": "canAfford"
+      }
+    ],
+    "actions": [
+      {
+        "type": "purchase"
+      }
+    ],
+    "priority": 95,
+    "fallback": "returnToOrigin",
+    "feedback": {
+      "rejectHint": "ui_hint_need_coins"
+    }
+  },
+  {
+    "id": "tap_collect",
+    "trigger": "tap",
+    "target": {
+      "has": [
+        "collectible"
+      ]
+    },
+    "actions": [
+      {
+        "type": "collect"
+      }
+    ],
+    "priority": 30
   }
 ]

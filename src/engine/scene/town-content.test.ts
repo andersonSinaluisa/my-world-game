@@ -9,7 +9,7 @@ import type { Appearance } from '../components/base';
 import type { EntityId } from '../core/types';
 import { SaveService } from '../persistence/save-service';
 
-/** EPIC-014/018 scenarios on the real core pack: doors, the street and the map data. */
+/** EPIC-014/018/019/020 scenarios on the real core pack: doors, street, map data, store and coins. */
 
 const CORE = path.resolve(__dirname, '..', '..', '..', 'content', 'core');
 const S = (local: string) => `core:street/${local}`;
@@ -37,7 +37,7 @@ function drag(g: TestGame, id: EntityId, to: { x: number; y: number }) {
 
 const tap = (g: TestGame, x: number, y: number) => g.dispatch({ type: 'pointerTap', worldPoint: { x, y } });
 
-describe('the town (EPIC-014/018)', () => {
+describe('the town (EPIC-014/018/019/020)', () => {
   it('home → street → store → street → home through the doors, clothes included', () => {
     const g = start();
     const a = kid(g, 600);
@@ -113,5 +113,53 @@ describe('the town (EPIC-014/018)', () => {
     g.engine.setPlayerState({ unlocks: ['core:home'] });
     const facade = createFacadeForTest(g);
     expect(facade.selectors.locations().filter((l) => l.locked).map((l) => l.id)).toEqual(['core:street', 'core:store']);
+  });
+
+  it('store: buy an apple with the new-game coins and walk out with it; an unpaid copy restocks the shelf', async () => {
+    const store = new InMemorySaveStore();
+    const g = start(store);
+    const save = new SaveService(g.engine, store, { scheduler: g.clock }).attach();
+    save.startNewGame();
+    expect(g.engine.coins).toBe(50);
+    const a = kid(g, 600);
+    drag(g, a, { x: 120, y: 760 });
+    drag(g, a, { x: 4820, y: 760 });
+    expect(g.engine.scene?.id).toBe('core:store');
+    const apple = 'core:store/p_apple';
+    expect(g.world.get(apple)?.components.purchasable).toMatchObject({ price: 2, purchased: false, origin: { x: 1260, y: 660 } });
+    // Leaving with it in the hand is not possible before paying.
+    g.engine.locations.move(apple, { kind: 'held', holderId: a, hand: 'right' });
+    drag(g, a, { x: 200, y: 760 });
+    expect(g.engine.scene?.id).toBe('core:store');
+    expect(g.world.get(apple)?.components.transform).toMatchObject({ x: 1260, y: 660 });
+    drag(g, apple, { x: 3100, y: 760 });
+    expect(g.engine.coins).toBe(48);
+    expect(g.world.get(apple)?.components.purchasable?.purchased).toBe(true);
+    expect(g.world.all().filter((e) => e.prefabId === 'core:apple_red' && e.components.purchasable?.purchased === false)).toHaveLength(1);
+    g.engine.locations.move(apple, { kind: 'held', holderId: a, hand: 'right' });
+    drag(g, a, { x: 200, y: 760 });
+    expect(g.engine.scene?.id).toBe('core:street');
+    expect(g.world.get(apple)?.location).toEqual({ kind: 'held', holderId: a, hand: 'right' });
+    await save.flush();
+    expect((await store.loadSlot('main'))?.player.wallet).toEqual({ coins: 48 });
+  });
+
+  it('a product without enough coins goes back to its shelf', () => {
+    const g = start();
+    g.engine.setPlayerState({ ...g.engine.playerState, wallet: { coins: 3 } });
+    g.dispatch({ type: 'travelTo', sceneId: 'core:store', spawnId: 'entrance' });
+    drag(g, 'core:store/p_teddy', { x: 3100, y: 760 });
+    expect(g.engine.coins).toBe(3);
+    expect(g.world.get('core:store/p_teddy')?.components.transform).toMatchObject({ x: 1960, y: 900 });
+  });
+
+  it('hidden coins in the house give 5 coins each, once', () => {
+    const g = start();
+    g.engine.setPlayerState({ ...g.engine.playerState, wallet: { coins: 0 } });
+    tap(g, 1480, 930);
+    expect(g.engine.coins).toBe(5);
+    expect(g.world.has('core:home/coin_1')).toBe(false);
+    tap(g, 1480, 930);
+    expect(g.engine.coins).toBe(5);
   });
 });

@@ -165,6 +165,12 @@ export type Spawner = z.infer<typeof SpawnerSchema>;
 export type SpawnedFrom = z.infer<typeof SpawnedFromSchema>;
 
 // §5.14 (Fase 2; isPurchased needs it for the backpack rule)
+/** A hidden coin or any pick-up reward (ENTITY_SCHEMA §5.15, HU-GAME-067). */
+export const CollectibleSchema = z.strictObject({
+  reward: z.strictObject({ coins: z.number().int().min(0).optional(), prefabId: z.string().min(1).optional() }),
+});
+export type Collectible = z.infer<typeof CollectibleSchema>;
+
 /** Door to another scene (ENTITY_SCHEMA §5.12, HU-GAME-049). */
 export const PortalSchema = z.strictObject({
   targetSceneId: z.string().min(1),

@@ -9,6 +9,7 @@ import {
   PoseSchema,
   PurchasableSchema,
   PortalSchema,
+  CollectibleSchema,
   EdibleSchema,
   DrinkableSchema,
   SpawnerSchema,
@@ -34,6 +35,7 @@ import {
   type Pose,
   type Purchasable,
   type Portal,
+  type Collectible,
   type Edible,
   type Drinkable,
   type Spawner,
@@ -76,6 +78,7 @@ export interface ComponentMap {
   expression: Expression;
   purchasable: Purchasable;
   portal: Portal;
+  collectible: Collectible;
   edible: Edible;
   drinkable: Drinkable;
   spawner: Spawner;
@@ -107,6 +110,7 @@ export const COMPONENT_SCHEMAS: { [K in ComponentName]: z.ZodType<ComponentMap[K
   expression: ExpressionSchema,
   purchasable: PurchasableSchema,
   portal: PortalSchema,
+  collectible: CollectibleSchema,
   edible: EdibleSchema,
   drinkable: DrinkableSchema,
   spawner: SpawnerSchema,

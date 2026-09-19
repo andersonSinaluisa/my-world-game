@@ -15,6 +15,8 @@ export type GameCommand =
   | { type: 'travelTo'; sceneId: SceneId; spawnId: string }
   /** The UI finished the fade-in: input is accepted again (HU-GAME-050 RN-4). */
   | { type: 'transitionDone' }
+  /** Daily gift of the HUD (HU-GAME-067): newGame.dailyGiftCoins once per local day. */
+  | { type: 'claimDailyGift' }
   | { type: 'pointerTap'; worldPoint: WorldPoint; minHitWorld?: number }
   | { type: 'pointerLongPress'; worldPoint: WorldPoint; minHitWorld?: number }
   | { type: 'dragStart'; entityId: EntityId; worldPoint: WorldPoint }
@@ -36,6 +38,7 @@ export type CommandFailure =
   | 'noContent'
   | 'unknownScene'
   | 'transitioning'
+  | 'alreadyClaimed'
   | 'notDraggable'
   | 'notDragging'
   | 'alreadyDragging'

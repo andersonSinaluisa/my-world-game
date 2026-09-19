@@ -138,6 +138,22 @@
         "x": 4820,
         "y": 960
       }
+    },
+    {
+      "localId": "coin_1",
+      "prefabId": "coin_hidden",
+      "transform": {
+        "x": 2080,
+        "y": 960
+      }
+    },
+    {
+      "localId": "coin_2",
+      "prefabId": "coin_hidden",
+      "transform": {
+        "x": 4320,
+        "y": 960
+      }
     }
   ],
   "audio": {
